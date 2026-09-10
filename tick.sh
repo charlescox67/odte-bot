@@ -21,4 +21,6 @@ if ! mkdir "$LOCK" 2>/dev/null; then
 fi
 trap 'rmdir "$LOCK" 2>/dev/null' EXIT
 
-exec ./venv/bin/python run_bot.py --once >> logs/bot.log 2>&1
+# NOT exec: exec replaces this shell, so the EXIT trap never fires and the
+# lock is never released — every later tick then dies silently on it.
+./venv/bin/python run_bot.py --once >> logs/bot.log 2>&1
