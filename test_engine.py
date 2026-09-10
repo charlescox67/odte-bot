@@ -1,0 +1,76 @@
+"""Deterministic checks on the paper book. No network, no market needed."""
+from __future__ import annotations
+
+import tempfile
+from datetime import date
+from pathlib import Path
+
+import paper_engine as pe
+
+tmp = Path(tempfile.mkdtemp())
+pe.BOOK, pe.TRADES = tmp / "book.json", tmp / "trades.csv"
+
+ok = fail = 0
+def check(label, got, want):
+    global ok, fail
+    good = (abs(got - want) < 1e-6) if isinstance(want, float) else (got == want)
+    print(f"  {'PASS' if good else 'FAIL'}  {label}: got {got!r} want {want!r}")
+    ok, fail = ok + good, fail + (not good)
+
+print("open / cost / spread cost")
+b = pe.Book(cash=10_000.0)
+p = b.open(symbol="SPY", contract=pe.occ("SPY","2026-09-10","C",759.0), right="C",
+           strike=759.0, expiry="2026-09-10", qty=2, ask=0.55,
+           underlying=758.74, reason="test")
+check("cash after buy 2 @ 0.55", b.cash, 10_000.0 - 110.0)
+check("cost", p.cost, 110.0)
+
+print("\nmark to market")
+p.mark = 1.10
+check("unrealised pnl at 1.10", p.pnl(), 110.0)
+check("unrealised pct", round(p.pnl_pct(), 4), 1.0)
+check("equity", b.equity(), 10_000.0 - 110.0 + 220.0)
+
+print("\nclose at the BID, not the mid")
+b.close(p, bid=1.05, reason="target")
+check("cash after sell", b.cash, 10_000.0 - 110.0 + 210.0)
+check("realised pnl", p.pnl(), 100.0)
+check("status", p.status, "closed")
+check("open positions", len(b.open_positions), 0)
+check("trade logged", pe.TRADES.exists(), True)
+
+print("\npersistence across a restart")
+b.save(pe.BOOK)
+b2 = pe.Book.load(pe.BOOK)
+check("cash survives", b2.cash, b.cash)
+check("history survives", len(b2.positions), 1)
+
+print("\nexpiry settlement — a 0DTE has no next day")
+b3 = pe.Book(cash=10_000.0)
+itm = b3.open(symbol="SPY", contract="x", right="C", strike=750.0,
+              expiry="2026-09-10", qty=1, ask=1.00, underlying=755.0, reason="t")
+otm = b3.open(symbol="SPY", contract="y", right="C", strike=770.0,
+              expiry="2026-09-10", qty=1, ask=0.20, underlying=755.0, reason="t")
+b3.settle_expired({"SPY": 756.30}, today=date(2026, 9, 10))
+check("ITM settles to intrinsic 6.30", itm.exit_price, 6.30)
+check("OTM expires worthless", otm.exit_price, 0.0)
+check("OTM loses the full premium", otm.pnl(), -20.0)
+check("both closed", len(b3.open_positions), 0)
+
+print("\nguards")
+for label, fn in [
+    ("refuse ask<=0", lambda: b3.open(symbol="SPY", contract="z", right="C",
+        strike=1.0, expiry="2026-09-11", qty=1, ask=0.0, underlying=1.0, reason="t")),
+    ("refuse over-spend", lambda: b3.open(symbol="SPY", contract="z", right="C",
+        strike=1.0, expiry="2026-09-11", qty=99999, ask=5.0, underlying=1.0, reason="t")),
+]:
+    try:
+        fn(); check(label, "no error", "ValueError")
+    except ValueError:
+        check(label, "ValueError", "ValueError")
+
+print("\nOCC symbol format")
+check("occ", pe.occ("SPY","2026-09-10","C",759.0), "SPY260910C00759000")
+
+print(f"\n{ok} passed, {fail} failed")
+raise SystemExit(1 if fail else 0)

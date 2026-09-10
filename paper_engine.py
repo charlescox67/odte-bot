@@ -1,0 +1,156 @@
+"""A self-contained simulated broker. No IBKR, no money, no order routing.
+
+Positions live in a JSON file so the book survives restarts and spans days.
+Every closed trade is appended to a CSV — that log is the whole point: without
+it you cannot estimate a win rate, and without a win rate position sizing is
+guesswork.
+
+FILL MODEL: buy at the ASK, sell at the BID. Always. Real paper platforms fill
+at the midpoint or better, which quietly hands you the spread twice per trade.
+On a 0DTE ATM contract the spread is ~2% of premium, so that flattery compounds
+into a materially wrong answer over a few hundred trades.
+"""
+from __future__ import annotations
+
+import csv
+import json
+import os
+import uuid
+from dataclasses import asdict, dataclass, field
+from datetime import date, datetime, timezone
+from pathlib import Path
+
+BOOK = Path(__file__).parent / "book.json"
+TRADES = Path(__file__).parent / "trades.csv"
+MULTIPLIER = 100  # US equity options
+
+
+@dataclass
+class Position:
+    id: str
+    symbol: str            # underlying, e.g. SPY
+    contract: str          # OCC symbol
+    right: str             # C or P
+    strike: float
+    expiry: str            # YYYY-MM-DD
+    qty: int
+    entry_price: float     # per share, what we paid (the ask)
+    entry_time: str
+    entry_reason: str
+    underlying_at_entry: float
+    status: str = "open"
+    mark: float = 0.0
+    exit_price: float | None = None
+    exit_time: str | None = None
+    exit_reason: str | None = None
+
+    @property
+    def cost(self) -> float:
+        return self.entry_price * self.qty * MULTIPLIER
+
+    def pnl(self, price: float | None = None) -> float:
+        px = self.exit_price if self.exit_price is not None else (
+            price if price is not None else self.mark)
+        return (px - self.entry_price) * self.qty * MULTIPLIER
+
+    def pnl_pct(self, price: float | None = None) -> float:
+        if not self.entry_price:
+            return 0.0
+        return self.pnl(price) / self.cost
+
+
+@dataclass
+class Book:
+    cash: float = 100_000.0
+    positions: list[Position] = field(default_factory=list)
+
+    # ---------- persistence ----------
+    @classmethod
+    def load(cls, path: Path = BOOK) -> "Book":
+        if not path.exists():
+            return cls()
+        raw = json.loads(path.read_text())
+        return cls(cash=raw["cash"],
+                   positions=[Position(**p) for p in raw["positions"]])
+
+    def save(self, path: Path = BOOK) -> None:
+        # Write-then-rename: a crash mid-write must not corrupt the book.
+        tmp = path.with_suffix(".tmp")
+        tmp.write_text(json.dumps(
+            {"cash": self.cash, "positions": [asdict(p) for p in self.positions]},
+            indent=2))
+        os.replace(tmp, path)
+
+    # ---------- book ops ----------
+    @property
+    def open_positions(self) -> list[Position]:
+        return [p for p in self.positions if p.status == "open"]
+
+    def open(self, *, symbol: str, contract: str, right: str, strike: float,
+             expiry: str, qty: int, ask: float, underlying: float,
+             reason: str, ts: datetime | None = None) -> Position:
+        if ask <= 0:
+            raise ValueError(f"refusing to open {contract} at ask={ask}")
+        ts = ts or datetime.now(timezone.utc)
+        pos = Position(
+            id=uuid.uuid4().hex[:8], symbol=symbol, contract=contract,
+            right=right, strike=strike, expiry=expiry, qty=qty,
+            entry_price=ask, entry_time=ts.isoformat(), entry_reason=reason,
+            underlying_at_entry=underlying, mark=ask)
+        cost = pos.cost
+        if cost > self.cash:
+            raise ValueError(f"insufficient cash: need {cost:.2f} have {self.cash:.2f}")
+        self.cash -= cost
+        self.positions.append(pos)
+        return pos
+
+    def close(self, pos: Position, *, bid: float, reason: str,
+              ts: datetime | None = None) -> Position:
+        ts = ts or datetime.now(timezone.utc)
+        pos.exit_price = max(0.0, bid)
+        pos.exit_time = ts.isoformat()
+        pos.exit_reason = reason
+        pos.status = "closed"
+        pos.mark = pos.exit_price
+        self.cash += pos.exit_price * pos.qty * MULTIPLIER
+        self._log(pos)
+        return pos
+
+    def settle_expired(self, spot_by_symbol: dict[str, float],
+                       today: date | None = None) -> list[Position]:
+        """A 0DTE contract has no next day. At expiry it becomes intrinsic value."""
+        today = today or datetime.now().date()
+        done = []
+        for pos in self.open_positions:
+            if date.fromisoformat(pos.expiry) > today:
+                continue
+            spot = spot_by_symbol.get(pos.symbol)
+            if spot is None:
+                continue
+            intrinsic = (max(0.0, spot - pos.strike) if pos.right == "C"
+                         else max(0.0, pos.strike - spot))
+            done.append(self.close(pos, bid=intrinsic, reason="expired"))
+        return done
+
+    def _log(self, pos: Position) -> None:
+        new = not TRADES.exists()
+        with TRADES.open("a", newline="") as fh:
+            w = csv.writer(fh)
+            if new:
+                w.writerow(["id", "symbol", "contract", "right", "strike", "expiry",
+                            "qty", "entry_time", "entry_price", "underlying_at_entry",
+                            "entry_reason", "exit_time", "exit_price", "exit_reason",
+                            "pnl", "pnl_pct"])
+            w.writerow([pos.id, pos.symbol, pos.contract, pos.right, pos.strike,
+                        pos.expiry, pos.qty, pos.entry_time, pos.entry_price,
+                        pos.underlying_at_entry, pos.entry_reason, pos.exit_time,
+                        pos.exit_price, pos.exit_reason,
+                        f"{pos.pnl():.2f}", f"{pos.pnl_pct():.4f}"])
+
+    def equity(self) -> float:
+        return self.cash + sum(p.mark * p.qty * MULTIPLIER for p in self.open_positions)
+
+
+def occ(symbol: str, expiry: str, right: str, strike: float) -> str:
+    y, m, d = expiry.split("-")
+    return f"{symbol}{y[2:]}{m}{d}{right.upper()}{int(round(strike*1000)):08d}"
