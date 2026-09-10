@@ -8,3 +8,5 @@ data/cache/
 book.json
 book.tmp
 trades.csv
+logs/
+.tick.lock
