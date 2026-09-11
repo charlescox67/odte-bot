@@ -10,3 +10,4 @@ book.tmp
 trades.csv
 logs/
 .tick.lock
+.caffeinate.pid
