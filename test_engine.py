@@ -51,11 +51,21 @@ itm = b3.open(symbol="SPY", contract="x", right="C", strike=750.0,
               expiry="2026-09-10", qty=1, ask=1.00, underlying=755.0, reason="t")
 otm = b3.open(symbol="SPY", contract="y", right="C", strike=770.0,
               expiry="2026-09-10", qty=1, ask=0.20, underlying=755.0, reason="t")
-b3.settle_expired({"SPY": 756.30}, today=date(2026, 9, 10))
+# settlement now takes a callable so the caller can supply the price on the
+# position's OWN expiry date rather than whatever spot happens to be now.
+b3.settle_expired(lambda pos: {"SPY": 756.30}.get(pos.symbol),
+                  today=date(2026, 9, 10))
 check("ITM settles to intrinsic 6.30", itm.exit_price, 6.30)
 check("OTM expires worthless", otm.exit_price, 0.0)
 check("OTM loses the full premium", otm.pnl(), -20.0)
 check("both closed", len(b3.open_positions), 0)
+
+print("\nunknown price must NOT settle at zero")
+b4 = pe.Book(cash=10_000.0)
+q = b4.open(symbol="SPY", contract="q", right="C", strike=750.0,
+            expiry="2026-09-10", qty=1, ask=1.00, underlying=755.0, reason="t")
+b4.settle_expired(lambda pos: None, today=date(2026, 9, 10))
+check("stays open when price unknown", q.status, "open")
 
 print("\nguards")
 for label, fn in [

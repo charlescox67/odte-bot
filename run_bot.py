@@ -9,6 +9,7 @@ quoting. The bot lives 20 minutes in the past and its P&L is honest.
 from __future__ import annotations
 
 import argparse
+import time
 import warnings
 from datetime import datetime, time as dtime, timedelta, timezone
 from zoneinfo import ZoneInfo
@@ -32,6 +33,37 @@ QTY = 1
 
 def now_et() -> datetime:
     return datetime.now(ET)
+
+
+def retry(fn, tries: int = 3, label: str = ""):
+    """yfinance scrapes an undocumented endpoint and drops out several times a
+    session. A transient DNS blip must not look like 'no data'."""
+    for i in range(tries):
+        try:
+            out = fn()
+            if out is not None and not (hasattr(out, "empty") and out.empty):
+                return out
+        except Exception as e:
+            if i == tries - 1:
+                print(f"  ! {label} failed after {tries}: {type(e).__name__}: {e}")
+        time.sleep(1.5 * (i + 1))
+    return None
+
+
+def spot_now(symbol: str) -> float | None:
+    """Last price without needing the bar history — survives a bars outage."""
+    def go():
+        return yf.Ticker(symbol).fast_info["last_price"]
+    v = retry(go, label=f"{symbol} spot")
+    return float(v) if v else None
+
+
+def close_on(symbol: str, day: str) -> float | None:
+    """Underlying close on a specific past date, for settling a late expiry."""
+    def go():
+        d = yf.Ticker(symbol).history(start=day, end=day, interval="1d")
+        return None if d.empty else float(d["Close"].iloc[0])
+    return retry(go, label=f"{symbol} close {day}")
 
 
 def bars_1m(symbol: str):
@@ -80,33 +112,25 @@ def chain_quote(symbol: str, expiry: str, right: str, spot: float):
     return row, float(row.strike)
 
 
-def tick(book: pe.Book, *, verbose: bool = True) -> None:
-    t_now = now_et()
-    asof = t_now - timedelta(minutes=LAG_MIN)
-    today = t_now.date().isoformat()
-    spots: dict[str, float] = {}
-
-    for sym in SYMBOLS:
-        df = bars_1m(sym)
-        if df.empty:
-            print(f"{sym}: no bars"); continue
-        spots[sym] = float(df["close"].iloc[-1])
-        side, px_asof = signal(df, asof)
-
-        # --- manage what is already open -------------------------------
-        for pos in [p for p in book.open_positions if p.symbol == sym]:
-            row, _ = chain_quote(sym, pos.expiry, pos.right, spots[sym])
-            exact = None
-            if row is not None:
-                t = yf.Ticker(sym).option_chain(pos.expiry)
-                tbl = t.calls if pos.right == "C" else t.puts
-                hit = tbl[tbl.contractSymbol == pos.contract]
-                if not hit.empty:
-                    exact = hit.iloc[0]
-            if exact is None:
+def manage(book: pe.Book, sym: str, t_now: datetime) -> None:
+    """Mark and exit open positions. Deliberately does NOT depend on the bar
+    feed — a signal-data outage must never suspend stop-loss checking."""
+    holding = [p for p in book.open_positions if p.symbol == sym]
+    if not holding:
+        return
+    for expiry in {p.expiry for p in holding}:
+        chain = retry(lambda: yf.Ticker(sym).option_chain(expiry),
+                      label=f"{sym} chain {expiry}")
+        if chain is None:
+            print(f"  ! {sym} {expiry}: no chain, positions left open")
+            continue
+        for pos in [p for p in holding if p.expiry == expiry]:
+            tbl = chain.calls if pos.right == "C" else chain.puts
+            hit = tbl[tbl.contractSymbol == pos.contract]
+            if hit.empty:
                 continue
-            pos.mark = float(exact.bid)
-            held = (t_now - datetime.fromisoformat(pos.entry_time).astimezone(ET))
+            pos.mark = float(hit.iloc[0].bid)
+            held = t_now - datetime.fromisoformat(pos.entry_time).astimezone(ET)
             pct = pos.pnl_pct(pos.mark)
             reason = ("target" if pct >= TARGET else
                       "stop" if pct <= STOP else
@@ -117,31 +141,52 @@ def tick(book: pe.Book, *, verbose: bool = True) -> None:
                 print(f"  CLOSE {pos.contract} @ {pos.mark:.2f} ({reason}) "
                       f"pnl ${pos.pnl():+.2f} ({pct:+.0%})")
 
-        # --- consider a new entry --------------------------------------
-        if not side:
-            if verbose:
-                print(f"{sym}: no signal as of {asof:%H:%M} (px {px_asof:.2f})")
-            continue
-        if t_now.time() >= NO_ENTRY_AFTER:
-            print(f"{sym}: signal {side} but past {NO_ENTRY_AFTER} cutoff"); continue
-        if any(p.symbol == sym for p in book.open_positions):
-            print(f"{sym}: signal {side} but already holding"); continue
-        if any(p.symbol == sym and p.entry_time[:10] == today for p in book.positions):
-            print(f"{sym}: signal {side} but already traded today"); continue
 
-        row, strike = chain_quote(sym, today, side, px_asof)
-        if row is None:
-            print(f"{sym}: no 0DTE chain for {today}"); continue
-        pos = book.open(symbol=sym, contract=row.contractSymbol, right=side,
-                        strike=strike, expiry=today, qty=QTY, ask=float(row.ask),
-                        underlying=px_asof, reason=f"ORB{OR_MIN}/{VOL_MULT}")
-        print(f"  OPEN  {pos.contract} x{QTY} @ ask {pos.entry_price:.2f} "
-              f"(bid {row.bid:.2f}, spread {row.ask-row.bid:.2f}) underlying {px_asof:.2f}")
+def consider_entry(book: pe.Book, sym: str, t_now: datetime, asof: datetime) -> None:
+    today = t_now.date().isoformat()
+    df = retry(lambda: bars_1m(sym), label=f"{sym} bars")
+    if df is None:
+        print(f"{sym}: no bars — entry skipped (positions still managed)")
+        return
+    side, px_asof = signal(df, asof)
+    if not side:
+        print(f"{sym}: no signal as of {asof:%H:%M} (px {px_asof:.2f})")
+        return
+    if t_now.time() >= NO_ENTRY_AFTER:
+        print(f"{sym}: signal {side} but past {NO_ENTRY_AFTER} cutoff"); return
+    if any(p.symbol == sym for p in book.open_positions):
+        print(f"{sym}: signal {side} but already holding"); return
+    if any(p.symbol == sym and p.entry_time[:10] == today for p in book.positions):
+        print(f"{sym}: signal {side} but already traded today"); return
 
-    book.settle_expired(spots)
+    row, strike = chain_quote(sym, today, side, px_asof)
+    if row is None:
+        print(f"{sym}: no 0DTE chain for {today}"); return
+    pos = book.open(symbol=sym, contract=row.contractSymbol, right=side,
+                    strike=strike, expiry=today, qty=QTY, ask=float(row.ask),
+                    underlying=px_asof, reason=f"ORB{OR_MIN}/{VOL_MULT}")
+    print(f"  OPEN  {pos.contract} x{QTY} @ ask {pos.entry_price:.2f} "
+          f"(bid {row.bid:.2f}, spread {row.ask-row.bid:.2f}) underlying {px_asof:.2f}")
+
+
+def settle_price(pos: pe.Position) -> float | None:
+    """Price on the position's OWN expiry date, not today's."""
+    if pos.expiry == now_et().date().isoformat():
+        return spot_now(pos.symbol)
+    return close_on(pos.symbol, pos.expiry)
+
+
+def tick(book: pe.Book, *, verbose: bool = True) -> None:
+    t_now = now_et()
+    asof = t_now - timedelta(minutes=LAG_MIN)
+    for sym in SYMBOLS:
+        manage(book, sym, t_now)       # risk first, always
+        consider_entry(book, sym, t_now, asof)
+    book.settle_expired(settle_price)
     book.save()
     print(f"equity ${book.equity():,.2f} | cash ${book.cash:,.2f} | "
-          f"open {len(book.open_positions)} | closed {len(book.positions)-len(book.open_positions)}")
+          f"open {len(book.open_positions)} | closed "
+          f"{len(book.positions)-len(book.open_positions)}")
 
 
 if __name__ == "__main__":

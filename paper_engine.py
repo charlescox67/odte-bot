@@ -116,15 +116,19 @@ class Book:
         self._log(pos)
         return pos
 
-    def settle_expired(self, spot_by_symbol: dict[str, float],
-                       today: date | None = None) -> list[Position]:
-        """A 0DTE contract has no next day. At expiry it becomes intrinsic value."""
+    def settle_expired(self, price_for, today: date | None = None) -> list[Position]:
+        """A 0DTE contract has no next day. At expiry it becomes intrinsic value.
+
+        `price_for(pos)` must return the underlying price ON THAT POSITION'S
+        EXPIRY DATE, not today's. If the bot is asleep at 16:00 and settles a
+        day late, using the current spot books a P&L from the wrong session.
+        """
         today = today or datetime.now().date()
         done = []
         for pos in self.open_positions:
             if date.fromisoformat(pos.expiry) > today:
                 continue
-            spot = spot_by_symbol.get(pos.symbol)
+            spot = price_for(pos)
             if spot is None:
                 continue
             intrinsic = (max(0.0, spot - pos.strike) if pos.right == "C"
