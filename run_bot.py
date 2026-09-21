@@ -17,18 +17,30 @@ from zoneinfo import ZoneInfo
 warnings.filterwarnings("ignore")
 import yfinance as yf
 
+import event_calendar as ev
 import paper_engine as pe
+import swing_signal as sw
 
 ET = ZoneInfo("America/New_York")
 LAG_MIN = 20            # measured: Yahoo OPRA delay
-SYMBOLS = ["SPY", "QQQ"]   # VOO excluded: no 0DTE, 15-40% spreads
-OR_MIN = 15             # opening range
-VOL_MULT = 1.25
-TARGET, STOP = 1.00, -0.40      # +100% / -40% of premium
-TIME_STOP_MIN = 20
-NO_ENTRY_AFTER = dtime(14, 0)
-FLATTEN_AT = dtime(15, 45)
-QTY = 1
+
+# option underlying -> chart the signal reads. The SPX index reports no volume
+# on Yahoo, so the S&P signal reads SPY. VOO is out: no 0DTE Mon-Thu and ~11%
+# spreads, and it is the same S&P bet as SPX anyway.
+MARKETS = {"^SPX": "SPY", "QQQ": "QQQ"}
+
+# Entry window on the LAGGED clock (the market time our fills are priced at).
+ENTRY_START = dtime(10, 0)      # lets real pivots form after the open
+NO_ENTRY_AFTER = dtime(14, 0)   # late-day gamma
+FLATTEN_AT = dtime(15, 45)      # wall clock
+
+RISK_PCT = 0.01                 # of equity, lost if the backstop is hit
+BACKSTOP = 0.50                 # exit if the option loses half its premium
+MAX_QTY = 10
+MAX_SPREAD = 0.10               # skip if bid-ask exceeds 10% of the ask
+MAX_ENTRIES_PER_DAY = 3         # per market
+DAILY_LOSS_LIMIT = 0.02         # of start-of-day equity: no new entries past it
+TIME_STOP_MIN = 60
 
 
 def now_et() -> datetime:
@@ -77,25 +89,27 @@ def bars_1m(symbol: str):
     return df.tz_convert(ET)
 
 
-def signal(df, asof: datetime) -> tuple[str | None, float]:
-    """Opening-range breakout evaluated strictly at or before `asof`."""
-    d = df[df.index <= asof]
-    if len(d) < OR_MIN + 2:
-        return None, 0.0
-    session = d[d.index.time >= dtime(9, 30)]
-    if len(session) < OR_MIN + 2:
-        return None, 0.0
-    opening = session.iloc[:OR_MIN]
-    hi, lo, avg = opening["high"].max(), opening["low"].min(), opening["volume"].mean()
-    bar = session.iloc[-1]
-    px = float(bar["close"])
-    if bar["volume"] < VOL_MULT * avg:
-        return None, px
-    if px > hi:
-        return "C", px
-    if px < lo:
-        return "P", px
-    return None, px
+def et_date(iso: str):
+    return datetime.fromisoformat(iso).astimezone(ET).date()
+
+
+def size_qty(equity: float, ask: float, risk_mult: float = 1.0) -> int:
+    """Contracts such that hitting the 50% backstop loses RISK_PCT of equity.
+    0 means the contract is too expensive for the risk budget: skip it."""
+    per_contract = ask * pe.MULTIPLIER * BACKSTOP
+    if per_contract <= 0:
+        return 0
+    return min(MAX_QTY, int(equity * RISK_PCT * risk_mult // per_contract))
+
+
+def day_pnl(book: pe.Book, day) -> float:
+    """Realised plus open P&L of positions entered on `day` (ET)."""
+    return sum(p.pnl() for p in book.positions if et_date(p.entry_time) == day)
+
+
+def loss_limit_hit(book: pe.Book, day) -> bool:
+    dp = day_pnl(book, day)
+    return dp <= -DAILY_LOSS_LIMIT * (book.equity() - dp)
 
 
 def chain_quote(symbol: str, expiry: str, right: str, spot: float):
@@ -112,9 +126,11 @@ def chain_quote(symbol: str, expiry: str, right: str, spot: float):
     return row, float(row.strike)
 
 
-def manage(book: pe.Book, sym: str, t_now: datetime) -> None:
-    """Mark and exit open positions. Deliberately does NOT depend on the bar
-    feed — a signal-data outage must never suspend stop-loss checking."""
+def manage(book: pe.Book, sym: str, t_now: datetime, asof: datetime,
+           sig_bars, profile: ev.DayProfile) -> None:
+    """Mark and exit open positions. The premium backstop needs only the
+    option chain, so it runs even when the chart feed is down; the swing
+    stop and its trailing need the chart and run whenever it is available."""
     holding = [p for p in book.open_positions if p.symbol == sym]
     if not holding:
         return
@@ -132,41 +148,75 @@ def manage(book: pe.Book, sym: str, t_now: datetime) -> None:
             pos.mark = float(hit.iloc[0].bid)
             held = t_now - datetime.fromisoformat(pos.entry_time).astimezone(ET)
             pct = pos.pnl_pct(pos.mark)
-            reason = ("target" if pct >= TARGET else
-                      "stop" if pct <= STOP else
-                      "time_stop" if held >= timedelta(minutes=TIME_STOP_MIN) else
-                      "eod" if t_now.time() >= FLATTEN_AT else None)
+            reason = "backstop" if pct <= -BACKSTOP else None
+            if reason is None and sig_bars is not None and pos.stop_underlying is not None:
+                new = sw.trail_stop(sig_bars, asof, pos.right, pos.stop_underlying)
+                if new != pos.stop_underlying:
+                    print(f"  TRAIL {pos.contract} stop {pos.stop_underlying:.2f} -> {new:.2f}")
+                    pos.stop_underlying = new
+                if sw.stop_hit(sig_bars, asof, pos.right, pos.stop_underlying):
+                    reason = "swing_stop"
+            if reason is None:
+                reason = ("time_stop" if held >= timedelta(minutes=TIME_STOP_MIN) else
+                          "event_flatten" if profile.flatten_at
+                                             and asof.time() >= profile.flatten_at else
+                          "eod" if t_now.time() >= FLATTEN_AT else None)
             if reason:
                 book.close(pos, bid=pos.mark, reason=reason)
-                print(f"  CLOSE {pos.contract} @ {pos.mark:.2f} ({reason}) "
+                print(f"  CLOSE {pos.contract} x{pos.qty} @ {pos.mark:.2f} ({reason}) "
                       f"pnl ${pos.pnl():+.2f} ({pct:+.0%})")
 
 
-def consider_entry(book: pe.Book, sym: str, t_now: datetime, asof: datetime) -> None:
-    today = t_now.date().isoformat()
-    df = retry(lambda: bars_1m(sym), label=f"{sym} bars")
-    if df is None:
-        print(f"{sym}: no bars — entry skipped (positions still managed)")
+def consider_entry(book: pe.Book, sym: str, sig_sym: str, sig_bars,
+                   t_now: datetime, asof: datetime, profile: ev.DayProfile) -> None:
+    if sig_bars is None:
+        print(f"{sym}: no {sig_sym} bars — entry skipped (positions still managed)")
         return
-    side, px_asof = signal(df, asof)
-    if not side:
-        print(f"{sym}: no signal as of {asof:%H:%M} (px {px_asof:.2f})")
+    today = asof.date()
+    mine_today = [p for p in book.positions
+                  if p.symbol == sym and et_date(p.entry_time) == today]
+    setup = sw.swing_setup(sig_bars, asof, {p.setup for p in mine_today if p.setup})
+    if not setup:
+        print(f"{sym}: no setup as of {asof:%H:%M} | {sw.summary(sig_bars, asof)}")
         return
-    if t_now.time() >= NO_ENTRY_AFTER:
-        print(f"{sym}: signal {side} but past {NO_ENTRY_AFTER} cutoff"); return
+    tag = f"{sym}: {setup.side} setup {setup.pivot_id} stop {setup.stop:.2f} ({sig_sym})"
+    cutoff = min(NO_ENTRY_AFTER, profile.entry_cutoff or NO_ENTRY_AFTER)
+    if not ENTRY_START <= asof.time() < cutoff:
+        print(f"{tag} — outside entry window {ENTRY_START:%H:%M}-{cutoff:%H:%M}"); return
     if any(p.symbol == sym for p in book.open_positions):
-        print(f"{sym}: signal {side} but already holding"); return
-    if any(p.symbol == sym and p.entry_time[:10] == today for p in book.positions):
-        print(f"{sym}: signal {side} but already traded today"); return
+        print(f"{tag} — already holding"); return
+    if len(mine_today) >= MAX_ENTRIES_PER_DAY:
+        print(f"{tag} — {MAX_ENTRIES_PER_DAY} entries already today"); return
+    if loss_limit_hit(book, today):
+        print(f"{tag} — daily loss limit hit, no new entries today"); return
 
-    row, strike = chain_quote(sym, today, side, px_asof)
+    # Strike comes from the option underlying's OWN price at asof (SPX, not SPY).
+    if sym == sig_sym:
+        ref = setup.price
+    else:
+        ub = retry(lambda: bars_1m(sym), label=f"{sym} bars")
+        d = sw.complete_1m(ub, asof) if ub is not None else None
+        if d is None or d.empty:
+            print(f"{tag} — no {sym} price at {asof:%H:%M}"); return
+        ref = float(d["close"].iloc[-1])
+    row, strike = chain_quote(sym, t_now.date().isoformat(), setup.side, ref)
     if row is None:
-        print(f"{sym}: no 0DTE chain for {today}"); return
-    pos = book.open(symbol=sym, contract=row.contractSymbol, right=side,
-                    strike=strike, expiry=today, qty=QTY, ask=float(row.ask),
-                    underlying=px_asof, reason=f"ORB{OR_MIN}/{VOL_MULT}")
-    print(f"  OPEN  {pos.contract} x{QTY} @ ask {pos.entry_price:.2f} "
-          f"(bid {row.bid:.2f}, spread {row.ask-row.bid:.2f}) underlying {px_asof:.2f}")
+        print(f"{tag} — no 0DTE chain"); return
+    ask, bid = float(row.ask), float(row.bid)
+    if ask - bid > MAX_SPREAD * ask:
+        print(f"{tag} — spread {bid:.2f}/{ask:.2f} over {MAX_SPREAD:.0%}"); return
+    qty = size_qty(book.equity(), ask, profile.risk_mult)
+    if qty < 1:
+        print(f"{tag} — ask {ask:.2f} too expensive for the risk budget"); return
+    pos = book.open(symbol=sym, contract=row.contractSymbol, right=setup.side,
+                    strike=strike, expiry=t_now.date().isoformat(), qty=qty, ask=ask,
+                    underlying=ref, reason=f"swing {setup.pivot_id}",
+                    signal_symbol=sig_sym, setup=setup.pivot_id,
+                    stop_at_entry=setup.stop, stop_underlying=setup.stop,
+                    spread_at_entry=round(ask - bid, 4), event_day=profile.label)
+    print(f"  OPEN  {pos.contract} x{qty} @ ask {ask:.2f} (bid {bid:.2f}) "
+          f"{sym} {ref:.2f} | {sig_sym} stop {setup.stop:.2f}"
+          f"{' | ' + profile.label if profile.label else ''}")
 
 
 def settle_price(pos: pe.Position) -> float | None:
@@ -179,9 +229,16 @@ def settle_price(pos: pe.Position) -> float | None:
 def tick(book: pe.Book, *, verbose: bool = True) -> None:
     t_now = now_et()
     asof = t_now - timedelta(minutes=LAG_MIN)
-    for sym in SYMBOLS:
-        manage(book, sym, t_now)       # risk first, always
-        consider_entry(book, sym, t_now, asof)
+    profile = ev.day_profile(asof.date())
+    if not profile.covered:
+        print(f"!!! event_calendar.py ends {ev.COVERED_THROUGH} — add new dates")
+    if profile.label:
+        print(f"event day: {profile.label} (risk x{profile.risk_mult})")
+    bars = {s: retry(lambda s=s: bars_1m(s), label=f"{s} bars")
+            for s in dict.fromkeys(MARKETS.values())}
+    for sym, sig in MARKETS.items():
+        manage(book, sym, t_now, asof, bars[sig], profile)   # risk first, always
+        consider_entry(book, sym, sig, bars[sig], t_now, asof, profile)
     book.settle_expired(settle_price)
     book.save()
     print(f"equity ${book.equity():,.2f} | cash ${book.cash:,.2f} | "

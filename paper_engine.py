@@ -28,7 +28,12 @@ from pathlib import Path
 STATE_DIR = Path(os.environ.get("ODTE_STATE_DIR") or Path(__file__).parent)
 BOOK = STATE_DIR / "book.json"
 TRADES = STATE_DIR / "trades.csv"
-MULTIPLIER = 100  # US equity options
+MULTIPLIER = 100  # US equity and index options
+TRADE_COLUMNS = ["id", "symbol", "contract", "right", "strike", "expiry", "qty",
+                 "entry_time", "entry_price", "underlying_at_entry", "entry_reason",
+                 "exit_time", "exit_price", "exit_reason", "pnl", "pnl_pct",
+                 "signal_symbol", "setup", "stop_at_entry", "stop_final",
+                 "spread_at_entry", "event_day"]
 
 
 @dataclass
@@ -49,6 +54,13 @@ class Position:
     exit_price: float | None = None
     exit_time: str | None = None
     exit_reason: str | None = None
+    # Swing-strategy context. Defaults keep older book.json files loadable.
+    signal_symbol: str | None = None     # chart the stop is measured on (SPY for SPX)
+    setup: str = ""                      # pivot id, e.g. "L1005": one trade per pivot
+    stop_at_entry: float | None = None   # underlying level
+    stop_underlying: float | None = None # current, after trailing
+    spread_at_entry: float | None = None
+    event_day: str = ""
 
     @property
     def cost(self) -> float:
@@ -94,7 +106,7 @@ class Book:
 
     def open(self, *, symbol: str, contract: str, right: str, strike: float,
              expiry: str, qty: int, ask: float, underlying: float,
-             reason: str, ts: datetime | None = None) -> Position:
+             reason: str, ts: datetime | None = None, **context) -> Position:
         if ask <= 0:
             raise ValueError(f"refusing to open {contract} at ask={ask}")
         ts = ts or datetime.now(timezone.utc)
@@ -102,7 +114,7 @@ class Book:
             id=uuid.uuid4().hex[:8], symbol=symbol, contract=contract,
             right=right, strike=strike, expiry=expiry, qty=qty,
             entry_price=ask, entry_time=ts.isoformat(), entry_reason=reason,
-            underlying_at_entry=underlying, mark=ask)
+            underlying_at_entry=underlying, mark=ask, **context)
         cost = pos.cost
         if cost > self.cash:
             raise ValueError(f"insufficient cash: need {cost:.2f} have {self.cash:.2f}")
@@ -148,19 +160,25 @@ class Book:
         return done
 
     def _log(self, pos: Position) -> None:
+        # A file written with a different column set is moved aside rather
+        # than appended to: mixed rows would silently misalign every column.
+        if TRADES.exists():
+            with TRADES.open(newline="") as fh:
+                header = next(csv.reader(fh), None)
+            if header != TRADE_COLUMNS:
+                TRADES.rename(TRADES.with_name(f"trades.old-{uuid.uuid4().hex[:6]}.csv"))
         new = not TRADES.exists()
         with TRADES.open("a", newline="") as fh:
             w = csv.writer(fh)
             if new:
-                w.writerow(["id", "symbol", "contract", "right", "strike", "expiry",
-                            "qty", "entry_time", "entry_price", "underlying_at_entry",
-                            "entry_reason", "exit_time", "exit_price", "exit_reason",
-                            "pnl", "pnl_pct"])
+                w.writerow(TRADE_COLUMNS)
             w.writerow([pos.id, pos.symbol, pos.contract, pos.right, pos.strike,
                         pos.expiry, pos.qty, pos.entry_time, pos.entry_price,
                         pos.underlying_at_entry, pos.entry_reason, pos.exit_time,
                         pos.exit_price, pos.exit_reason,
-                        f"{pos.pnl():.2f}", f"{pos.pnl_pct():.4f}"])
+                        f"{pos.pnl():.2f}", f"{pos.pnl_pct():.4f}",
+                        pos.signal_symbol or "", pos.setup, pos.stop_at_entry,
+                        pos.stop_underlying, pos.spread_at_entry, pos.event_day])
 
     def equity(self) -> float:
         return self.cash + sum(p.mark * p.qty * MULTIPLIER for p in self.open_positions)

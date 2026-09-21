@@ -44,7 +44,9 @@ jobs:
           git -C state checkout -q -B state
 
       - name: Unit tests
-        run: python test_engine.py
+        run: |
+          python test_engine.py
+          python test_swing.py
 
       # Entries need the options chain, which is only fetched when a signal
       # fires. Probe it up front so a Yahoo block shows up when the job
@@ -55,11 +57,12 @@ jobs:
         run: |
           python - <<'PY'
           import yfinance as yf
-          t = yf.Ticker("SPY"); exp = t.options[0]
-          ch = t.option_chain(exp)
-          n = int(((ch.calls.bid > 0) & (ch.calls.ask > 0)).sum())
-          print(f"SPY chain {exp}: {len(ch.calls)} calls, {n} two-sided")
-          assert n > 0, "no two-sided quotes"
+          for sym in ("^SPX", "QQQ"):
+              t = yf.Ticker(sym); exp = t.options[0]
+              ch = t.option_chain(exp)
+              n = int(((ch.calls.bid > 0) & (ch.calls.ask > 0)).sum())
+              print(f"{sym} chain {exp}: {len(ch.calls)} calls, {n} two-sided")
+              assert n > 0, f"{sym}: no two-sided quotes"
           PY
 
       - name: Run session

@@ -93,5 +93,27 @@ for label, fn in [
 print("\nOCC symbol format")
 check("occ", pe.occ("SPY","2026-09-10","C",759.0), "SPY260910C00759000")
 
+print("\nbackward compatibility")
+import json
+old = tmp / "old_book.json"
+old.write_text(json.dumps({"cash": 5000.0, "positions": [{
+    "id": "a", "symbol": "SPY", "contract": "c", "right": "C", "strike": 1.0,
+    "expiry": "2026-09-10", "qty": 1, "entry_price": 1.0, "entry_time": "t",
+    "entry_reason": "ORB15/1.25", "underlying_at_entry": 1.0}]}))
+ob = pe.Book.load(old)
+check("pre-swing book.json loads", ob.positions[0].stop_underlying, None)
+
+pe.TRADES.write_text("id,symbol,old,columns\n1,SPY,x,y\n")
+b5 = pe.Book(cash=10_000.0)
+q5 = b5.open(symbol="QQQ", contract="q5", right="P", strike=700.0, expiry="2026-09-10",
+             qty=1, ask=1.0, underlying=701.0, reason="swing", setup="H1005",
+             stop_at_entry=702.0, stop_underlying=702.0, signal_symbol="QQQ")
+b5.close(q5, bid=1.5, reason="swing_stop")
+import csv as _csv
+rows = list(_csv.reader(pe.TRADES.open()))
+check("old-format trades.csv moved aside", len(list(tmp.glob("trades.old-*.csv"))), 1)
+check("new file has new header", rows[0], pe.TRADE_COLUMNS)
+check("context logged", rows[1][pe.TRADE_COLUMNS.index("setup")], "H1005")
+
 print(f"\n{ok} passed, {fail} failed")
 raise SystemExit(1 if fail else 0)
