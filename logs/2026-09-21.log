@@ -1028,3 +1028,43 @@ equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
 ^SPX: no setup as of 15:30 | trend up | vwap 770.80 | last low 773.96@1510 high 774.62@1450 | close 774.10
 QQQ: no setup as of 15:30 | trend up | vwap 736.08 | last low 741.00@1505 high 741.58@1450 | close 741.75
 equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 15:51:00 EDT (signals as of 15:31) ---
+^SPX: no setup as of 15:31 | trend up | vwap 770.81 | last low 773.96@1510 high 774.62@1450 | close 774.10
+QQQ: no setup as of 15:31 | trend up | vwap 736.10 | last low 741.00@1505 high 741.58@1450 | close 741.75
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 15:52:00 EDT (signals as of 15:32) ---
+^SPX: no setup as of 15:32 | trend up | vwap 770.84 | last low 773.96@1510 high 774.62@1450 | close 774.10
+QQQ: no setup as of 15:32 | trend up | vwap 736.11 | last low 741.00@1505 high 741.58@1450 | close 741.75
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 15:53:00 EDT (signals as of 15:33) ---
+^SPX: no setup as of 15:33 | trend up | vwap 770.85 | last low 773.96@1510 high 774.62@1450 | close 774.10
+QQQ: no setup as of 15:33 | trend up | vwap 736.13 | last low 741.00@1505 high 741.58@1450 | close 741.75
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 15:54:00 EDT (signals as of 15:34) ---
+^SPX: no setup as of 15:34 | trend up | vwap 770.86 | last low 773.96@1510 high 774.62@1450 | close 774.10
+QQQ: no setup as of 15:34 | trend up | vwap 736.15 | last low 741.00@1505 high 741.58@1450 | close 741.75
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 15:55:00 EDT (signals as of 15:35) ---
+^SPX: C setup L1510 stop 773.96 (SPY) — outside entry window 10:00-14:00
+QQQ: C setup L1505 stop 741.00 (QQQ) — outside entry window 10:00-14:00
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 15:56:00 EDT (signals as of 15:36) ---
+^SPX: C setup L1510 stop 773.96 (SPY) — outside entry window 10:00-14:00
+QQQ: C setup L1505 stop 741.00 (QQQ) — outside entry window 10:00-14:00
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 15:57:00 EDT (signals as of 15:37) ---
+^SPX: C setup L1510 stop 773.96 (SPY) — outside entry window 10:00-14:00
+QQQ: C setup L1505 stop 741.00 (QQQ) — outside entry window 10:00-14:00
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 15:58:00 EDT (signals as of 15:38) ---
+^SPX: C setup L1510 stop 773.96 (SPY) — outside entry window 10:00-14:00
+QQQ: C setup L1505 stop 741.00 (QQQ) — outside entry window 10:00-14:00
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 15:59:00 EDT (signals as of 15:39) ---
+^SPX: C setup L1510 stop 773.96 (SPY) — outside entry window 10:00-14:00
+QQQ: C setup L1505 stop 741.00 (QQQ) — outside entry window 10:00-14:00
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 16:00:00 EDT (signals as of 15:40) ---
+^SPX: C setup L1525 stop 774.02 (SPY) — outside entry window 10:00-14:00
+QQQ: C setup L1505 stop 741.00 (QQQ) — outside entry window 10:00-14:00
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
