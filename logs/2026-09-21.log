@@ -238,3 +238,8 @@ equity $100,340.00 | cash $97,920.00 | open 2 | closed 0
 ^SPX: no setup as of 12:14 | trend up | vwap 768.69 | last low 769.81@1130 high 771.36@1150 | close 771.65
 QQQ: no setup as of 12:14 | trend up | vwap 733.34 | last low 736.94@1155 high 737.86@1150 | close 738.15
 equity $100,220.00 | cash $97,920.00 | open 2 | closed 0
+--- tick 2026-09-21 12:35:00 EDT (signals as of 12:15) ---
+  TRAIL SPXW260921C07735000 stop 769.81 -> 770.52
+^SPX: no setup as of 12:15 | trend up | vwap 768.69 | last low 770.52@1200 high 771.36@1150 | close 771.55
+QQQ: no setup as of 12:15 | trend up | vwap 733.35 | last low 736.94@1155 high 737.86@1150 | close 738.16
+equity $100,400.00 | cash $97,920.00 | open 2 | closed 0
