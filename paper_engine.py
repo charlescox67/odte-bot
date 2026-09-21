@@ -24,8 +24,10 @@ ET = ZoneInfo("America/New_York")
 MARKET_CLOSE = time(16, 0)
 from pathlib import Path
 
-BOOK = Path(__file__).parent / "book.json"
-TRADES = Path(__file__).parent / "trades.csv"
+# On the cloud runner, state lives in a checkout of the `state` branch.
+STATE_DIR = Path(os.environ.get("ODTE_STATE_DIR") or Path(__file__).parent)
+BOOK = STATE_DIR / "book.json"
+TRADES = STATE_DIR / "trades.csv"
 MULTIPLIER = 100  # US equity options
 
 

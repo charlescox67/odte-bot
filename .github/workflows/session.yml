@@ -1,0 +1,53 @@
+name: session
+
+# GitHub cron is UTC and routinely fires late. Firing hourly through the
+# session, with one job queued behind the running one, means a late or dropped
+# run is covered by the next, and a job that hits its time budget hands off
+# within seconds. Runs outside the session exit immediately.
+on:
+  schedule:
+    - cron: "7 13-20 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      budget_min:
+        description: "Minutes this job may run (default 340)"
+        default: "340"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: odte-session
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: requirements-cloud.txt
+
+      - run: pip install -r requirements-cloud.txt
+
+      - name: Check out state branch
+        run: |
+          git config --global user.name "odte-bot"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch -q origin state
+          git worktree add -q state origin/state
+          git -C state checkout -q -B state
+
+      - name: Unit tests
+        run: python test_engine.py
+
+      - name: Run session
+        env:
+          ODTE_STATE_DIR: state
+          BUDGET_MIN: ${{ inputs.budget_min || '340' }}
+        run: python cloud_loop.py
