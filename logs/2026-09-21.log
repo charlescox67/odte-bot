@@ -335,3 +335,11 @@ equity $100,620.00 | cash $97,920.00 | open 2 | closed 0
 ^SPX: C setup L1200 stop 770.52 (SPY) — already holding
 QQQ: no setup as of 12:38 | trend up | vwap 733.85 | last low 736.94@1155 high 737.86@1150 | close 739.24
 equity $100,760.00 | cash $97,920.00 | open 2 | closed 0
+--- tick 2026-09-21 12:59:00 EDT (signals as of 12:39) ---
+^SPX: C setup L1200 stop 770.52 (SPY) — already holding
+QQQ: no setup as of 12:39 | trend up | vwap 733.86 | last low 736.94@1155 high 737.86@1150 | close 739.24
+equity $100,760.00 | cash $97,920.00 | open 2 | closed 0
+--- tick 2026-09-21 13:00:00 EDT (signals as of 12:40) ---
+^SPX: no setup as of 12:40 | trend up | vwap 768.96 | last low 770.52@1200 high 771.85@1210 | close 771.89
+QQQ: no setup as of 12:40 | trend up | vwap 733.88 | last low 736.94@1155 high 737.86@1150 | close 738.53
+equity $100,760.00 | cash $97,920.00 | open 2 | closed 0
