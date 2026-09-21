@@ -45,7 +45,7 @@
       "signal_symbol": "QQQ",
       "setup": "L1155",
       "stop_at_entry": 736.9400024414062,
-      "stop_underlying": 736.9400024414062,
+      "stop_underlying": 738.47998046875,
       "spread_at_entry": 0.01,
       "event_day": ""
     }
