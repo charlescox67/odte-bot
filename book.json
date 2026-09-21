@@ -1,5 +1,5 @@
 {
-  "cash": 100760.0,
+  "cash": 99080.0,
   "positions": [
     {
       "id": "ea4251b8",
@@ -47,6 +47,30 @@
       "stop_at_entry": 736.9400024414062,
       "stop_underlying": 738.5,
       "spread_at_entry": 0.01,
+      "event_day": ""
+    },
+    {
+      "id": "9704f857",
+      "symbol": "^SPX",
+      "contract": "SPXW260921C07760000",
+      "right": "C",
+      "strike": 7760.0,
+      "expiry": "2026-09-21",
+      "qty": 3,
+      "entry_price": 5.6,
+      "entry_time": "2026-09-21T17:35:01.746925+00:00",
+      "entry_reason": "swing L1240",
+      "underlying_at_entry": 7758.5498046875,
+      "status": "open",
+      "mark": 5.6,
+      "exit_price": null,
+      "exit_time": null,
+      "exit_reason": null,
+      "signal_symbol": "SPY",
+      "setup": "L1240",
+      "stop_at_entry": 771.7999877929688,
+      "stop_underlying": 771.7999877929688,
+      "spread_at_entry": 0.1,
       "event_day": ""
     }
   ]
