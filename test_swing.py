@@ -86,11 +86,39 @@ check("never loosens", sw.trail_stop(df, after(15), "C", 102.5), 102.5)
 check("not hit while price above", sw.stop_hit(df, after(15), "C", 101.9), False)
 check("hit once close is below", sw.stop_hit(df, after(15), "C", 103.0), True)
 
-print("\nsizing: 1% of equity lost at the 50% backstop")
-check("SPX ask 7.60 on $100k -> 2", rb.size_qty(100_000, 7.60), 2)
-check("SPX ask 25 -> too expensive", rb.size_qty(100_000, 25.0), 0)
-check("QQQ ask 0.85 capped", rb.size_qty(100_000, 0.85), rb.MAX_QTY)
-check("half risk on data days", rb.size_qty(100_000, 7.60, 0.5), 1)
+print("\nsizing: 0.5% of equity lost at the 50% backstop, any account size")
+check("SPY ask 0.42 on $100k", rb.size_qty(100_000, 0.42), 23)
+check("same rule on a $20k account", rb.size_qty(20_000, 0.42), 4)
+check("cheap contract hits the cap", rb.size_qty(100_000, 0.10), rb.MAX_QTY)
+check("too expensive for the budget", rb.size_qty(100_000, 25.0), 0)
+check("half risk on data days", rb.size_qty(100_000, 0.42, 0.5), 11)
+
+print("\ndelta straight from the chain")
+tbl = pd.DataFrame({"strike": [770.0, 771.0, 772.0, 773.0],
+                    "bid": [3.00, 2.20, 1.50, 0.95], "ask": [3.10, 2.30, 1.60, 1.05]})
+check("ATM call delta from neighbours", round(rb.est_delta(tbl, 771.0, "C"), 2), 0.75)
+check("put delta is negative", rb.est_delta(tbl, 771.0, "P") < 0, True)
+wide = pd.DataFrame({"strike": [740.0, 745.0], "bid": [3.0, 0.5], "ask": [3.1, 0.6]})
+check("strikes too far apart -> plain 0.5", rb.est_delta(wide, 741.0, "C"), 0.5)
+
+print("\nstop must be reachable before the backstop")
+# The -$840 trade in SPY terms: a 0DTE call at 0.42 with the pivot 1.00 away.
+# Reaching that pivot would cost 0.50 = 119% of the premium, so it is useless
+# as a stop: the backstop always fires first. Pulled in to what 30% buys.
+far = rb.cap_stop("C", 772.80, 771.80, 0.42, 0.50)
+check("far pivot pulled in", round(far, 3), 772.548)
+check("cost at the new stop is 30%", round((772.80 - far) * 0.50 / 0.42, 2), 0.30)
+check("a close pivot is left alone", rb.cap_stop("C", 772.80, 772.60, 1.50, 0.50), 772.60)
+check("richer premium allows a wider stop", round(rb.cap_stop("C", 772.80, 770.00, 1.50, 0.50), 2), 771.90)
+check("puts mirror", round(rb.cap_stop("P", 772.80, 774.00, 0.42, -0.50), 3), 773.052)
+
+print("\nlive marking never invents a gain")
+check("adverse move marks down now", rb.adjust_mark(5.00, 0.50, 771.0, 772.0), 4.50)
+check("favourable move keeps the stale quote", rb.adjust_mark(5.00, 0.50, 773.0, 772.0), 5.00)
+check("put gains as price falls -> still stale", rb.adjust_mark(5.00, -0.50, 771.0, 772.0), 5.00)
+check("put marks down as price rises", rb.adjust_mark(5.00, -0.50, 773.0, 772.0), 4.50)
+check("never below zero", rb.adjust_mark(0.20, 0.50, 760.0, 772.0), 0.0)
+check("no data -> unchanged", rb.adjust_mark(5.00, None, None, 772.0), 5.00)
 
 print("\ndaily loss limit")
 import tempfile

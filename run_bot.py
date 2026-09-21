@@ -27,20 +27,27 @@ LAG_MIN = 20            # measured: Yahoo OPRA delay
 # option underlying -> chart the signal reads. The SPX index reports no volume
 # on Yahoo, so the S&P signal reads SPY. VOO is out: no 0DTE Mon-Thu and ~11%
 # spreads, and it is the same S&P bet as SPX anyway.
-MARKETS = {"^SPX": "SPY", "QQQ": "QQQ"}
+# SPX is out as of 2026-09-21: one contract costs $500-2500, so a 0.5%-of-
+# equity budget cannot buy one on a normal account, and the granularity gets
+# worse as the account shrinks. SPY tracks the same index at ~1/10 the price.
+MARKETS = {"SPY": "SPY", "QQQ": "QQQ"}
 
 # Entry window on the LAGGED clock (the market time our fills are priced at).
 ENTRY_START = dtime(10, 0)      # lets real pivots form after the open
 NO_ENTRY_AFTER = dtime(14, 0)   # late-day gamma
 FLATTEN_AT = dtime(15, 45)      # wall clock
 
-RISK_PCT = 0.01                 # of equity, lost if the backstop is hit
+RISK_PCT = 0.005                # of equity, lost if the backstop is hit
 BACKSTOP = 0.50                 # exit if the option loses half its premium
-MAX_QTY = 10
+MAX_QTY = 50                    # SPY/QQQ 0DTE trade thousands per minute
 MAX_SPREAD = 0.10               # skip if bid-ask exceeds 10% of the ask
 MAX_ENTRIES_PER_DAY = 3         # per market
 DAILY_LOSS_LIMIT = 0.02         # of start-of-day equity: no new entries past it
 TIME_STOP_MIN = 60
+# The chart stop must be close enough to fire BEFORE the premium backstop. A
+# stop 1.0 away on a $5.60 option cost ~90% of it, so the backstop always won
+# and the swing stop never acted. Cap the distance at what 30% of premium buys.
+STOP_COST_CAP = 0.30
 
 
 def now_et() -> datetime:
@@ -112,18 +119,60 @@ def loss_limit_hit(book: pe.Book, day) -> bool:
     return dp <= -DAILY_LOSS_LIMIT * (book.equity() - dp)
 
 
+def est_delta(tbl, strike: float, right: str) -> float:
+    """Delta straight from the chain: how much the option mid moves per $1 of
+    strike. No pricing model, no volatility guess. Falls back to a plain ATM
+    0.5 when neighbouring strikes are too far apart to differentiate."""
+    t = tbl[(tbl.bid > 0) & (tbl.ask > 0)].sort_values("strike").reset_index(drop=True)
+    i = int((t.strike - strike).abs().idxmin())
+    lo, hi = t.iloc[max(0, i - 1)], t.iloc[min(len(t) - 1, i + 1)]
+    width = hi.strike - lo.strike
+    sign = 1.0 if right == "C" else -1.0
+    if width <= 0 or width > 3:
+        return sign * 0.5
+    mid = lambda r: (r.bid + r.ask) / 2
+    d = -(mid(hi) - mid(lo)) / width          # calls cheapen as strike rises
+    return sign * min(0.95, max(0.15, abs(d)))
+
+
+def cap_stop(side: str, ref: float, pivot: float, ask: float, delta: float) -> float:
+    """Pull the stop in so reaching it costs at most STOP_COST_CAP of premium."""
+    max_dist = STOP_COST_CAP * ask / abs(delta)
+    return max(pivot, ref - max_dist) if side == "C" else min(pivot, ref + max_dist)
+
+
+def live_price(sig_bars, t_now: datetime) -> float | None:
+    """Underlying now. SPY/QQQ bars are real time; only option quotes lag."""
+    d = sw.complete_1m(sig_bars, t_now)
+    return None if d is None or d.empty else float(d["close"].iloc[-1])
+
+
+def adjust_mark(bid: float, delta: float | None,
+                live_px: float | None, lagged_px: float | None) -> float:
+    """Estimate what the option is worth NOW from a ~16-20 minute old quote
+    plus the underlying move since it was taken.
+
+    Only ever marks DOWN. A favourable move keeps the stale quote, so the book
+    never books a gain the delayed feed has not actually printed; an adverse
+    move is recognised immediately, which is the point of using live data."""
+    if delta is None or live_px is None or lagged_px is None:
+        return bid
+    return max(0.0, min(bid, bid + delta * (live_px - lagged_px)))
+
+
 def chain_quote(symbol: str, expiry: str, right: str, spot: float):
-    """Nearest-the-money contract with a two-sided quote. Returns (row, strike)."""
+    """Nearest-the-money contract with a two-sided quote.
+    Returns (row, strike, table) — the table is kept for the delta estimate."""
     t = yf.Ticker(symbol)
     if expiry not in t.options:
-        return None, None
+        return None, None, None
     ch = t.option_chain(expiry)
     tbl = ch.calls if right == "C" else ch.puts
     tbl = tbl[(tbl.bid > 0) & (tbl.ask > 0)]
     if tbl.empty:
-        return None, None
+        return None, None, None
     row = tbl.iloc[(tbl.strike - spot).abs().argsort().iloc[0]]
-    return row, float(row.strike)
+    return row, float(row.strike), tbl
 
 
 def manage(book: pe.Book, sym: str, t_now: datetime, asof: datetime,
@@ -145,7 +194,12 @@ def manage(book: pe.Book, sym: str, t_now: datetime, asof: datetime,
             hit = tbl[tbl.contractSymbol == pos.contract]
             if hit.empty:
                 continue
-            pos.mark = float(hit.iloc[0].bid)
+            quoted = float(hit.iloc[0].bid)
+            live_px = live_price(sig_bars, t_now) if sig_bars is not None else None
+            lagged_px = live_price(sig_bars, asof) if sig_bars is not None else None
+            delta = est_delta(tbl, pos.strike, pos.right)
+            pos.mark = adjust_mark(quoted, delta, live_px, lagged_px)
+            pos.exit_basis = "estimated" if pos.mark < quoted else "quote"
             held = t_now - datetime.fromisoformat(pos.entry_time).astimezone(ET)
             pct = pos.pnl_pct(pos.mark)
             reason = "backstop" if pct <= -BACKSTOP else None
@@ -154,7 +208,11 @@ def manage(book: pe.Book, sym: str, t_now: datetime, asof: datetime,
                 if new != pos.stop_underlying:
                     print(f"  TRAIL {pos.contract} stop {pos.stop_underlying:.2f} -> {new:.2f}")
                     pos.stop_underlying = new
-                if sw.stop_hit(sig_bars, asof, pos.right, pos.stop_underlying):
+                # Checked on the LIVE price, not the lagged one: the chart is
+                # real time, so a break is acted on now rather than 20 min late.
+                if live_px is not None and (
+                        live_px < pos.stop_underlying if pos.right == "C"
+                        else live_px > pos.stop_underlying):
                     reason = "swing_stop"
             if reason is None:
                 reason = ("time_stop" if held >= timedelta(minutes=TIME_STOP_MIN) else
@@ -199,12 +257,20 @@ def consider_entry(book: pe.Book, sym: str, sig_sym: str, sig_bars,
         if d is None or d.empty:
             print(f"{tag} — no {sym} price at {asof:%H:%M}"); return
         ref = float(d["close"].iloc[-1])
-    row, strike = chain_quote(sym, t_now.date().isoformat(), setup.side, ref)
+    row, strike, tbl = chain_quote(sym, t_now.date().isoformat(), setup.side, ref)
     if row is None:
         print(f"{tag} — no 0DTE chain"); return
     ask, bid = float(row.ask), float(row.bid)
     if ask - bid > MAX_SPREAD * ask:
         print(f"{tag} — spread {bid:.2f}/{ask:.2f} over {MAX_SPREAD:.0%}"); return
+    # Pull the stop in if the pivot sits further away than 30% of premium
+    # buys: otherwise the backstop always fires first and the chart stop is
+    # decoration (that is how one trade lost 50% with price above its stop).
+    delta = est_delta(tbl, strike, setup.side)
+    stop = cap_stop(setup.side, ref, setup.stop, ask, delta)
+    if abs(stop - setup.stop) > 1e-9:
+        print(f"{tag} — stop pulled in to {stop:.2f} "
+              f"(pivot {setup.stop:.2f} would cost ~{abs(ref - setup.stop) * abs(delta) / ask:.0%})")
     qty = size_qty(book.equity(), ask, profile.risk_mult)
     if qty < 1:
         print(f"{tag} — ask {ask:.2f} too expensive for the risk budget"); return
@@ -212,10 +278,10 @@ def consider_entry(book: pe.Book, sym: str, sig_sym: str, sig_bars,
                     strike=strike, expiry=t_now.date().isoformat(), qty=qty, ask=ask,
                     underlying=ref, reason=f"swing {setup.pivot_id}",
                     signal_symbol=sig_sym, setup=setup.pivot_id,
-                    stop_at_entry=setup.stop, stop_underlying=setup.stop,
+                    stop_at_entry=stop, stop_underlying=stop,
                     spread_at_entry=round(ask - bid, 4), event_day=profile.label)
     print(f"  OPEN  {pos.contract} x{qty} @ ask {ask:.2f} (bid {bid:.2f}) "
-          f"{sym} {ref:.2f} | {sig_sym} stop {setup.stop:.2f}"
+          f"{sym} {ref:.2f} | stop {stop:.2f} (delta {delta:+.2f})"
           f"{' | ' + profile.label if profile.label else ''}")
 
 

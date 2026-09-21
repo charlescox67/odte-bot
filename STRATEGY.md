@@ -28,16 +28,17 @@ not connect to any broker. It runs on GitHub Actions every trading day.
 
 ## 1. Markets
 
-| Market | Options traded | Chart the signal reads | Why |
-|---|---|---|---|
-| S&P 500 | **SPX** (SPXW daily expirations) | **SPY** | Tightest spread (~1%), expires every day, settles in cash. Yahoo reports no volume for the SPX index, so the signal reads SPY, which tracks the same index. |
-| Nasdaq-100 | **QQQ** | **QQQ** | Daily expirations, ~2% spread. |
+| Market | Options traded | Why |
+|---|---|---|
+| S&P 500 | **SPY** | Same-day expirations, ~3% spread, and about $40–150 per contract, so any account can size properly. Its price feed is live. |
+| Nasdaq-100 | **QQQ** | Same-day expirations, ~2% spread, similar price. |
 
 **Left out on purpose:**
-- **VOO.** No same-day options Monday to Thursday, a spread of about 11%, and
-  the same S&P 500 bet as SPX anyway.
-- **SPY options.** Trading SPY *and* SPX on one signal would be the same bet
-  twice.
+- **SPX** (traded 2026-09-21 only). One contract costs $500–2,500, so a
+  0.5%-of-equity budget often can't buy even one, and on a smaller account it
+  never can. Its price feed is also delayed on Yahoo, unlike SPY. Trading SPY
+  *and* SPX would also be the same bet twice.
+- **VOO.** No same-day options Monday to Thursday and an ~11% spread.
 
 ## 2. The 20-minute clock
 
@@ -99,18 +100,19 @@ option prices very hard.
 ## 4. Contract and size
 
 **Contract.** The **nearest-to-the-money** same-day option, as long as it has
-both a bid and an ask. For SPX, "nearest" is measured against SPX's own price
-at the lagged time, not SPY's. The bot never buys cheap far-out-of-the-money
-lottery tickets.
+both a bid and an ask, measured against the underlying's price at the lagged
+time. The bot never buys cheap far-out-of-the-money lottery tickets.
 
 **Liquidity check.** If the bid-ask spread is more than **10% of the ask**,
 the trade is skipped.
 
-**Size.** The number of contracts is set so that hitting the 50% loss exit
-(below) would lose **1% of the account**:
+**Size.** Always a **percentage of the account**, never a fixed dollar
+amount, so it shrinks and grows with the balance. The number of contracts is
+set so that hitting the 50% loss exit (below) would lose **0.5% of the
+account**:
 
 ```
-contracts = floor( 1% of equity / (ask x 100 x 50%) )     capped at 10
+contracts = floor( 0.5% of equity / (ask x 100 x 50%) )     capped at 50
 ```
 
 If that comes out below 1, the contract is too expensive for the risk budget
@@ -118,23 +120,34 @@ and the trade is skipped.
 
 | Example | Math | Contracts |
 |---|---|---|
-| SPX, ask 10.50, $100k | 1,000 / 525 = 1.9 | **1** ($1,050 spent) |
-| SPX, ask 25.00, $100k | 1,000 / 1,250 = 0.8 | **skipped** |
-| QQQ, ask 1.03, $100k | 1,000 / 51.5 = 19.4 | **10** (the cap; $1,030 spent) |
+| SPY, ask 1.37, $100k | 500 / 68.5 = 7.3 | **7** ($959 spent, $480 at risk) |
+| SPY, ask 1.37, **$20k** | 100 / 68.5 = 1.5 | **1** ($137 spent) |
+| QQQ, ask 0.10, $100k | 500 / 5 = 100 | **50** (the cap) |
 
-Because contract counts round down, the real risk per trade is usually
-**0.5–1%** of the account, not exactly 1%.
+Because contract counts round down, real risk per trade is usually a little
+**under** 0.5%.
 
 ## 5. Exits
 
 Checked every minute. Whichever happens **first** closes the trade:
 
-1. **The option loses 50% of its premium.** This backstop uses only the option
-   quote, so it keeps working even when the chart data fails to load.
-2. **Swing stop.** The underlying closes a 1-minute bar below the stop (above
-   it, for puts). The stop starts at the pullback's swing low. It **moves up
-   to each newer, higher swing low** while the trend continues, and never
-   moves down. For SPX trades the stop is measured on **SPY's chart**.
+1. **Swing stop, on live prices.** SPY and QQQ price data is real time, while
+   option quotes are ~16 minutes behind. So the stop is checked against the
+   **live** price and acts the moment it breaks, instead of 20 minutes later.
+   The stop starts at the pullback's swing low, **moves up to each newer,
+   higher swing low**, and never moves down.
+   - **The stop must be reachable.** If the pullback low sits further away
+     than **30% of the premium** would cover, the stop is pulled in to that
+     distance. Otherwise the stop can never act before the 50% backstop, which
+     is exactly how one trade lost 50% while price stayed above its stop.
+   - **The exit price is estimated, conservatively.** The only quote available
+     is ~16 minutes old, so the fill is that quote adjusted by the move since,
+     using a delta measured from the chain itself. It is only ever adjusted
+     **down**: a favourable move keeps the stale quote, so the book never
+     books a gain the delayed feed hasn't printed. The `exit_basis` column
+     says `estimated` or `quote` for every trade.
+2. **The option loses 50% of its premium.** This backstop uses the option
+   quote (adjusted as above), so it keeps working even when chart data fails.
 3. **60 minutes** after entry.
 4. **Economic-event exit** (Fed days only, see [section 7](#7-economic-event-days)).
 5. **15:45 ET**: everything still open is closed.
@@ -213,13 +226,18 @@ bot made its decision, never before it.
 
 **What it doesn't model:**
 - **Commissions and exchange fees.** Typically about $0.65 per contract per
-  side at retail brokers, plus exchange fees on SPX. A 10-contract QQQ round
-  trip costs roughly $13–15 that the book doesn't deduct.
+  side at retail brokers. A 10-contract round trip costs roughly $13 that the
+  book doesn't deduct — worth noting now that positions run to tens of
+  contracts of cheap SPY and QQQ options.
 - **Fill size.** It assumes 1–10 contracts fill at the displayed bid or ask.
   That's realistic for these very liquid contracts at this size, but not at a
   much bigger size.
 - **Price between checks.** Stops are checked once a minute, so a fast move can
   go further past the stop than a real stop order would allow.
+- **Estimated exit prices.** A stop exit is priced from a ~16-minute-old quote
+  adjusted by delta, not from a quote at that instant. Delta shifts as price
+  moves (gamma), so the estimate is roughest on the largest moves. It is
+  deliberately biased low, and `exit_basis` flags every affected trade.
 - **Missed minutes.** If Yahoo fails to respond, that minute is skipped. The
   50% backstop still runs as long as the options quote loads.
 
@@ -242,7 +260,24 @@ these numbers: with 60 days of data, that would just be fitting noise.
 The previous strategy, an opening-range breakout, was also checked over 60
 days and found no edge either. It was replaced on 2026-09-21.
 
-**Live paper trades** start 2026-09-21. See the trade log below.
+**Live paper trades** start 2026-09-21. Day one, under the first version of
+these rules (SPX, 1% risk, no live stop), produced three trades: **+$770**,
+**−$10**, **−$840**.
+
+The −$840 trade is why the rules above changed. SPY never came near the
+trade's stop — it *rose* — but SPX slipped 5 points (0.07%), which halved a
+$5.60 option and triggered the backstop. Six minutes later the option was
+back above the entry price. Three faults, all now fixed:
+
+1. **The stop was unreachable.** It sat ~10 SPX points away on an option with
+   ~$5.60 of premium: reaching it would have cost ~90%, so the 50% backstop
+   was always going to fire first. Stops are now capped at 30% of premium.
+2. **Mismatched instruments.** The stop was measured on SPY while the option's
+   value moved with SPX, where 1 SPY point ≈ 10 SPX points. Each market now
+   trades options on the same instrument its stop is measured on.
+3. **Risk was 1%.** $840 *was* the rule working: sizing targets 1% of equity
+   at the backstop. Now 0.5%, and the 30% stop cap means a typical stopped
+   trade loses ~0.3% rather than the full backstop.
 
 ## Where to see results
 
@@ -250,7 +285,7 @@ All state lives on the [`state` branch](https://github.com/charlescox67/odte-bot
 
 | File | What it shows |
 |---|---|
-| [`trades.csv`](https://github.com/charlescox67/odte-bot/blob/state/trades.csv) | One row per **closed** trade: prices, contracts, `cost` and `proceeds` in dollars, `pnl`, exit reason, the pullback traded (`setup`), both stops, spread, event-day tag |
+| [`trades.csv`](https://github.com/charlescox67/odte-bot/blob/state/trades.csv) | One row per **closed** trade: prices, contracts, `cost` and `proceeds` in dollars, `pnl`, exit reason, the pullback traded (`setup`), both stops, spread, event-day tag, and `exit_basis` (`quote` or `estimated`) |
 | [`book.json`](https://github.com/charlescox67/odte-bot/blob/state/book.json) | Cash and **open** positions |
 | [`logs/`](https://github.com/charlescox67/odte-bot/tree/state/logs) | Every minute's decision for each market: trend, VWAP, latest swing low and high, and why it did or didn't trade |
 
@@ -261,12 +296,14 @@ every 10 minutes; trades are saved the minute they happen.
 
 | Setting | Value | File |
 |---|---|---|
-| Lagged clock | 20 min | `run_bot.py` `LAG_MIN` |
+| Lagged clock (entries, quotes) | 20 min | `run_bot.py` `LAG_MIN` |
+| Stops checked on | live price | `live_price`, `adjust_mark` |
 | Entry window (lagged clock) | 10:00–14:00 ET | `ENTRY_START`, `NO_ENTRY_AFTER` |
 | End-of-day exit | 15:45 ET | `FLATTEN_AT` |
-| Risk per trade | 1% of equity at the backstop | `RISK_PCT` |
+| Risk per trade | 0.5% of equity at the backstop | `RISK_PCT` |
+| Max cost of reaching the stop | 30% of premium | `STOP_COST_CAP` |
 | Premium backstop | −50% | `BACKSTOP` |
-| Max contracts | 10 | `MAX_QTY` |
+| Max contracts | 50 | `MAX_QTY` |
 | Max spread | 10% of ask | `MAX_SPREAD` |
 | Entries per market per day | 3 | `MAX_ENTRIES_PER_DAY` |
 | Daily loss stop | −2% | `DAILY_LOSS_LIMIT` |

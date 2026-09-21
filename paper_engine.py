@@ -34,7 +34,7 @@ TRADE_COLUMNS = ["id", "symbol", "contract", "right", "strike", "expiry", "qty",
                  "exit_time", "exit_price", "exit_reason", "cost", "proceeds",
                  "pnl", "pnl_pct",
                  "signal_symbol", "setup", "stop_at_entry", "stop_final",
-                 "spread_at_entry", "event_day"]
+                 "spread_at_entry", "event_day", "exit_basis"]
 
 
 @dataclass
@@ -62,6 +62,7 @@ class Position:
     stop_underlying: float | None = None # current, after trailing
     spread_at_entry: float | None = None
     event_day: str = ""
+    exit_basis: str = ""      # "quote" or "estimated" (live-adjusted)
 
     @property
     def cost(self) -> float:
@@ -177,7 +178,7 @@ class Book:
                         f"{pos.cost:.2f}", f"{pos.exit_price * pos.qty * MULTIPLIER:.2f}",
                         f"{pos.pnl():.2f}", f"{pos.pnl_pct():.4f}",
                         pos.signal_symbol or "", pos.setup, pos.stop_at_entry,
-                        pos.stop_underlying, pos.spread_at_entry, pos.event_day])
+                        pos.stop_underlying, pos.spread_at_entry, pos.event_day, pos.exit_basis])
 
     def equity(self) -> float:
         return self.cash + sum(p.mark * p.qty * MULTIPLIER for p in self.open_positions)
