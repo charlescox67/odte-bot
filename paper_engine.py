@@ -31,7 +31,8 @@ TRADES = STATE_DIR / "trades.csv"
 MULTIPLIER = 100  # US equity and index options
 TRADE_COLUMNS = ["id", "symbol", "contract", "right", "strike", "expiry", "qty",
                  "entry_time", "entry_price", "underlying_at_entry", "entry_reason",
-                 "exit_time", "exit_price", "exit_reason", "pnl", "pnl_pct",
+                 "exit_time", "exit_price", "exit_reason", "cost", "proceeds",
+                 "pnl", "pnl_pct",
                  "signal_symbol", "setup", "stop_at_entry", "stop_final",
                  "spread_at_entry", "event_day"]
 
@@ -160,13 +161,10 @@ class Book:
         return done
 
     def _log(self, pos: Position) -> None:
-        # A file written with a different column set is moved aside rather
-        # than appended to: mixed rows would silently misalign every column.
+        # Appending under a different header would misalign every column, so
+        # an older layout is upgraded in place first (see _upgrade_log).
         if TRADES.exists():
-            with TRADES.open(newline="") as fh:
-                header = next(csv.reader(fh), None)
-            if header != TRADE_COLUMNS:
-                TRADES.rename(TRADES.with_name(f"trades.old-{uuid.uuid4().hex[:6]}.csv"))
+            _upgrade_log()
         new = not TRADES.exists()
         with TRADES.open("a", newline="") as fh:
             w = csv.writer(fh)
@@ -176,12 +174,41 @@ class Book:
                         pos.expiry, pos.qty, pos.entry_time, pos.entry_price,
                         pos.underlying_at_entry, pos.entry_reason, pos.exit_time,
                         pos.exit_price, pos.exit_reason,
+                        f"{pos.cost:.2f}", f"{pos.exit_price * pos.qty * MULTIPLIER:.2f}",
                         f"{pos.pnl():.2f}", f"{pos.pnl_pct():.4f}",
                         pos.signal_symbol or "", pos.setup, pos.stop_at_entry,
                         pos.stop_underlying, pos.spread_at_entry, pos.event_day])
 
     def equity(self) -> float:
         return self.cash + sum(p.mark * p.qty * MULTIPLIER for p in self.open_positions)
+
+
+def _upgrade_log() -> None:
+    """Bring trades.csv to TRADE_COLUMNS without losing history.
+
+    Rows from an older layout are rewritten by column NAME, and the dollar
+    columns are derived from price x qty x 100. A file with columns this code
+    doesn't know is moved aside instead, since it can't be mapped safely."""
+    with TRADES.open(newline="") as fh:
+        rows = list(csv.DictReader(fh))
+        header = list(rows[0].keys()) if rows else None
+    if header is None or header == TRADE_COLUMNS:
+        return
+    if not set(header) <= set(TRADE_COLUMNS):
+        TRADES.rename(TRADES.with_name(f"trades.old-{uuid.uuid4().hex[:6]}.csv"))
+        return
+    for r in rows:
+        mult = float(r["qty"]) * MULTIPLIER
+        r.setdefault("cost", f"{float(r['entry_price']) * mult:.2f}")
+        if "proceeds" not in r:
+            r["proceeds"] = (f"{float(r['exit_price']) * mult:.2f}"
+                             if r.get("exit_price") else "")
+    tmp = TRADES.with_suffix(".tmp")
+    with tmp.open("w", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=TRADE_COLUMNS, restval="")
+        w.writeheader()
+        w.writerows(rows)
+    os.replace(tmp, TRADES)
 
 
 def occ(symbol: str, expiry: str, right: str, strike: float) -> str:

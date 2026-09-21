@@ -115,5 +115,27 @@ check("old-format trades.csv moved aside", len(list(tmp.glob("trades.old-*.csv")
 check("new file has new header", rows[0], pe.TRADE_COLUMNS)
 check("context logged", rows[1][pe.TRADE_COLUMNS.index("setup")], "H1005")
 
+print("\nlog upgrade keeps history (today's real first trade, pre-cost layout)")
+pe.TRADES.write_text(
+    "id,symbol,contract,right,strike,expiry,qty,entry_time,entry_price,underlying_at_entry,"
+    "entry_reason,exit_time,exit_price,exit_reason,pnl,pnl_pct,signal_symbol,setup,"
+    "stop_at_entry,stop_final,spread_at_entry,event_day\n"
+    "ea4251b8,^SPX,SPXW260921C07735000,C,7735.0,2026-09-21,1,2026-09-21T16:05:01+00:00,"
+    "10.5,7737.17,swing L1130,2026-09-21T17:06:01+00:00,18.2,time_stop,770.00,0.7333,"
+    "SPY,L1130,769.81,770.52,0.1,\n")
+before = len(list(tmp.glob("trades.old-*.csv")))
+b6 = pe.Book(cash=10_000.0)
+q6 = b6.open(symbol="QQQ", contract="q6", right="C", strike=738.0, expiry="2026-09-21",
+             qty=10, ask=1.03, underlying=738.15, reason="swing", setup="L1135")
+b6.close(q6, bid=1.20, reason="swing_stop")
+rows = list(_csv.DictReader(pe.TRADES.open()))
+check("upgraded in place, not moved aside", len(list(tmp.glob("trades.old-*.csv"))), before)
+check("old row kept", rows[0]["id"], "ea4251b8")
+check("old row cost = 10.50 x 1 x 100", rows[0]["cost"], "1050.00")
+check("old row proceeds = 18.20 x 1 x 100", rows[0]["proceeds"], "1820.00")
+check("new row cost = 1.03 x 10 x 100", rows[1]["cost"], "1030.00")
+check("new row proceeds", rows[1]["proceeds"], "1200.00")
+check("header now current", list(rows[0].keys()), pe.TRADE_COLUMNS)
+
 print(f"\n{ok} passed, {fail} failed")
 raise SystemExit(1 if fail else 0)
