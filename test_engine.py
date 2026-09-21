@@ -2,7 +2,11 @@
 from __future__ import annotations
 
 import tempfile
-from datetime import date
+from datetime import date, datetime
+from zoneinfo import ZoneInfo
+
+ET = ZoneInfo("America/New_York")
+AFTER_CLOSE = datetime(2026, 9, 10, 16, 1, tzinfo=ET)
 from pathlib import Path
 
 import paper_engine as pe
@@ -53,8 +57,15 @@ otm = b3.open(symbol="SPY", contract="y", right="C", strike=770.0,
               expiry="2026-09-10", qty=1, ask=0.20, underlying=755.0, reason="t")
 # settlement now takes a callable so the caller can supply the price on the
 # position's OWN expiry date rather than whatever spot happens to be now.
-b3.settle_expired(lambda pos: {"SPY": 756.30}.get(pos.symbol),
-                  today=date(2026, 9, 10))
+
+# Regression: every live trade 09-14..09-18 "expired" 0.3s after opening,
+# mid-session, because a 0DTE's expiry date IS today. Settlement must wait
+# for the 16:00 ET close, not just the calendar date.
+b3.settle_expired(lambda pos: 756.30, now=datetime(2026, 9, 10, 11, 52, tzinfo=ET))
+check("0DTE NOT settled mid-session", len(b3.open_positions), 2)
+b3.settle_expired(lambda pos: 756.30, now=datetime(2026, 9, 10, 15, 59, tzinfo=ET))
+check("0DTE NOT settled at 15:59", len(b3.open_positions), 2)
+b3.settle_expired(lambda pos: {"SPY": 756.30}.get(pos.symbol), now=AFTER_CLOSE)
 check("ITM settles to intrinsic 6.30", itm.exit_price, 6.30)
 check("OTM expires worthless", otm.exit_price, 0.0)
 check("OTM loses the full premium", otm.pnl(), -20.0)
@@ -64,7 +75,7 @@ print("\nunknown price must NOT settle at zero")
 b4 = pe.Book(cash=10_000.0)
 q = b4.open(symbol="SPY", contract="q", right="C", strike=750.0,
             expiry="2026-09-10", qty=1, ask=1.00, underlying=755.0, reason="t")
-b4.settle_expired(lambda pos: None, today=date(2026, 9, 10))
+b4.settle_expired(lambda pos: None, now=AFTER_CLOSE)
 check("stays open when price unknown", q.status, "open")
 
 print("\nguards")

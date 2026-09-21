@@ -17,7 +17,11 @@ import json
 import os
 import uuid
 from dataclasses import asdict, dataclass, field
-from datetime import date, datetime, timezone
+from datetime import date, datetime, time, timezone
+from zoneinfo import ZoneInfo
+
+ET = ZoneInfo("America/New_York")
+MARKET_CLOSE = time(16, 0)
 from pathlib import Path
 
 BOOK = Path(__file__).parent / "book.json"
@@ -116,17 +120,22 @@ class Book:
         self._log(pos)
         return pos
 
-    def settle_expired(self, price_for, today: date | None = None) -> list[Position]:
+    def settle_expired(self, price_for, now: datetime | None = None) -> list[Position]:
         """A 0DTE contract has no next day. At expiry it becomes intrinsic value.
 
         `price_for(pos)` must return the underlying price ON THAT POSITION'S
         EXPIRY DATE, not today's. If the bot is asleep at 16:00 and settles a
         day late, using the current spot books a P&L from the wrong session.
         """
-        today = today or datetime.now().date()
+        # A contract expires at the 16:00 ET close, not at midnight. Comparing
+        # dates alone settled every 0DTE trade the instant it was opened.
+        now = (now or datetime.now(ET)).astimezone(ET)
         done = []
         for pos in self.open_positions:
-            if date.fromisoformat(pos.expiry) > today:
+            expiry = date.fromisoformat(pos.expiry)
+            if expiry > now.date():
+                continue
+            if expiry == now.date() and now.time() < MARKET_CLOSE:
                 continue
             spot = price_for(pos)
             if spot is None:
