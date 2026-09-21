@@ -568,3 +568,23 @@ equity $99,980.00 | cash $99,080.00 | open 1 | closed 2
 ^SPX: no setup as of 13:35 | trend up | vwap 769.54 | last low 771.80@1240 high 772.98@1320 | close 772.36
 QQQ: no setup as of 13:35 | trend up | vwap 734.34 | last low 738.50@1250 high 739.15@1305 | close 738.68
 equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 13:56:00 EDT (signals as of 13:36) ---
+^SPX: no setup as of 13:36 | trend up | vwap 769.55 | last low 771.80@1240 high 772.98@1320 | close 772.36
+QQQ: no setup as of 13:36 | trend up | vwap 734.35 | last low 738.50@1250 high 739.15@1305 | close 738.68
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 13:57:00 EDT (signals as of 13:37) ---
+^SPX: no setup as of 13:37 | trend up | vwap 769.56 | last low 771.80@1240 high 772.98@1320 | close 772.36
+QQQ: no setup as of 13:37 | trend up | vwap 734.35 | last low 738.50@1250 high 739.15@1305 | close 738.68
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 13:58:00 EDT (signals as of 13:38) ---
+^SPX: no setup as of 13:38 | trend up | vwap 769.56 | last low 771.80@1240 high 772.98@1320 | close 772.36
+QQQ: no setup as of 13:38 | trend up | vwap 734.36 | last low 738.50@1250 high 739.15@1305 | close 738.68
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 13:59:00 EDT (signals as of 13:39) ---
+^SPX: no setup as of 13:39 | trend up | vwap 769.57 | last low 771.80@1240 high 772.98@1320 | close 772.36
+QQQ: no setup as of 13:39 | trend up | vwap 734.37 | last low 738.50@1250 high 739.15@1305 | close 738.68
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 14:00:00 EDT (signals as of 13:40) ---
+^SPX: no setup as of 13:40 | trend up | vwap 769.57 | last low 771.80@1240 high 772.98@1320 | close 772.28
+QQQ: no setup as of 13:40 | trend up | vwap 734.37 | last low 738.43@1325 high 739.15@1305 | close 738.83
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
