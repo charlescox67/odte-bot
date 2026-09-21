@@ -122,3 +122,7 @@ equity $100,000.00 | cash $100,000.00 | open 0 | closed 0
   OPEN  SPXW260921C07735000 x1 @ ask 10.50 (bid 10.40) ^SPX 7737.17 | SPY stop 769.81
 QQQ: no setup as of 11:45 | trend up | vwap 732.81 | last low 734.56@1040 high 735.86@1035 | close 737.23
 equity $100,000.00 | cash $98,950.00 | open 1 | closed 0
+--- tick 2026-09-21 12:06:00 EDT (signals as of 11:46) ---
+^SPX: no setup as of 11:46 | trend up | vwap 768.31 | last low 769.81@1130 high 770.18@1115 | close 770.71
+QQQ: no setup as of 11:46 | trend up | vwap 732.83 | last low 734.56@1040 high 735.86@1035 | close 737.23
+equity $100,020.00 | cash $98,950.00 | open 1 | closed 0
