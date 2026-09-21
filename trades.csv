@@ -1,0 +1,2 @@
+id,symbol,contract,right,strike,expiry,qty,entry_time,entry_price,underlying_at_entry,entry_reason,exit_time,exit_price,exit_reason,pnl,pnl_pct,signal_symbol,setup,stop_at_entry,stop_final,spread_at_entry,event_day
+ea4251b8,^SPX,SPXW260921C07735000,C,7735.0,2026-09-21,1,2026-09-21T16:05:01.618273+00:00,10.5,7737.169921875,swing L1130,2026-09-21T17:06:01.219936+00:00,18.2,time_stop,770.00,0.7333,SPY,L1130,769.8099975585938,770.5189819335938,0.1,

@@ -1,5 +1,5 @@
 {
-  "cash": 97920.0,
+  "cash": 99740.0,
   "positions": [
     {
       "id": "ea4251b8",
@@ -13,11 +13,11 @@
       "entry_time": "2026-09-21T16:05:01.618273+00:00",
       "entry_reason": "swing L1130",
       "underlying_at_entry": 7737.169921875,
-      "status": "open",
+      "status": "closed",
       "mark": 18.2,
-      "exit_price": null,
-      "exit_time": null,
-      "exit_reason": null,
+      "exit_price": 18.2,
+      "exit_time": "2026-09-21T17:06:01.219936+00:00",
+      "exit_reason": "time_stop",
       "signal_symbol": "SPY",
       "setup": "L1130",
       "stop_at_entry": 769.8099975585938,

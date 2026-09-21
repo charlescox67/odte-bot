@@ -343,3 +343,28 @@ equity $100,760.00 | cash $97,920.00 | open 2 | closed 0
 ^SPX: no setup as of 12:40 | trend up | vwap 768.96 | last low 770.52@1200 high 771.85@1210 | close 771.89
 QQQ: no setup as of 12:40 | trend up | vwap 733.88 | last low 736.94@1155 high 737.86@1150 | close 738.53
 equity $100,760.00 | cash $97,920.00 | open 2 | closed 0
+--- tick 2026-09-21 13:01:00 EDT (signals as of 12:41) ---
+^SPX: no setup as of 12:41 | trend up | vwap 768.98 | last low 770.52@1200 high 771.85@1210 | close 771.89
+QQQ: no setup as of 12:41 | trend up | vwap 733.89 | last low 736.94@1155 high 737.86@1150 | close 738.53
+equity $100,760.00 | cash $97,920.00 | open 2 | closed 0
+--- tick 2026-09-21 13:02:00 EDT (signals as of 12:42) ---
+^SPX: no setup as of 12:42 | trend up | vwap 768.99 | last low 770.52@1200 high 771.85@1210 | close 771.89
+QQQ: no setup as of 12:42 | trend up | vwap 733.90 | last low 736.94@1155 high 737.86@1150 | close 738.53
+equity $100,760.00 | cash $97,920.00 | open 2 | closed 0
+--- tick 2026-09-21 13:03:00 EDT (signals as of 12:43) ---
+^SPX: no setup as of 12:43 | trend up | vwap 769.00 | last low 770.52@1200 high 771.85@1210 | close 771.89
+QQQ: no setup as of 12:43 | trend up | vwap 733.91 | last low 736.94@1155 high 737.86@1150 | close 738.53
+equity $100,760.00 | cash $97,920.00 | open 2 | closed 0
+--- tick 2026-09-21 13:04:00 EDT (signals as of 12:44) ---
+^SPX: no setup as of 12:44 | trend up | vwap 769.01 | last low 770.52@1200 high 771.85@1210 | close 771.89
+QQQ: no setup as of 12:44 | trend up | vwap 733.92 | last low 736.94@1155 high 737.86@1150 | close 738.53
+equity $100,760.00 | cash $97,920.00 | open 2 | closed 0
+--- tick 2026-09-21 13:05:00 EDT (signals as of 12:45) ---
+^SPX: no setup as of 12:45 | trend up | vwap 769.02 | last low 770.52@1200 high 772.65@1230 | close 772.00
+QQQ: no setup as of 12:45 | trend up | vwap 733.93 | last low 736.94@1155 high 739.39@1230 | close 738.60
+equity $100,760.00 | cash $97,920.00 | open 2 | closed 0
+--- tick 2026-09-21 13:06:00 EDT (signals as of 12:46) ---
+  CLOSE SPXW260921C07735000 x1 @ 18.20 (time_stop) pnl $+770.00 (+73%)
+^SPX: no setup as of 12:46 | trend up | vwap 769.02 | last low 770.52@1200 high 772.65@1230 | close 772.00
+QQQ: no setup as of 12:46 | trend up | vwap 733.93 | last low 736.94@1155 high 739.39@1230 | close 738.60
+equity $100,760.00 | cash $99,740.00 | open 1 | closed 1
