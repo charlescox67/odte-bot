@@ -668,3 +668,43 @@ equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
 ^SPX: no setup as of 14:00 | trend up | vwap 769.79 | last low 772.24@1340 high 773.17@1345 | close 772.90
 QQQ: no setup as of 14:00 | trend up | vwap 734.81 | last low 738.43@1325 high 739.86@1345 | close 739.56
 equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 14:21:00 EDT (signals as of 14:01) ---
+^SPX: no setup as of 14:01 | trend up | vwap 769.80 | last low 772.24@1340 high 773.17@1345 | close 772.90
+QQQ: no setup as of 14:01 | trend up | vwap 734.82 | last low 738.43@1325 high 739.86@1345 | close 739.56
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 14:22:00 EDT (signals as of 14:02) ---
+^SPX: no setup as of 14:02 | trend up | vwap 769.81 | last low 772.24@1340 high 773.17@1345 | close 772.90
+QQQ: no setup as of 14:02 | trend up | vwap 734.83 | last low 738.43@1325 high 739.86@1345 | close 739.56
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 14:23:00 EDT (signals as of 14:03) ---
+^SPX: no setup as of 14:03 | trend up | vwap 769.81 | last low 772.24@1340 high 773.17@1345 | close 772.90
+QQQ: no setup as of 14:03 | trend up | vwap 734.83 | last low 738.43@1325 high 739.86@1345 | close 739.56
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 14:24:00 EDT (signals as of 14:04) ---
+^SPX: no setup as of 14:04 | trend up | vwap 769.82 | last low 772.24@1340 high 773.17@1345 | close 772.90
+QQQ: no setup as of 14:04 | trend up | vwap 734.84 | last low 738.43@1325 high 739.86@1345 | close 739.56
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 14:25:00 EDT (signals as of 14:05) ---
+^SPX: C setup L1340 stop 772.24 (SPY) — outside entry window 10:00-14:00
+QQQ: no setup as of 14:05 | trend up | vwap 734.85 | last low 738.43@1325 high 739.86@1345 | close 739.84
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 14:26:00 EDT (signals as of 14:06) ---
+^SPX: C setup L1340 stop 772.24 (SPY) — outside entry window 10:00-14:00
+QQQ: no setup as of 14:06 | trend up | vwap 734.86 | last low 738.43@1325 high 739.86@1345 | close 739.84
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 14:27:00 EDT (signals as of 14:07) ---
+^SPX: C setup L1340 stop 772.24 (SPY) — outside entry window 10:00-14:00
+QQQ: no setup as of 14:07 | trend up | vwap 734.88 | last low 738.43@1325 high 739.86@1345 | close 739.84
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 14:28:00 EDT (signals as of 14:08) ---
+^SPX: C setup L1340 stop 772.24 (SPY) — outside entry window 10:00-14:00
+QQQ: no setup as of 14:08 | trend up | vwap 734.88 | last low 738.43@1325 high 739.86@1345 | close 739.84
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 14:29:00 EDT (signals as of 14:09) ---
+^SPX: C setup L1340 stop 772.24 (SPY) — outside entry window 10:00-14:00
+QQQ: no setup as of 14:09 | trend up | vwap 734.90 | last low 738.43@1325 high 739.86@1345 | close 739.84
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 14:30:00 EDT (signals as of 14:10) ---
+^SPX: no setup as of 14:10 | trend up | vwap 769.86 | last low 772.24@1340 high 773.17@1345 | close 773.18
+QQQ: no setup as of 14:10 | trend up | vwap 734.92 | last low 738.43@1325 high 739.86@1345 | close 739.84
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
