@@ -563,3 +563,8 @@ equity $99,935.00 | cash $99,080.00 | open 1 | closed 2
 ^SPX: no setup as of 13:34 | trend up | vwap 769.54 | last low 771.80@1240 high 772.65@1230 | close 772.80
 QQQ: no setup as of 13:34 | trend up | vwap 734.34 | last low 738.50@1250 high 739.15@1305 | close 738.97
 equity $99,980.00 | cash $99,080.00 | open 1 | closed 2
+--- tick 2026-09-21 13:55:00 EDT (signals as of 13:35) ---
+  CLOSE SPXW260921C07760000 x3 @ 2.80 (backstop) pnl $-840.00 (-50%)
+^SPX: no setup as of 13:35 | trend up | vwap 769.54 | last low 771.80@1240 high 772.98@1320 | close 772.36
+QQQ: no setup as of 13:35 | trend up | vwap 734.34 | last low 738.50@1250 high 739.15@1305 | close 738.68
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
