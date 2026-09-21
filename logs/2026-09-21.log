@@ -102,3 +102,23 @@ equity $100,000.00 | cash $100,000.00 | open 0 | closed 0
 SPY: no signal as of 11:32 (px 769.97)
 QQQ: no signal as of 11:32 (px 736.69)
 equity $100,000.00 | cash $100,000.00 | open 0 | closed 0
+--- tick 2026-09-21 12:01:52 EDT (signals as of 11:41) ---
+^SPX: no setup as of 11:41 | trend up | vwap 768.25 | last low 768.73@1045 high 770.18@1115 | close 770.49
+QQQ: no setup as of 11:41 | trend up | vwap 732.76 | last low 734.56@1040 high 735.86@1035 | close 737.11
+equity $100,000.00 | cash $100,000.00 | open 0 | closed 0
+--- tick 2026-09-21 12:02:00 EDT (signals as of 11:42) ---
+^SPX: no setup as of 11:42 | trend up | vwap 768.26 | last low 768.73@1045 high 770.18@1115 | close 770.49
+QQQ: no setup as of 11:42 | trend up | vwap 732.77 | last low 734.56@1040 high 735.86@1035 | close 737.11
+equity $100,000.00 | cash $100,000.00 | open 0 | closed 0
+--- tick 2026-09-21 12:03:00 EDT (signals as of 11:43) ---
+^SPX: no setup as of 11:43 | trend up | vwap 768.27 | last low 768.73@1045 high 770.18@1115 | close 770.49
+QQQ: no setup as of 11:43 | trend up | vwap 732.78 | last low 734.56@1040 high 735.86@1035 | close 737.11
+equity $100,000.00 | cash $100,000.00 | open 0 | closed 0
+--- tick 2026-09-21 12:04:00 EDT (signals as of 11:44) ---
+^SPX: no setup as of 11:44 | trend up | vwap 768.28 | last low 768.73@1045 high 770.18@1115 | close 770.49
+QQQ: no setup as of 11:44 | trend up | vwap 732.79 | last low 734.56@1040 high 735.86@1035 | close 737.11
+equity $100,000.00 | cash $100,000.00 | open 0 | closed 0
+--- tick 2026-09-21 12:05:00 EDT (signals as of 11:45) ---
+  OPEN  SPXW260921C07735000 x1 @ ask 10.50 (bid 10.40) ^SPX 7737.17 | SPY stop 769.81
+QQQ: no setup as of 11:45 | trend up | vwap 732.81 | last low 734.56@1040 high 735.86@1035 | close 737.23
+equity $100,000.00 | cash $98,950.00 | open 1 | closed 0
