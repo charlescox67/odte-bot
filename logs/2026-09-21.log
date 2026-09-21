@@ -291,3 +291,15 @@ equity $100,700.00 | cash $97,920.00 | open 2 | closed 0
 ^SPX: no setup as of 12:27 | trend up | vwap 768.79 | last low 770.52@1200 high 771.85@1210 | close 771.66
 QQQ: no setup as of 12:27 | trend up | vwap 733.57 | last low 736.94@1155 high 737.86@1150 | close 738.61
 equity $100,760.00 | cash $97,920.00 | open 2 | closed 0
+--- tick 2026-09-21 12:48:00 EDT (signals as of 12:28) ---
+^SPX: no setup as of 12:28 | trend up | vwap 768.80 | last low 770.52@1200 high 771.85@1210 | close 771.66
+QQQ: no setup as of 12:28 | trend up | vwap 733.58 | last low 736.94@1155 high 737.86@1150 | close 738.61
+equity $100,760.00 | cash $97,920.00 | open 2 | closed 0
+--- tick 2026-09-21 12:49:00 EDT (signals as of 12:29) ---
+^SPX: no setup as of 12:29 | trend up | vwap 768.81 | last low 770.52@1200 high 771.85@1210 | close 771.66
+QQQ: no setup as of 12:29 | trend up | vwap 733.62 | last low 736.94@1155 high 737.86@1150 | close 738.61
+equity $100,760.00 | cash $97,920.00 | open 2 | closed 0
+--- tick 2026-09-21 12:50:00 EDT (signals as of 12:30) ---
+^SPX: C setup L1200 stop 770.52 (SPY) — already holding
+QQQ: no setup as of 12:30 | trend up | vwap 733.63 | last low 736.94@1155 high 737.86@1150 | close 738.78
+equity $100,760.00 | cash $97,920.00 | open 2 | closed 0
