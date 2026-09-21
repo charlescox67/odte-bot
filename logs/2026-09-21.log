@@ -868,3 +868,43 @@ equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
 ^SPX: no setup as of 14:50 | trend up | vwap 770.28 | last low 772.24@1340 high 773.99@1425 | close 774.35
 QQQ: C setup L1430 stop 740.16 (QQQ) — outside entry window 10:00-14:00
 equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 15:11:00 EDT (signals as of 14:51) ---
+^SPX: no setup as of 14:51 | trend up | vwap 770.29 | last low 772.24@1340 high 773.99@1425 | close 774.35
+QQQ: C setup L1430 stop 740.16 (QQQ) — outside entry window 10:00-14:00
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 15:12:00 EDT (signals as of 14:52) ---
+^SPX: no setup as of 14:52 | trend up | vwap 770.30 | last low 772.24@1340 high 773.99@1425 | close 774.35
+QQQ: C setup L1430 stop 740.16 (QQQ) — outside entry window 10:00-14:00
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 15:13:00 EDT (signals as of 14:53) ---
+^SPX: no setup as of 14:53 | trend up | vwap 770.31 | last low 772.24@1340 high 773.99@1425 | close 774.35
+QQQ: C setup L1430 stop 740.16 (QQQ) — outside entry window 10:00-14:00
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 15:14:00 EDT (signals as of 14:54) ---
+^SPX: no setup as of 14:54 | trend up | vwap 770.32 | last low 772.24@1340 high 773.99@1425 | close 774.35
+QQQ: C setup L1430 stop 740.16 (QQQ) — outside entry window 10:00-14:00
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 15:15:00 EDT (signals as of 14:55) ---
+^SPX: no setup as of 14:55 | trend up | vwap 770.33 | last low 772.24@1340 high 773.99@1425 | close 774.45
+QQQ: C setup L1430 stop 740.16 (QQQ) — outside entry window 10:00-14:00
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 15:16:00 EDT (signals as of 14:56) ---
+^SPX: no setup as of 14:56 | trend up | vwap 770.35 | last low 772.24@1340 high 773.99@1425 | close 774.45
+QQQ: C setup L1430 stop 740.16 (QQQ) — outside entry window 10:00-14:00
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 15:17:00 EDT (signals as of 14:57) ---
+^SPX: no setup as of 14:57 | trend up | vwap 770.36 | last low 772.24@1340 high 773.99@1425 | close 774.45
+QQQ: C setup L1430 stop 740.16 (QQQ) — outside entry window 10:00-14:00
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 15:18:00 EDT (signals as of 14:58) ---
+^SPX: no setup as of 14:58 | trend up | vwap 770.37 | last low 772.24@1340 high 773.99@1425 | close 774.45
+QQQ: C setup L1430 stop 740.16 (QQQ) — outside entry window 10:00-14:00
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 15:19:00 EDT (signals as of 14:59) ---
+^SPX: no setup as of 14:59 | trend up | vwap 770.38 | last low 772.24@1340 high 773.99@1425 | close 774.45
+QQQ: C setup L1430 stop 740.16 (QQQ) — outside entry window 10:00-14:00
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-21 15:20:00 EDT (signals as of 15:00) ---
+^SPX: no setup as of 15:00 | trend up | vwap 770.39 | last low 772.24@1340 high 773.99@1425 | close 774.29
+QQQ: no setup as of 15:00 | trend up | vwap 735.58 | last low 740.16@1430 high 739.86@1345 | close 741.34
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
