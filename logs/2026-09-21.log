@@ -210,3 +210,7 @@ equity $100,610.00 | cash $98,950.00 | open 1 | closed 0
 ^SPX: no setup as of 12:07 | trend up | vwap 768.58 | last low 769.81@1130 high 771.36@1150 | close 771.04
 QQQ: no setup as of 12:07 | trend up | vwap 733.21 | last low 734.56@1040 high 737.86@1150 | close 737.61
 equity $100,580.00 | cash $98,950.00 | open 1 | closed 0
+--- tick 2026-09-21 12:28:00 EDT (signals as of 12:08) ---
+^SPX: no setup as of 12:08 | trend up | vwap 768.61 | last low 769.81@1130 high 771.36@1150 | close 771.04
+QQQ: no setup as of 12:08 | trend up | vwap 733.25 | last low 734.56@1040 high 737.86@1150 | close 737.61
+equity $100,330.00 | cash $98,950.00 | open 1 | closed 0
