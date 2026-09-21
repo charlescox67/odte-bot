@@ -17,7 +17,8 @@ from datetime import time, timedelta
 import pandas as pd
 
 import swing_signal as sw
-from run_bot import ENTRY_START, NO_ENTRY_AFTER, MAX_ENTRIES_PER_DAY, TIME_STOP_MIN
+from run_bot import (ENTRY_START, NO_ENTRY_AFTER, MAX_ENTRIES_PER_DAY,
+                     TIME_STOP_MIN, TIME_STOP_KEEP_R)
 from yahoo_data import bars
 
 FLATTEN_BAR = time(15, 40)  # the bar ending 15:45
@@ -30,12 +31,14 @@ def replay(day: pd.DataFrame) -> list[dict]:
         px = float(day["close"].iloc[k])
         if pos:
             pos["stop"] = sw.trail_stop(day, asof, pos["side"], pos["stop"])
+            sign = 1 if pos["side"] == "C" else -1
+            r_now = sign * (px - pos["px"]) / pos["risk"]
+            aged = asof - pos["t"] >= timedelta(minutes=TIME_STOP_MIN)
             why = ("swing_stop" if sw.stop_hit(day, asof, pos["side"], pos["stop"]) else
-                   "time_stop" if asof - pos["t"] >= timedelta(minutes=TIME_STOP_MIN) else
+                   "time_stop" if aged and r_now < TIME_STOP_KEEP_R else
                    "eod" if t.time() >= FLATTEN_BAR else None)
             if why:
-                sign = 1 if pos["side"] == "C" else -1
-                trades.append({"r": sign * (px - pos["px"]) / pos["risk"], "why": why,
+                trades.append({"r": r_now, "why": why,
                                "mins": (asof - pos["t"]).seconds // 60})
                 pos = None
         if pos is None and ENTRY_START <= asof.time() < NO_ENTRY_AFTER \

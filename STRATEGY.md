@@ -42,6 +42,22 @@ not connect to any broker. It runs on GitHub Actions every trading day.
 
 ## 2. The 20-minute clock
 
+**Why Yahoo?** It is free and needs no account. Checked 2026-09-21, nothing
+free is faster for option quotes:
+
+| Source | Options quotes | Cost |
+|---|---|---|
+| Yahoo (current) | ~16 min delayed | free |
+| Barchart | 15 min delayed on the site; API is paid, and the site blocks automated access (HTTP 202) | paid |
+| Alpaca free tier | 15 min delayed ("indicative") | free |
+| Alpaca Algo Trader Plus | real time | $99/mo |
+| Schwab API | real time | free with a brokerage account |
+| IBKR + OPRA subscription | real time | small monthly fee |
+
+Real-time option quotes essentially require a brokerage account. Underlying
+(SPY/QQQ) prices from Yahoo are already live, which is why stops use them.
+
+
 Yahoo's stock charts are close to real time, but its **option quotes are
 delayed**. If the bot read a live chart signal and then "bought" at a delayed
 option price, it would be buying at prices from *before* the move it just saw.
@@ -148,7 +164,11 @@ Checked every minute. Whichever happens **first** closes the trade:
      says `estimated` or `quote` for every trade.
 2. **The option loses 50% of its premium.** This backstop uses the option
    quote (adjusted as above), so it keeps working even when chart data fails.
-3. **60 minutes** after entry.
+3. **60 minutes after entry — but only if the trade is going nowhere.** If it
+   is up at least **0.25R** (a quarter of the distance from entry to its
+   initial stop), the clock is ignored and the trailing stop takes over. A
+   strategy that rides swings shouldn't sell a working trade because an hour
+   passed.
 4. **Economic-event exit** (Fed days only, see [section 7](#7-economic-event-days)).
 5. **15:45 ET**: everything still open is closed.
 
@@ -279,6 +299,34 @@ back above the entry price. Three faults, all now fixed:
    at the backstop. Now 0.5%, and the 30% stop cap means a typical stopped
    trade loses ~0.3% rather than the full backstop.
 
+### Day one review (2026-09-21)
+
+All three trades **called the direction correctly** — the market rallied into
+the close and every option finished far above where the bot sold:
+
+| Trade | Sold at | Best price afterwards | Why it sold |
+|---|---|---|---|
+| SPX 7735C | 18.20 (+73%) | **44.00** (+319%) | 60-minute clock |
+| QQQ 738C | 1.02 (flat) | **4.88** (+374%) | 60-minute clock |
+| SPX 7760C | 2.80 (−50%) | **19.00** (+239%) | backstop |
+
+**What worked, and stays:** the entries. Trend plus pullback got the direction
+right three times out of three. The trailing stop never fired early — it was
+never the thing that ended a trade. The spread filter and percentage sizing
+behaved exactly as specified.
+
+**What failed, and changed:** the exits sold winners while their trends were
+intact. The 60-minute clock closed a +73% winner and a flat trade that later
+reached +374%. Simulated on the day's real bars, letting the trailing stop
+manage those two instead gives +264% and +330%, both running to the 15:45
+close. Over 60 days the conditional clock lifts SPY from −0.14R to −0.05R per
+trade and leaves QQQ unchanged, so the change isn't justified by one day
+alone. The third trade's failure is covered above.
+
+**Honest caveat:** −0.05R and −0.14R are within noise at ~100 trades (roughly
+±0.1R). This rule change is better aligned with the strategy's own logic; it
+is not a proven edge, and expectancy is still negative.
+
 ## Where to see results
 
 All state lives on the [`state` branch](https://github.com/charlescox67/odte-bot/tree/state):
@@ -307,7 +355,7 @@ every 10 minutes; trades are saved the minute they happen.
 | Max spread | 10% of ask | `MAX_SPREAD` |
 | Entries per market per day | 3 | `MAX_ENTRIES_PER_DAY` |
 | Daily loss stop | −2% | `DAILY_LOSS_LIMIT` |
-| Time limit | 60 min | `TIME_STOP_MIN` |
+| Time limit | 60 min, unless up ≥ 0.25R | `TIME_STOP_MIN`, `TIME_STOP_KEEP_R` |
 | Swing definition | beats 2 bars each side | `swing_signal.py` `PIVOT_K` |
 | Swing must be recent | confirmed within 30 min | `FRESH_BARS` (6 bars) |
 | Trend averages | 9 and 21 bars (5-min) | `EMA_FAST`, `EMA_SLOW` |

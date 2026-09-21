@@ -44,6 +44,12 @@ MAX_SPREAD = 0.10               # skip if bid-ask exceeds 10% of the ask
 MAX_ENTRIES_PER_DAY = 3         # per market
 DAILY_LOSS_LIMIT = 0.02         # of start-of-day equity: no new entries past it
 TIME_STOP_MIN = 60
+# ...but a trade that is working is handed to the trailing stop instead of
+# being closed on the clock. Day one closed a +73% winner at 60 minutes that
+# went on to +319%, and a flat trade that reached +374%. Over 60 days this
+# lifts SPY from -0.14R to -0.05R per trade and leaves QQQ unchanged. The
+# threshold is R = the distance from entry to the initial stop.
+TIME_STOP_KEEP_R = 0.25
 # The chart stop must be close enough to fire BEFORE the premium backstop. A
 # stop 1.0 away on a $5.60 option cost ~90% of it, so the backstop always won
 # and the swing stop never acted. Cap the distance at what 30% of premium buys.
@@ -135,6 +141,17 @@ def est_delta(tbl, strike: float, right: str) -> float:
     return sign * min(0.95, max(0.15, abs(d)))
 
 
+def progress_r(pos, live_px: float | None) -> float | None:
+    """How far the trade has come, in units of its own initial risk."""
+    if live_px is None or pos.stop_at_entry is None:
+        return None
+    risk = abs(pos.underlying_at_entry - pos.stop_at_entry)
+    if risk <= 0:
+        return None
+    sign = 1.0 if pos.right == "C" else -1.0
+    return sign * (live_px - pos.underlying_at_entry) / risk
+
+
 def cap_stop(side: str, ref: float, pivot: float, ask: float, delta: float) -> float:
     """Pull the stop in so reaching it costs at most STOP_COST_CAP of premium."""
     max_dist = STOP_COST_CAP * ask / abs(delta)
@@ -215,7 +232,13 @@ def manage(book: pe.Book, sym: str, t_now: datetime, asof: datetime,
                         else live_px > pos.stop_underlying):
                     reason = "swing_stop"
             if reason is None:
-                reason = ("time_stop" if held >= timedelta(minutes=TIME_STOP_MIN) else
+                # The clock only closes trades that are going nowhere; a
+                # working trade is left to the trailing stop. No live price
+                # means no judgement, so the clock applies as before.
+                r_now = progress_r(pos, live_px)
+                aged = held >= timedelta(minutes=TIME_STOP_MIN)
+                reason = ("time_stop" if aged and (r_now is None
+                                                   or r_now < TIME_STOP_KEEP_R) else
                           "event_flatten" if profile.flatten_at
                                              and asof.time() >= profile.flatten_at else
                           "eod" if t_now.time() >= FLATTEN_AT else None)

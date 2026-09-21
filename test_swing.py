@@ -120,6 +120,22 @@ check("put marks down as price rises", rb.adjust_mark(5.00, -0.50, 773.0, 772.0)
 check("never below zero", rb.adjust_mark(0.20, 0.50, 760.0, 772.0), 0.0)
 check("no data -> unchanged", rb.adjust_mark(5.00, None, None, 772.0), 5.00)
 
+print("\nthe clock only closes trades going nowhere")
+class FakePos:
+    right, underlying_at_entry, stop_at_entry = "C", 100.0, 99.0   # 1R = 1.00
+check("flat trade", rb.progress_r(FakePos(), 100.0), 0.0)
+check("up half its risk", rb.progress_r(FakePos(), 100.5), 0.5)
+check("below entry", rb.progress_r(FakePos(), 99.5), -0.5)
+class FakePut(FakePos):
+    right, stop_at_entry = "P", 101.0
+check("puts measure downward", rb.progress_r(FakePut(), 99.0), 1.0)
+class NoStop(FakePos):
+    stop_at_entry = None
+check("no stop recorded -> unknown", rb.progress_r(NoStop(), 100.0), None)
+check("no live price -> unknown", rb.progress_r(FakePos(), None), None)
+check("a working trade is held", 0.30 >= rb.TIME_STOP_KEEP_R, True)
+check("a dead trade is closed", 0.10 < rb.TIME_STOP_KEEP_R, True)
+
 print("\ndaily loss limit")
 import tempfile
 from pathlib import Path
