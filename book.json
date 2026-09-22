@@ -89,7 +89,7 @@
       "entry_reason": "swing H1205",
       "underlying_at_entry": 744.2901000976562,
       "status": "open",
-      "mark": 5.93,
+      "mark": 5.639962158203125,
       "exit_price": null,
       "exit_time": null,
       "exit_reason": null,
@@ -99,7 +99,7 @@
       "stop_underlying": 745.1500244140625,
       "spread_at_entry": 0.24,
       "event_day": "",
-      "exit_basis": ""
+      "exit_basis": "estimated"
     }
   ]
 }
