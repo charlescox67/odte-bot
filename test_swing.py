@@ -136,6 +136,22 @@ check("no live price -> unknown", rb.progress_r(FakePos(), None), None)
 check("a working trade is held", 0.30 >= rb.TIME_STOP_KEEP_R, True)
 check("a dead trade is closed", 0.10 < rb.TIME_STOP_KEEP_R, True)
 
+print("\nexit rules, in priority order")
+from datetime import time as T
+E = lambda **k: rb.decide_exit(**{**dict(pct=0.0, stop_broken=False, aged=False,
+                                         r_now=0.0, asof_t=T(11, 0)), **k})
+check("nothing to do -> hold", E(), None)
+check("tanking: stop broken -> sell", E(stop_broken=True), "swing_stop")
+check("down 50% -> backstop", E(pct=-0.50), "backstop")
+check("up 60% -> take the profit", E(pct=0.60), "target")
+check("up 59% -> keep holding", E(pct=0.59), None)
+check("tanking beats everything else", E(pct=0.70, stop_broken=True), "swing_stop")
+check("60m and going nowhere -> close (decay)", E(aged=True, r_now=0.10), "time_stop")
+check("60m but working -> hold", E(aged=True, r_now=0.40), None)
+check("14:45 -> out, however it's doing", E(asof_t=T(14, 45), r_now=0.9, pct=0.3), "eod")
+check("14:44 -> still holding", E(asof_t=T(14, 44), r_now=0.9, pct=0.3), None)
+check("FOMC early flatten", E(asof_t=T(13, 55), event_flatten=T(13, 55)), "event_flatten")
+
 print("\ndaily loss limit")
 import tempfile
 from pathlib import Path

@@ -35,7 +35,9 @@ MARKETS = {"SPY": "SPY", "QQQ": "QQQ"}
 # Entry window on the LAGGED clock (the market time our fills are priced at).
 ENTRY_START = dtime(10, 0)      # lets real pivots form after the open
 NO_ENTRY_AFTER = dtime(14, 0)   # late-day gamma
-FLATTEN_AT = dtime(15, 45)      # wall clock
+# Everything is out by 14:45 on the lagged clock (the market time exits are
+# priced at): the last hour is where 0DTE time decay is steepest.
+FLATTEN_AT = dtime(14, 45)
 
 RISK_PCT = 0.005                # of equity, lost if the backstop is hit
 BACKSTOP = 0.50                 # exit if the option loses half its premium
@@ -50,6 +52,10 @@ TIME_STOP_MIN = 60
 # lifts SPY from -0.14R to -0.05R per trade and leaves QQQ unchanged. The
 # threshold is R = the distance from entry to the initial stop.
 TIME_STOP_KEEP_R = 0.25
+# Take the profit once the option is up 60%: twice the ~30% the stop risks.
+# Checked on the (conservatively adjusted) option price, so a booked profit is
+# one the delayed feed actually printed.
+TARGET_PCT = 0.60
 # The chart stop must be close enough to fire BEFORE the premium backstop. A
 # stop 1.0 away on a $5.60 option cost ~90% of it, so the backstop always won
 # and the swing stop never acted. Cap the distance at what 30% of premium buys.
@@ -141,6 +147,25 @@ def est_delta(tbl, strike: float, right: str) -> float:
     return sign * min(0.95, max(0.15, abs(d)))
 
 
+def decide_exit(*, pct: float, stop_broken: bool, aged: bool,
+                r_now: float | None, asof_t, event_flatten=None) -> str | None:
+    """Why to close, in priority order, or None to hold.
+    Losses first (never hold something tanking), then profit, then decay."""
+    if pct <= -BACKSTOP:
+        return "backstop"
+    if stop_broken:
+        return "swing_stop"
+    if pct >= TARGET_PCT:
+        return "target"
+    if aged and (r_now is None or r_now < TIME_STOP_KEEP_R):
+        return "time_stop"          # going nowhere while the premium decays
+    if event_flatten and asof_t >= event_flatten:
+        return "event_flatten"
+    if asof_t >= FLATTEN_AT:
+        return "eod"
+    return None
+
+
 def progress_r(pos, live_px: float | None) -> float | None:
     """How far the trade has come, in units of its own initial risk."""
     if live_px is None or pos.stop_at_entry is None:
@@ -219,29 +244,22 @@ def manage(book: pe.Book, sym: str, t_now: datetime, asof: datetime,
             pos.exit_basis = "estimated" if pos.mark < quoted else "quote"
             held = t_now - datetime.fromisoformat(pos.entry_time).astimezone(ET)
             pct = pos.pnl_pct(pos.mark)
-            reason = "backstop" if pct <= -BACKSTOP else None
-            if reason is None and sig_bars is not None and pos.stop_underlying is not None:
+            stop_broken = False
+            if sig_bars is not None and pos.stop_underlying is not None:
                 new = sw.trail_stop(sig_bars, asof, pos.right, pos.stop_underlying)
                 if new != pos.stop_underlying:
                     print(f"  TRAIL {pos.contract} stop {pos.stop_underlying:.2f} -> {new:.2f}")
                     pos.stop_underlying = new
                 # Checked on the LIVE price, not the lagged one: the chart is
                 # real time, so a break is acted on now rather than 20 min late.
-                if live_px is not None and (
-                        live_px < pos.stop_underlying if pos.right == "C"
-                        else live_px > pos.stop_underlying):
-                    reason = "swing_stop"
-            if reason is None:
-                # The clock only closes trades that are going nowhere; a
-                # working trade is left to the trailing stop. No live price
-                # means no judgement, so the clock applies as before.
-                r_now = progress_r(pos, live_px)
-                aged = held >= timedelta(minutes=TIME_STOP_MIN)
-                reason = ("time_stop" if aged and (r_now is None
-                                                   or r_now < TIME_STOP_KEEP_R) else
-                          "event_flatten" if profile.flatten_at
-                                             and asof.time() >= profile.flatten_at else
-                          "eod" if t_now.time() >= FLATTEN_AT else None)
+                stop_broken = live_px is not None and (
+                    live_px < pos.stop_underlying if pos.right == "C"
+                    else live_px > pos.stop_underlying)
+            reason = decide_exit(
+                pct=pct, stop_broken=stop_broken,
+                aged=held >= timedelta(minutes=TIME_STOP_MIN),
+                r_now=progress_r(pos, live_px), asof_t=asof.time(),
+                event_flatten=profile.flatten_at)
             if reason:
                 book.close(pos, bid=pos.mark, reason=reason)
                 print(f"  CLOSE {pos.contract} x{pos.qty} @ {pos.mark:.2f} ({reason}) "

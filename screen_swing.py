@@ -21,7 +21,7 @@ from run_bot import (ENTRY_START, NO_ENTRY_AFTER, MAX_ENTRIES_PER_DAY,
                      TIME_STOP_MIN, TIME_STOP_KEEP_R)
 from yahoo_data import bars
 
-FLATTEN_BAR = time(15, 40)  # the bar ending 15:45
+FLATTEN_BAR = time(14, 40)  # the bar ending 14:45 (run_bot.FLATTEN_AT)
 
 
 def replay(day: pd.DataFrame) -> list[dict]:
