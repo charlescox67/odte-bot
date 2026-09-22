@@ -379,3 +379,7 @@ SPY: C setup L1340 stop 773.10 (SPY) — stop pulled in to 773.76 (pivot 773.10 
   OPEN  SPY260922C00774000 x17 @ ask 0.57 (bid 0.56) SPY 774.09 | stop 773.76 (delta +0.52)
 QQQ: no setup as of 13:55 | trend up | vwap 744.65 | last low 744.83@1340 high 745.67@1325 | close 746.17
 equity $100,385.50 | cash $98,570.50 | open 2 | closed 5
+--- tick 2026-09-22 14:16:00 EDT (signals as of 13:56) ---
+SPY: no setup as of 13:56 | trend up | vwap 773.66 | last low 773.10@1340 high 773.59@1325 | close 774.09
+QQQ: no setup as of 13:56 | trend up | vwap 744.66 | last low 744.83@1340 high 745.67@1325 | close 746.17
+equity $99,939.22 | cash $98,570.50 | open 2 | closed 5
