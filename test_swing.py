@@ -152,6 +152,42 @@ check("14:45 -> out, however it's doing", E(asof_t=T(14, 45), r_now=0.9, pct=0.3
 check("14:44 -> still holding", E(asof_t=T(14, 44), r_now=0.9, pct=0.3), None)
 check("FOMC early flatten", E(asof_t=T(13, 55), event_flatten=T(13, 55)), "event_flatten")
 
+print("\nhard breakout vs slow grind")
+def one_min(closes, opens=None):
+    idx = pd.DatetimeIndex([DAY + timedelta(minutes=i) for i in range(len(closes))])
+    o = opens or [closes[0]] + closes[:-1]
+    return pd.DataFrame({"open": o, "high": [max(a, b) for a, b in zip(o, closes)],
+                         "low": [min(a, b) for a, b in zip(o, closes)],
+                         "close": closes, "volume": 1000}, index=idx)
+end = lambda df: df.index[-1] + timedelta(minutes=1)
+straight = one_min([100 + 0.1 * i for i in range(25)])           # +1.0 in 10 min, no dips
+check("straight line = efficiency 1.0", round(sw.efficiency(straight, end(straight)), 2), 1.0)
+check("fast and clean -> breaking out", sw.breaking_out(straight, end(straight), "C", 0.5), True)
+check("same move vs a wide stop -> just a grind", sw.breaking_out(straight, end(straight), "C", 2.0), False)
+check("puts need the move DOWN", sw.breaking_out(straight, end(straight), "P", 0.5), False)
+zig = one_min([100 + (0.3 if i % 2 else 0) + 0.02 * i for i in range(25)])  # ups and downs
+check("ups and downs = low efficiency", sw.efficiency(zig, end(zig)) < 0.5, True)
+check("choppy rise -> not a breakout", sw.breaking_out(zig, end(zig), "C", 0.1), False)
+
+calm = [100 + (0.05 if i % 2 else 0) for i in range(22)]
+dip = one_min(calm + [99.75], None)                                # red body 0.30 vs typical 0.05
+check("deep red candle -> dip", sw.deep_dip(dip, end(dip), "C"), True)
+small = one_min(calm + [99.95])
+check("ordinary red candle -> no dip", sw.deep_dip(small, end(small), "C"), False)
+check("for puts, a deep RED candle is good news", sw.deep_dip(dip, end(dip), "P"), False)
+pop = one_min(calm + [100.35])
+check("for puts, a deep GREEN candle is the dip", sw.deep_dip(pop, end(pop), "P"), True)
+
+print("\nrunner mode")
+check("+60% on a slow grind -> take the profit", E(pct=0.60, strong=False), "target")
+check("+60% breaking out hard -> become a runner", E(pct=0.60, strong=True), "runner")
+check("runner keeps going above +60%", E(pct=1.50, runner=True), None)
+check("runner: deep red candle -> sell", E(pct=1.50, runner=True, dip=True), "runner_dip")
+check("runner: falls back under +60% -> sell", E(pct=0.55, runner=True), "runner_floor")
+check("runner ignores the decay clock", E(pct=0.90, runner=True, aged=True, r_now=0.1), None)
+check("runner still obeys the stop", E(pct=0.90, runner=True, stop_broken=True), "swing_stop")
+check("runner still out at 14:45", E(pct=2.0, runner=True, asof_t=T(14, 45)), "eod")
+
 print("\ndaily loss limit")
 import tempfile
 from pathlib import Path

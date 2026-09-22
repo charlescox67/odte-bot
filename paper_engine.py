@@ -63,6 +63,7 @@ class Position:
     spread_at_entry: float | None = None
     event_day: str = ""
     exit_basis: str = ""      # "quote" or "estimated" (live-adjusted)
+    runner: bool = False      # reached +60% while breaking out hard
 
     @property
     def cost(self) -> float:

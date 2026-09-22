@@ -165,10 +165,24 @@ going wrong is never held; then profit; then time decay.
      says `estimated` or `quote` for every trade.
 2. **The option loses 50% of its premium.** This backstop uses the option
    quote (adjusted as above), so it keeps working even when chart data fails.
-3. **Take the profit at +60%.** Twice the ~30% the capped stop risks, so
-   winners pay for two losers. Checked on the option price as marked (only
-   ever adjusted down from the delayed quote), so a booked profit is one the
-   feed actually printed.
+3. **Take the profit at +60% — unless it's breaking out hard.** When the
+   option reaches +60%, the bot looks at the last 10 one-minute candles of
+   the stock:
+   - **Slow grind, with ups and downs** → sell at +60%. Twice the ~30% the
+     stop risks, so one winner covers two losers.
+   - **Breaking out hard** → hold it as a **runner**. "Hard" means fast (at
+     least 1R, the full stop distance, in those 10 minutes) *and* clean (an
+     efficiency of 0.5 or more: at least half of all the up-and-down movement
+     went one way). A runner is sold on the first **deep red candle** — a
+     1-minute body at least 2.5× the size of a typical recent candle — or if
+     the option falls back **below +60%**, so a runner never finishes worse
+     than the plain target. The 14:45 exit and the stops still apply.
+
+   Both checks read the **live** candles. Tested on 18 days of 1-minute data:
+   3 trades became runners. The one that failed gave back a sliver (+1.87R vs
+   +2.06R at the plain target); the two that worked averaged +3.50R vs
+   +2.16R, the best running to +5.0R. Three trades is a sanity check that the
+   rule behaves as intended, not proof.
 4. **Time decay: 60 minutes and going nowhere.** If the trade is up less than
    **0.25R** (a quarter of its entry-to-stop distance) after an hour, it is
    closed before decay eats it. A trade that is working keeps going.
@@ -349,7 +363,9 @@ every 10 minutes; trades are saved the minute they happen.
 | Stops checked on | live price | `live_price`, `adjust_mark` |
 | Entry window (lagged clock) | 10:00–14:00 ET | `ENTRY_START`, `NO_ENTRY_AFTER` |
 | End-of-day exit | 14:45 ET (lagged clock) | `FLATTEN_AT` |
-| Profit target | +60% of premium | `TARGET_PCT` |
+| Profit target | +60% of premium, unless breaking out hard | `TARGET_PCT` |
+| Hard breakout | ≥1R in 10 min and efficiency ≥0.5 | `swing_signal.py` `BREAKOUT_*` |
+| Deep red candle | body ≥2.5× typical 1-min move | `DEEP_DIP_MULT` |
 | Risk per trade | 0.5% of equity at the backstop | `RISK_PCT` |
 | Max cost of reaching the stop | 30% of premium | `STOP_COST_CAP` |
 | Premium backstop | −50% | `BACKSTOP` |

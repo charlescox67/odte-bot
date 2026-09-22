@@ -160,3 +160,47 @@ def summary(df_1m: pd.DataFrame, asof: datetime) -> str:
     lo = f"{b['low'].iloc[lows[-1]]:.2f}@{b.index[lows[-1]]:%H%M}" if lows else "-"
     hi = f"{b['high'].iloc[highs[-1]]:.2f}@{b.index[highs[-1]]:%H%M}" if highs else "-"
     return f"trend {t} | vwap {vwap:.2f} | last low {lo} high {hi} | close {b['close'].iloc[-1]:.2f}"
+
+
+# ---- profit-taking: hard breakout vs slow grind ---------------------------
+BREAKOUT_BARS = 10       # look at the last 10 one-minute candles
+BREAKOUT_EFFICIENCY = 0.5  # >= half of all movement in one direction
+BREAKOUT_MOVE_R = 1.0    # and covering at least 1R in those 10 minutes
+DEEP_DIP_MULT = 2.5      # a red candle 2.5x the size of a typical candle
+DIP_LOOKBACK = 20
+
+
+def efficiency(df_1m: pd.DataFrame, asof: datetime, n: int = BREAKOUT_BARS) -> float | None:
+    """Net move / total distance travelled over the last n candles.
+    1.0 = a straight line; near 0 = all ups and downs, going nowhere."""
+    c = complete_1m(df_1m, asof)["close"]
+    if len(c) < n + 1:
+        return None
+    path = c.diff().abs().iloc[-n:].sum()
+    return None if path <= 0 else float(abs(c.iloc[-1] - c.iloc[-1 - n]) / path)
+
+
+def breaking_out(df_1m: pd.DataFrame, asof: datetime, side: str, risk: float) -> bool:
+    """Breaking out HARD: fast (>= 1R in 10 minutes, in the trade's direction)
+    AND clean (efficiency >= 0.5). A slow grind fails one or the other."""
+    c = complete_1m(df_1m, asof)["close"]
+    er = efficiency(df_1m, asof)
+    if er is None or risk <= 0:
+        return False
+    sign = 1.0 if side == "C" else -1.0
+    move = sign * (c.iloc[-1] - c.iloc[-1 - BREAKOUT_BARS])
+    return er >= BREAKOUT_EFFICIENCY and move >= BREAKOUT_MOVE_R * risk
+
+
+def deep_dip(df_1m: pd.DataFrame, asof: datetime, side: str) -> bool:
+    """The last completed candle went hard AGAINST the trade: a body at least
+    DEEP_DIP_MULT times the typical one-minute move of the prior 20 candles.
+    Relative to the stock's own recent behaviour, so 'deep' means the same
+    thing on a quiet day and a wild one."""
+    d = complete_1m(df_1m, asof)
+    if len(d) < DIP_LOOKBACK + 2:
+        return False
+    last = d.iloc[-1]
+    against = (last["open"] - last["close"]) if side == "C" else (last["close"] - last["open"])
+    typical = d["close"].diff().abs().iloc[-DIP_LOOKBACK - 1:-1].median()
+    return bool(typical > 0 and against >= DEEP_DIP_MULT * typical)

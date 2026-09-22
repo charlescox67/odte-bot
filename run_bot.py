@@ -56,6 +56,11 @@ TIME_STOP_KEEP_R = 0.25
 # Checked on the (conservatively adjusted) option price, so a booked profit is
 # one the delayed feed actually printed.
 TARGET_PCT = 0.60
+# ...unless the stock is breaking out HARD when the target is reached
+# (swing_signal.breaking_out: >= 1R in 10 min, efficiency >= 0.5). Then the
+# trade becomes a runner: held until a deep red candle (swing_signal.deep_dip)
+# or until it falls back below +60%, so a runner never ends worse than the
+# plain target would have. Slow grinds with ups and downs still sell at +60%.
 # The chart stop must be close enough to fire BEFORE the premium backstop. A
 # stop 1.0 away on a $5.60 option cost ~90% of it, so the backstop always won
 # and the swing stop never acted. Cap the distance at what 30% of premium buys.
@@ -148,16 +153,24 @@ def est_delta(tbl, strike: float, right: str) -> float:
 
 
 def decide_exit(*, pct: float, stop_broken: bool, aged: bool,
-                r_now: float | None, asof_t, event_flatten=None) -> str | None:
+                r_now: float | None, asof_t, event_flatten=None,
+                runner: bool = False, strong: bool = False,
+                dip: bool = False) -> str | None:
     """Why to close, in priority order, or None to hold.
-    Losses first (never hold something tanking), then profit, then decay."""
+    Losses first (never hold something tanking), then profit, then decay.
+    Returns "runner" to mean: don't sell at the target, switch to runner mode."""
     if pct <= -BACKSTOP:
         return "backstop"
     if stop_broken:
         return "swing_stop"
-    if pct >= TARGET_PCT:
-        return "target"
-    if aged and (r_now is None or r_now < TIME_STOP_KEEP_R):
+    if runner:
+        if dip:
+            return "runner_dip"     # the deep red candle
+        if pct < TARGET_PCT:
+            return "runner_floor"   # never finish worse than the plain target
+    elif pct >= TARGET_PCT:
+        return "runner" if strong else "target"
+    if not runner and aged and (r_now is None or r_now < TIME_STOP_KEEP_R):
         return "time_stop"          # going nowhere while the premium decays
     if event_flatten and asof_t >= event_flatten:
         return "event_flatten"
@@ -255,11 +268,22 @@ def manage(book: pe.Book, sym: str, t_now: datetime, asof: datetime,
                 stop_broken = live_px is not None and (
                     live_px < pos.stop_underlying if pos.right == "C"
                     else live_px > pos.stop_underlying)
+            risk = (abs(pos.underlying_at_entry - pos.stop_at_entry)
+                    if pos.stop_at_entry is not None else 0.0)
+            live = sig_bars is not None
             reason = decide_exit(
                 pct=pct, stop_broken=stop_broken,
                 aged=held >= timedelta(minutes=TIME_STOP_MIN),
                 r_now=progress_r(pos, live_px), asof_t=asof.time(),
-                event_flatten=profile.flatten_at)
+                event_flatten=profile.flatten_at, runner=pos.runner,
+                # both read the LIVE candles: the move is happening now
+                strong=live and sw.breaking_out(sig_bars, t_now, pos.right, risk),
+                dip=live and pos.runner and sw.deep_dip(sig_bars, t_now, pos.right))
+            if reason == "runner":
+                pos.runner = True
+                print(f"  RUNNER {pos.contract} at {pct:+.0%}: breaking out hard, "
+                      f"holding for a deep red candle (floor +{TARGET_PCT:.0%})")
+                reason = None
             if reason:
                 book.close(pos, bid=pos.mark, reason=reason)
                 print(f"  CLOSE {pos.contract} x{pos.qty} @ {pos.mark:.2f} ({reason}) "
