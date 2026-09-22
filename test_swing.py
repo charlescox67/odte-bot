@@ -204,6 +204,15 @@ row, k, _ = rb.chain_quote("QQQ", "2026-09-22", "P", 744.29)
 check("complete chain -> nearest strike", k, 744.0)
 rb.yf.Ticker = real_ticker
 
+print("\nno buying a setup that is already failing on live prices")
+check("09-22 QQQ put: 34% used at entry", round(rb.room_used("P", 744.29, 745.15, 744.58), 2), 0.34)
+check("34% -> still allowed", rb.room_used("P", 744.29, 745.15, 744.58) < rb.MAX_USED_AT_ENTRY, True)
+check("halfway to the stop -> skip", rb.room_used("P", 744.29, 745.15, 744.72) >= rb.MAX_USED_AT_ENTRY, True)
+check("already through the stop -> skip", rb.room_used("P", 744.29, 745.15, 745.40) >= 1.0, True)
+check("moved in our favour -> 0 used", rb.room_used("P", 744.29, 745.15, 743.90), 0.0)
+check("calls mirror", round(rb.room_used("C", 100.0, 99.0, 99.6), 2), 0.4)
+check("no live price -> no judgement", rb.room_used("C", 100.0, 99.0, None), 0.0)
+
 print("\ndaily loss limit")
 import tempfile
 from pathlib import Path

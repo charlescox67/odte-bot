@@ -48,6 +48,10 @@ MAX_SPREAD = 0.10               # skip if bid-ask exceeds 10% of the ask
 # bought a deep in-the-money put. The nearest quoted strike must sit within
 # 0.25% of the price (at least $1), or the entry waits for a complete chain.
 MAX_STRIKE_GAP = 0.0025
+# Entries are priced ~20 min in the past but stops watch the LIVE price, so a
+# setup can already be failing by the time it is bought: on 2026-09-22 QQQ had
+# used 34% of the room to the stop before the entry. Skip if half is gone.
+MAX_USED_AT_ENTRY = 0.5
 MAX_ENTRIES_PER_DAY = 3         # per market
 DAILY_LOSS_LIMIT = 0.02         # of start-of-day equity: no new entries past it
 TIME_STOP_MIN = 60
@@ -193,6 +197,16 @@ def progress_r(pos, live_px: float | None) -> float | None:
         return None
     sign = 1.0 if pos.right == "C" else -1.0
     return sign * (live_px - pos.underlying_at_entry) / risk
+
+
+def room_used(side: str, entry_px: float, stop: float, live_px: float | None) -> float:
+    """Fraction of the entry-to-stop distance already lost on LIVE prices.
+    0 = untouched (or moved in our favour), 1+ = the stop is already broken."""
+    risk = abs(entry_px - stop)
+    if live_px is None or risk <= 0:
+        return 0.0
+    against = (entry_px - live_px) if side == "C" else (live_px - entry_px)
+    return max(0.0, against / risk)
 
 
 def cap_stop(side: str, ref: float, pivot: float, ask: float, delta: float) -> float:
@@ -345,6 +359,10 @@ def consider_entry(book: pe.Book, sym: str, sig_sym: str, sig_bars,
     if abs(stop - setup.stop) > 1e-9:
         print(f"{tag} — stop pulled in to {stop:.2f} "
               f"(pivot {setup.stop:.2f} would cost ~{abs(ref - setup.stop) * abs(delta) / ask:.0%})")
+    used = room_used(setup.side, ref, stop, live_price(sig_bars, t_now))
+    if used >= MAX_USED_AT_ENTRY:
+        print(f"{tag} — already failing on live prices ({used:.0%} of the room "
+              f"to the stop used since the signal)"); return
     qty = size_qty(book.equity(), ask, profile.risk_mult)
     if qty < 1:
         print(f"{tag} — ask {ask:.2f} too expensive for the risk budget"); return
