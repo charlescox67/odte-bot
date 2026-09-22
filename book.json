@@ -144,7 +144,7 @@
       "entry_reason": "swing L1320",
       "underlying_at_entry": 745.2999877929688,
       "status": "open",
-      "mark": 1.271125946044922,
+      "mark": 1.2503097534179688,
       "exit_price": null,
       "exit_time": null,
       "exit_reason": null,
@@ -170,7 +170,7 @@
       "entry_reason": "swing L1340",
       "underlying_at_entry": 774.0900268554688,
       "status": "open",
-      "mark": 0.411090087890625,
+      "mark": 0.44,
       "exit_price": null,
       "exit_time": null,
       "exit_reason": null,
@@ -180,7 +180,7 @@
       "stop_underlying": 773.7611807016226,
       "spread_at_entry": 0.01,
       "event_day": "",
-      "exit_basis": "estimated",
+      "exit_basis": "quote",
       "runner": false
     }
   ]
