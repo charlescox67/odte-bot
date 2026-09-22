@@ -118,7 +118,7 @@
       "entry_reason": "swing L1225",
       "underlying_at_entry": 745.3150024414062,
       "status": "open",
-      "mark": 0.88,
+      "mark": 0.8668850708007813,
       "exit_price": null,
       "exit_time": null,
       "exit_reason": null,
@@ -128,7 +128,7 @@
       "stop_underlying": 744.8393267657306,
       "spread_at_entry": 0.01,
       "event_day": "",
-      "exit_basis": "",
+      "exit_basis": "estimated",
       "runner": false
     }
   ]
