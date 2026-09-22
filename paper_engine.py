@@ -34,7 +34,8 @@ TRADE_COLUMNS = ["id", "symbol", "contract", "right", "strike", "expiry", "qty",
                  "exit_time", "exit_price", "exit_reason", "cost", "proceeds",
                  "pnl", "pnl_pct",
                  "signal_symbol", "setup", "stop_at_entry", "stop_final",
-                 "spread_at_entry", "event_day", "exit_basis"]
+                 "spread_at_entry", "event_day", "exit_basis",
+                 "bb_pct", "bb_squeeze", "vs_dow_30m"]
 
 
 @dataclass
@@ -64,6 +65,10 @@ class Position:
     event_day: str = ""
     exit_basis: str = ""      # "quote" or "estimated" (live-adjusted)
     runner: bool = False      # reached +60% while breaking out hard
+    # recorded at entry, not used as rules (see swing_signal.bollinger)
+    bb_pct: float | None = None       # position in Bollinger Bands, 5m
+    bb_squeeze: bool | None = None
+    vs_dow_30m: float | None = None   # % beat (+) / lagged (-) the Dow, 30 min
 
     @property
     def cost(self) -> float:
@@ -179,7 +184,8 @@ class Book:
                         f"{pos.cost:.2f}", f"{pos.exit_price * pos.qty * MULTIPLIER:.2f}",
                         f"{pos.pnl():.2f}", f"{pos.pnl_pct():.4f}",
                         pos.signal_symbol or "", pos.setup, pos.stop_at_entry,
-                        pos.stop_underlying, pos.spread_at_entry, pos.event_day, pos.exit_basis])
+                        pos.stop_underlying, pos.spread_at_entry, pos.event_day, pos.exit_basis,
+                        pos.bb_pct, pos.bb_squeeze, pos.vs_dow_30m])
 
     def equity(self) -> float:
         return self.cash + sum(p.mark * p.qty * MULTIPLIER for p in self.open_positions)

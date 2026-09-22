@@ -366,14 +366,24 @@ def consider_entry(book: pe.Book, sym: str, sig_sym: str, sig_bars,
     qty = size_qty(book.equity(), ask, profile.risk_mult)
     if qty < 1:
         print(f"{tag} — ask {ask:.2f} too expensive for the risk budget"); return
+    # Context recorded for later review; a missing Dow feed never blocks a trade.
+    bb = sw.bollinger(sig_bars, asof)
+    dow = retry(lambda: bars_1m("DIA"), tries=1, label="DIA bars")
+    rel = sw.vs_dow(sig_bars, dow, asof) if dow is not None else None
     pos = book.open(symbol=sym, contract=row.contractSymbol, right=setup.side,
                     strike=strike, expiry=t_now.date().isoformat(), qty=qty, ask=ask,
                     underlying=ref, reason=f"swing {setup.pivot_id}",
                     signal_symbol=sig_sym, setup=setup.pivot_id,
                     stop_at_entry=stop, stop_underlying=stop,
-                    spread_at_entry=round(ask - bid, 4), event_day=profile.label)
+                    spread_at_entry=round(ask - bid, 4), event_day=profile.label,
+                    bb_pct=None if bb is None else round(bb[0], 3),
+                    bb_squeeze=None if bb is None else bb[1],
+                    vs_dow_30m=None if rel is None else round(rel, 3))
     print(f"  OPEN  {pos.contract} x{qty} @ ask {ask:.2f} (bid {bid:.2f}) "
           f"{sym} {ref:.2f} | stop {stop:.2f} (delta {delta:+.2f})"
+          f" | bands %B {'-' if bb is None else f'{bb[0]:.2f}'}"
+          f"{' SQUEEZE' if bb and bb[1] else ''}"
+          f" | vs Dow {'-' if rel is None else f'{rel:+.2f}%'}"
           f"{' | ' + profile.label if profile.label else ''}")
 
 

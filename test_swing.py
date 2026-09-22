@@ -213,6 +213,28 @@ check("moved in our favour -> 0 used", rb.room_used("P", 744.29, 745.15, 743.90)
 check("calls mirror", round(rb.room_used("C", 100.0, 99.0, 99.6), 2), 0.4)
 check("no live price -> no judgement", rb.room_used("C", 100.0, 99.0, None), 0.0)
 
+print("\nrecorded context: Bollinger Bands and strength vs the Dow")
+def mins(closes):
+    idx = pd.DatetimeIndex([DAY + timedelta(minutes=i) for i in range(len(closes))])
+    return pd.DataFrame({"open": closes, "high": closes, "low": closes, "close": closes,
+                         "volume": 1000}, index=idx)
+fin = lambda df: df.index[-1] + timedelta(minutes=1)
+quiet = [100 + (0.05 if (i // 5) % 2 else 0) for i in range(120)]
+spike = mins(quiet[:-5] + [101.0] * 5)
+bb = sw.bollinger(spike, fin(spike))
+check("close far above the upper band -> %B > 1", bb is not None and bb[0] > 1, True)
+calm_mid = mins(quiet)
+check("sitting mid-range -> %B between 0 and 1", 0 <= sw.bollinger(calm_mid, fin(calm_mid))[0] <= 1, True)
+wide_then_tight = mins([100 + (0.8 if (i // 5) % 2 else 0) for i in range(80)] +
+                       [100.4 + (0.02 if (i // 5) % 2 else 0) for i in range(120)])
+check("bands narrowing -> squeeze", sw.bollinger(wide_then_tight, fin(wide_then_tight))[1], True)
+check("too few bars -> nothing", sw.bollinger(mins(quiet[:50]), fin(mins(quiet[:50]))), None)
+sym_up = mins([100 + i * (1.0 / 30) for i in range(31)])     # +1% in 30 min
+dow_flat = mins([400.0] * 31)
+check("beat a flat Dow by 1%", round(sw.vs_dow(sym_up, dow_flat, fin(sym_up)), 2), 1.0)
+dow_up = mins([400 + i * (2.0 / 30) for i in range(31)])     # Dow +0.5%
+check("flat while the Dow rose 0.5%", round(sw.vs_dow(mins([100.0] * 31), dow_up, fin(dow_up)), 2), -0.5)
+
 print("\ndaily loss limit")
 import tempfile
 from pathlib import Path

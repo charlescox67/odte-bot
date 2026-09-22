@@ -204,3 +204,39 @@ def deep_dip(df_1m: pd.DataFrame, asof: datetime, side: str) -> bool:
     against = (last["open"] - last["close"]) if side == "C" else (last["close"] - last["open"])
     typical = d["close"].diff().abs().iloc[-DIP_LOOKBACK - 1:-1].median()
     return bool(typical > 0 and against >= DEEP_DIP_MULT * typical)
+
+
+# ---- recorded context (not filters): Bollinger Bands, strength vs the Dow --
+# Screened 2026-09-22 and NOT used as rules: band breaks continued ~50% of the
+# time on SPY/QQQ 1-minute data, and relative strength vs the Dow did not
+# separate winners from losers over 60 days (for SPY it pointed the wrong
+# way). They are recorded on every trade so real results can settle it.
+BB_BARS, BB_STD = 20, 2.0
+
+
+def bollinger(df_1m: pd.DataFrame, asof: datetime) -> tuple[float, bool] | None:
+    """(%B, squeeze) on 5-minute bars. %B: 0 = lower band, 0.5 = middle,
+    1 = upper band, >1 = closed above it. Squeeze: band width in the bottom
+    fifth of the session so far, the setup that often precedes a breakout."""
+    c = to_5m(df_1m, asof)["close"]
+    if len(c) < BB_BARS:
+        return None
+    mid = c.rolling(BB_BARS).mean(); sd = c.rolling(BB_BARS).std()
+    up, lo = mid + BB_STD * sd, mid - BB_STD * sd
+    span = (up - lo).iloc[-1]
+    if not span > 0:
+        return None
+    width = ((up - lo) / mid).dropna()
+    return float((c.iloc[-1] - lo.iloc[-1]) / span), bool(width.iloc[-1] <= width.quantile(0.2))
+
+
+def vs_dow(sym_1m: pd.DataFrame, dow_1m: pd.DataFrame, asof: datetime,
+           minutes: int = 30) -> float | None:
+    """Relative strength: % the symbol beat (+) or lagged (-) the Dow over
+    the last `minutes`, measured on completed candles at asof."""
+    a = complete_1m(sym_1m, asof)["close"]
+    b = complete_1m(dow_1m, asof)["close"].reindex(a.index).dropna()
+    a = a.reindex(b.index)
+    if len(a) < minutes + 1:
+        return None
+    return float((a.iloc[-1] / a.iloc[-1 - minutes] - b.iloc[-1] / b.iloc[-1 - minutes]) * 100)

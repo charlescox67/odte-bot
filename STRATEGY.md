@@ -342,13 +342,31 @@ alone. The third trade's failure is covered above.
 ±0.1R). This rule change is better aligned with the strategy's own logic; it
 is not a proven edge, and expectancy is still negative.
 
+### Bollinger Bands and strength vs the Dow: recorded, not used (yet)
+
+Tested 2026-09-22 as possible filters:
+
+- **Relative strength vs the Dow** (SPY or QQQ divided by DIA, over the last
+  30 minutes) didn't separate winners from losers across 60 days of the bot's
+  own trades. For SPY it pointed the wrong way: trades where SPY was beating
+  the Dow did *worse* (−0.12R vs +0.01R). SPY and the Dow move nearly together.
+- **Bollinger Band breakouts** (20 bars, 2 standard deviations) on 18 days of
+  1-minute data: after ~370 band breaks per market, the move continued 45–52%
+  of the time — a coin flip. After a squeeze the follow-through was larger but
+  based on only ~80 cases, and QQQ reversed in the first 5 minutes.
+
+Neither is a rule. Each trade records `bb_pct` (where price sat in the bands:
+0 = lower band, 1 = upper band, above 1 = broke out), `bb_squeeze`, and
+`vs_dow_30m` (% beat or lagged the Dow over 30 minutes), so real trades can
+show whether they matter.
+
 ## Where to see results
 
 All state lives on the [`state` branch](https://github.com/charlescox67/odte-bot/tree/state):
 
 | File | What it shows |
 |---|---|
-| [`trades.csv`](https://github.com/charlescox67/odte-bot/blob/state/trades.csv) | One row per **closed** trade: prices, contracts, `cost` and `proceeds` in dollars, `pnl`, exit reason, the pullback traded (`setup`), both stops, spread, event-day tag, and `exit_basis` (`quote` or `estimated`) |
+| [`trades.csv`](https://github.com/charlescox67/odte-bot/blob/state/trades.csv) | One row per **closed** trade: prices, contracts, `cost` and `proceeds` in dollars, `pnl`, exit reason, the pullback traded (`setup`), both stops, spread, event-day tag, `exit_basis` (`quote` or `estimated`), and the recorded Bollinger/Dow context |
 | [`book.json`](https://github.com/charlescox67/odte-bot/blob/state/book.json) | Cash and **open** positions |
 | [`logs/`](https://github.com/charlescox67/odte-bot/tree/state/logs) | Every minute's decision for each market: trend, VWAP, latest swing low and high, and why it did or didn't trade |
 
