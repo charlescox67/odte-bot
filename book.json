@@ -24,7 +24,8 @@
       "stop_underlying": 770.5189819335938,
       "spread_at_entry": 0.1,
       "event_day": "",
-      "exit_basis": ""
+      "exit_basis": "",
+      "runner": false
     },
     {
       "id": "b21f0db1",
@@ -49,7 +50,8 @@
       "stop_underlying": 738.5,
       "spread_at_entry": 0.01,
       "event_day": "",
-      "exit_basis": ""
+      "exit_basis": "",
+      "runner": false
     },
     {
       "id": "9704f857",
@@ -74,7 +76,8 @@
       "stop_underlying": 771.7999877929688,
       "spread_at_entry": 0.1,
       "event_day": "",
-      "exit_basis": ""
+      "exit_basis": "",
+      "runner": false
     },
     {
       "id": "b02ba9da",
@@ -99,7 +102,8 @@
       "stop_underlying": 745.1500244140625,
       "spread_at_entry": 0.24,
       "event_day": "",
-      "exit_basis": "estimated"
+      "exit_basis": "estimated",
+      "runner": false
     }
   ]
 }
