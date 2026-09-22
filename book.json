@@ -1,5 +1,5 @@
 {
-  "cash": 99235.60321044922,
+  "cash": 100135.60321044922,
   "positions": [
     {
       "id": "ea4251b8",
@@ -143,18 +143,18 @@
       "entry_time": "2026-09-22T18:08:01.152352+00:00",
       "entry_reason": "swing L1320",
       "underlying_at_entry": 745.2999877929688,
-      "status": "open",
-      "mark": 1.3810394287109375,
-      "exit_price": null,
-      "exit_time": null,
-      "exit_reason": null,
+      "status": "closed",
+      "mark": 1.5,
+      "exit_price": 1.5,
+      "exit_time": "2026-09-22T19:05:01.314846+00:00",
+      "exit_reason": "eod",
       "signal_symbol": "QQQ",
       "setup": "L1320",
       "stop_at_entry": 745.02001953125,
       "stop_underlying": 745.02001953125,
       "spread_at_entry": 0.06,
       "event_day": "",
-      "exit_basis": "estimated",
+      "exit_basis": "quote",
       "runner": false
     },
     {
