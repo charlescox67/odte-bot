@@ -1,5 +1,5 @@
 {
-  "cash": 99327.0,
+  "cash": 99803.5,
   "positions": [
     {
       "id": "ea4251b8",
@@ -88,11 +88,11 @@
       "entry_time": "2026-09-22T16:45:00.880647+00:00",
       "entry_reason": "swing H1205",
       "underlying_at_entry": 744.2901000976562,
-      "status": "open",
-      "mark": 5.04000732421875,
-      "exit_price": null,
-      "exit_time": null,
-      "exit_reason": null,
+      "status": "closed",
+      "mark": 4.765,
+      "exit_price": 4.765,
+      "exit_time": "2026-09-22T16:50:00.989664+00:00",
+      "exit_reason": "swing_stop",
       "signal_symbol": "QQQ",
       "setup": "H1205",
       "stop_at_entry": 745.1500244140625,
