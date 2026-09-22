@@ -99,6 +99,15 @@ def main() -> int:
 
     persist(f"end {now():%F %H:%M} ET ({ticks} ticks)")
     print(f"job done: {ticks} ticks", flush=True)
+    # Out of budget with the session still open: start the successor now
+    # rather than hoping a cron slot fires. GitHub lets a GITHUB_TOKEN
+    # dispatch a new run (the one exception to its no-recursion rule).
+    session_end = datetime.combine(start.date(), LAST_TICK, ET)
+    if now() < session_end - timedelta(minutes=2):
+        r = subprocess.run(["gh", "workflow", "run", "session.yml"],
+                           capture_output=True, text=True)
+        print(f"handoff: dispatched successor (exit {r.returncode}) {r.stderr.strip()[:200]}",
+              flush=True)
     return 0
 
 

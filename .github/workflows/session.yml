@@ -1,12 +1,17 @@
 name: session
 
-# GitHub cron is UTC and routinely fires late. Firing hourly through the
-# session, with one job queued behind the running one, means a late or dropped
-# run is covered by the next, and a job that hits its time budget hands off
-# within seconds. Runs outside the session exit immediately.
+# GitHub cron is best-effort: on 2026-09-22 it dropped all four hourly slots
+# and the bot never started. So the schedule is only one of three starters:
+#   1. dense morning slots (every 10 min, 08:00-10:50 EDT) so one lands;
+#   2. hourly slots through the session as a backstop;
+#   3. kick.sh on the Mac, which dispatches a run if none is active.
+# Once running, a job that hits its 6h budget dispatches its own successor,
+# so a started session never depends on cron again. Early runs wait for the
+# open (up to 45 min); runs outside the session exit immediately.
 on:
   schedule:
-    - cron: "7 13-20 * * 1-5"
+    - cron: "*/10 12-14 * * 1-5"
+    - cron: "7 15-20 * * 1-5"
   workflow_dispatch:
     inputs:
       budget_min:
@@ -15,6 +20,7 @@ on:
 
 permissions:
   contents: write
+  actions: write     # a job dispatches its own successor
 
 concurrency:
   group: odte-session
@@ -69,4 +75,5 @@ jobs:
         env:
           ODTE_STATE_DIR: state
           BUDGET_MIN: ${{ inputs.budget_min || '340' }}
+          GH_TOKEN: ${{ github.token }}
         run: python cloud_loop.py
