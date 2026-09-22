@@ -90,6 +90,7 @@ class Position:
     exit_basis: str = ""      # "quote" or "estimated" (live-adjusted)
     runner: bool = False      # reached +60% while breaking out hard
     fees: float = 0.0         # commissions + regulatory fees paid so far
+    peak_pct: float = 0.0     # best option-price gain seen, for the runner floor
     # recorded at entry, not used as rules (see swing_signal.bollinger)
     bb_pct: float | None = None       # position in Bollinger Bands, 5m
     bb_squeeze: bool | None = None

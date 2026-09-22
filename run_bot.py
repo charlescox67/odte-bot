@@ -38,6 +38,13 @@ NO_ENTRY_AFTER = dtime(14, 0)   # late-day gamma
 # Everything is out by 14:45 on the lagged clock (the market time exits are
 # priced at): the last hour is where 0DTE time decay is steepest.
 FLATTEN_AT = dtime(14, 45)
+# ...but a runner may hold to 15:45. The last hour is where decay bites, and
+# also where the biggest moves of 09-21 and 09-22 happened; a runner is by
+# definition trending, and keeps its deep-dip exit and its +60% floor.
+# 15:30 on the lagged clock, i.e. ~15:50 wall: late enough to ride the
+# afternoon trend, early enough that the session loop (which stops at 16:01
+# wall) actually executes it rather than leaving it to expiry settlement.
+RUNNER_FLATTEN = dtime(15, 30)
 
 RISK_PCT = 0.005                # of equity, lost if the backstop is hit
 BACKSTOP = 0.50                 # exit if the option loses half its premium
@@ -66,14 +73,24 @@ TIME_STOP_KEEP_R = 0.25
 # one the delayed feed actually printed.
 TARGET_PCT = 0.60
 # ...unless the stock is breaking out HARD when the target is reached
-# (swing_signal.breaking_out: >= 1R in 10 min, efficiency >= 0.5). Then the
+# (swing_signal.breaking_out: >= 0.5R in 10 min, efficiency >= 0.4). Then the
 # trade becomes a runner: held until a deep red candle (swing_signal.deep_dip)
 # or until it falls back below +60%, so a runner never ends worse than the
 # plain target would have. Slow grinds with ups and downs still sell at +60%.
-# The chart stop must be close enough to fire BEFORE the premium backstop. A
+# A runner keeps at least RUNNER_KEEP of its best gain, and never less than
+# RUNNER_MIN_PCT. The old flat +60% floor sold into the first pullback: on
+# 2026-09-22 a runner would have been floored at +60% during a dip to +51%
+# and missed the move to +190% that followed.
+RUNNER_KEEP = 0.40
+RUNNER_MIN_PCT = 0.30
+
+# The chart stop must be close enough to fire BEFORE the premium backstop: a
 # stop 1.0 away on a $5.60 option cost ~90% of it, so the backstop always won
-# and the swing stop never acted. Cap the distance at what 30% of premium buys.
-STOP_COST_CAP = 0.30
+# and the swing stop never acted. But 0.30 of premium was too tight for cheap
+# options - on 2026-09-22 a 0.57 SPY call got a stop 0.33 away, SPY clipped it
+# by 3 cents and recovered, turning a +$580 trade into -$304. 0.45 still fires
+# before the 50% backstop.
+STOP_COST_CAP = 0.45
 
 
 def now_et() -> datetime:
@@ -165,7 +182,7 @@ def est_delta(tbl, strike: float, right: str) -> float:
 def decide_exit(*, pct: float, stop_broken: bool, aged: bool,
                 r_now: float | None, asof_t, event_flatten=None,
                 runner: bool = False, strong: bool = False,
-                dip: bool = False) -> str | None:
+                dip: bool = False, peak_pct: float = 0.0) -> str | None:
     """Why to close, in priority order, or None to hold.
     Losses first (never hold something tanking), then profit, then decay.
     Returns "runner" to mean: don't sell at the target, switch to runner mode."""
@@ -176,15 +193,16 @@ def decide_exit(*, pct: float, stop_broken: bool, aged: bool,
     if runner:
         if dip:
             return "runner_dip"     # the deep red candle
-        if pct < TARGET_PCT:
-            return "runner_floor"   # never finish worse than the plain target
+        floor = max(RUNNER_MIN_PCT, (peak_pct or 0.0) * RUNNER_KEEP)
+        if pct < floor:
+            return "runner_floor"   # gave back too much of the best gain
     elif pct >= TARGET_PCT:
         return "runner" if strong else "target"
     if not runner and aged and (r_now is None or r_now < TIME_STOP_KEEP_R):
         return "time_stop"          # going nowhere while the premium decays
     if event_flatten and asof_t >= event_flatten:
         return "event_flatten"
-    if asof_t >= FLATTEN_AT:
+    if asof_t >= (RUNNER_FLATTEN if runner else FLATTEN_AT):
         return "eod"
     return None
 
@@ -281,6 +299,7 @@ def manage(book: pe.Book, sym: str, t_now: datetime, asof: datetime,
             pos.exit_basis = "estimated" if pos.mark < quoted else "quote"
             held = t_now - datetime.fromisoformat(pos.entry_time).astimezone(ET)
             pct = pos.move_pct(pos.mark)
+            pos.peak_pct = max(pos.peak_pct, pct)
             stop_broken = False
             if sig_bars is not None and pos.stop_underlying is not None:
                 new = sw.trail_stop(sig_bars, asof, pos.right, pos.stop_underlying)
@@ -300,13 +319,21 @@ def manage(book: pe.Book, sym: str, t_now: datetime, asof: datetime,
                 aged=held >= timedelta(minutes=TIME_STOP_MIN),
                 r_now=progress_r(pos, live_px), asof_t=asof.time(),
                 event_flatten=profile.flatten_at, runner=pos.runner,
+                peak_pct=pos.peak_pct,
                 # both read the LIVE candles: the move is happening now
-                strong=live and sw.breaking_out(sig_bars, t_now, pos.right, risk),
+                # Either clock may qualify a breakout: the target is spotted on
+                # the ~16-min-old quote, so the move that earned it shows up on
+                # the lagged bars, while the live bars say what is happening
+                # now. On 2026-09-22 the lagged clock said "breaking out" and
+                # the live clock said "stalling" for the same trade.
+                strong=live and (sw.breaking_out(sig_bars, t_now, pos.right, risk)
+                                 or sw.breaking_out(sig_bars, asof, pos.right, risk)),
                 dip=live and pos.runner and sw.deep_dip(sig_bars, t_now, pos.right))
             if reason == "runner":
                 pos.runner = True
                 print(f"  RUNNER {pos.contract} at {pct:+.0%}: breaking out hard, "
-                      f"holding for a deep red candle (floor +{TARGET_PCT:.0%})")
+                      f"holding for a deep red candle "
+                      f"(keeps {RUNNER_KEEP:.0%} of its best, min +{RUNNER_MIN_PCT:.0%})")
                 reason = None
             if reason:
                 book.close(pos, bid=pos.mark, reason=reason)

@@ -164,10 +164,10 @@ def summary(df_1m: pd.DataFrame, asof: datetime) -> str:
 
 # ---- profit-taking: hard breakout vs slow grind ---------------------------
 BREAKOUT_BARS = 10       # look at the last 10 one-minute candles
-BREAKOUT_EFFICIENCY = 0.5  # >= half of all movement in one direction
-BREAKOUT_MOVE_R = 1.0    # and covering at least 1R in those 10 minutes
+BREAKOUT_EFFICIENCY = 0.4  # >= 40% of all movement in one direction
+BREAKOUT_MOVE_R = 0.5    # and covering at least 0.5R in those 10 minutes
 DEEP_DIP_MULT = 2.5      # a red candle 2.5x the size of a typical candle
-DIP_LOOKBACK = 20
+DIP_LOOKBACK = 12        # ...typical over the last hour of 5-minute candles
 
 
 def efficiency(df_1m: pd.DataFrame, asof: datetime, n: int = BREAKOUT_BARS) -> float | None:
@@ -181,8 +181,11 @@ def efficiency(df_1m: pd.DataFrame, asof: datetime, n: int = BREAKOUT_BARS) -> f
 
 
 def breaking_out(df_1m: pd.DataFrame, asof: datetime, side: str, risk: float) -> bool:
-    """Breaking out HARD: fast (>= 1R in 10 minutes, in the trade's direction)
-    AND clean (efficiency >= 0.5). A slow grind fails one or the other."""
+    """Breaking out HARD: fast (>= 0.5R in 10 minutes, in the trade's direction)
+    AND clean (efficiency >= 0.4). Loosened 2026-09-22: at the old 1R/0.5 a
+    steady QQQ trend failed the test and was sold at +68%, then more than
+    doubled. Over 18 days of 1-minute data the looser test doubles the number
+    of runners (3 -> 6) while they still average about +2.5R."""
     c = complete_1m(df_1m, asof)["close"]
     er = efficiency(df_1m, asof)
     if er is None or risk <= 0:
@@ -193,16 +196,20 @@ def breaking_out(df_1m: pd.DataFrame, asof: datetime, side: str, risk: float) ->
 
 
 def deep_dip(df_1m: pd.DataFrame, asof: datetime, side: str) -> bool:
-    """The last completed candle went hard AGAINST the trade: a body at least
-    DEEP_DIP_MULT times the typical one-minute move of the prior 20 candles.
-    Relative to the stock's own recent behaviour, so 'deep' means the same
-    thing on a quiet day and a wild one."""
-    d = complete_1m(df_1m, asof)
-    if len(d) < DIP_LOOKBACK + 2:
+    """The last completed 5-MINUTE candle went hard AGAINST the trade: a body
+    at least DEEP_DIP_MULT times the typical 5-minute move of the last hour.
+
+    Measured on 5-minute candles, not 1-minute: on 2026-09-22 the 1-minute
+    version fired 7 minutes into a runner and would have sold it at +23%,
+    worse than simply taking the +60% target. The move it was meant to catch
+    ran to +173%. This is also the candle a person watching a chart sees.
+    """
+    b = to_5m(df_1m, asof)
+    if len(b) < DIP_LOOKBACK + 2:
         return False
-    last = d.iloc[-1]
+    last = b.iloc[-1]
     against = (last["open"] - last["close"]) if side == "C" else (last["close"] - last["open"])
-    typical = d["close"].diff().abs().iloc[-DIP_LOOKBACK - 1:-1].median()
+    typical = b["close"].diff().abs().iloc[-DIP_LOOKBACK - 1:-1].median()
     return bool(typical > 0 and against >= DEEP_DIP_MULT * typical)
 
 

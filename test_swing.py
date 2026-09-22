@@ -107,11 +107,11 @@ print("\nstop must be reachable before the backstop")
 # Reaching that pivot would cost 0.50 = 119% of the premium, so it is useless
 # as a stop: the backstop always fires first. Pulled in to what 30% buys.
 far = rb.cap_stop("C", 772.80, 771.80, 0.42, 0.50)
-check("far pivot pulled in", round(far, 3), 772.548)
-check("cost at the new stop is 30%", round((772.80 - far) * 0.50 / 0.42, 2), 0.30)
+check("far pivot pulled in", round(far, 3), 772.422)
+check("cost at the new stop is 45%", round((772.80 - far) * 0.50 / 0.42, 2), 0.45)
 check("a close pivot is left alone", rb.cap_stop("C", 772.80, 772.60, 1.50, 0.50), 772.60)
-check("richer premium allows a wider stop", round(rb.cap_stop("C", 772.80, 770.00, 1.50, 0.50), 2), 771.90)
-check("puts mirror", round(rb.cap_stop("P", 772.80, 774.00, 0.42, -0.50), 3), 773.052)
+check("richer premium allows a wider stop", round(rb.cap_stop("C", 772.80, 770.00, 1.50, 0.50), 2), 771.45)
+check("puts mirror", round(rb.cap_stop("P", 772.80, 774.00, 0.42, -0.50), 3), 773.178)
 
 print("\nlive marking never invents a gain")
 check("adverse move marks down now", rb.adjust_mark(5.00, 0.50, 771.0, 772.0), 4.50)
@@ -164,30 +164,43 @@ end = lambda df: df.index[-1] + timedelta(minutes=1)
 straight = one_min([100 + 0.1 * i for i in range(25)])           # +1.0 in 10 min, no dips
 check("straight line = efficiency 1.0", round(sw.efficiency(straight, end(straight)), 2), 1.0)
 check("fast and clean -> breaking out", sw.breaking_out(straight, end(straight), "C", 0.5), True)
-check("same move vs a wide stop -> just a grind", sw.breaking_out(straight, end(straight), "C", 2.0), False)
+# 1.0 of movement vs a 3.0 stop distance is 0.33R in 10 min: below 0.5R
+check("same move vs a wide stop -> just a grind", sw.breaking_out(straight, end(straight), "C", 3.0), False)
 check("puts need the move DOWN", sw.breaking_out(straight, end(straight), "P", 0.5), False)
 zig = one_min([100 + (0.3 if i % 2 else 0) + 0.02 * i for i in range(25)])  # ups and downs
-check("ups and downs = low efficiency", sw.efficiency(zig, end(zig)) < 0.5, True)
+check("ups and downs = low efficiency", sw.efficiency(zig, end(zig)) < sw.BREAKOUT_EFFICIENCY, True)
 check("choppy rise -> not a breakout", sw.breaking_out(zig, end(zig), "C", 0.1), False)
 
-calm = [100 + (0.05 if i % 2 else 0) for i in range(22)]
-dip = one_min(calm + [99.75], None)                                # red body 0.30 vs typical 0.05
-check("deep red candle -> dip", sw.deep_dip(dip, end(dip), "C"), True)
-small = one_min(calm + [99.95])
-check("ordinary red candle -> no dip", sw.deep_dip(small, end(small), "C"), False)
-check("for puts, a deep RED candle is good news", sw.deep_dip(dip, end(dip), "P"), False)
-pop = one_min(calm + [100.35])
-check("for puts, a deep GREEN candle is the dip", sw.deep_dip(pop, end(pop), "P"), True)
+# deep dips are read on 5-MINUTE candles (1-minute was pure noise)
+# closes must actually move, or "typical movement" is zero
+flat5 = [(100.0 + (0.04 if i % 2 else 0.0),) * 1 for i in range(20)]
+flat5 = [(c, c + 0.02, c - 0.02, c) for (c,) in flat5]
+drop5 = flat5 + [(100.0, 100.0, 99.70, 99.72)]      # red body 0.28 vs typical 0.04
+mild5 = flat5 + [(100.0, 100.02, 99.96, 99.98)]
+deep = bars(drop5); mild = bars(mild5)
+check("deep red 5-min candle -> dip", sw.deep_dip(deep, after(len(drop5)), "C"), True)
+check("ordinary 5-min candle -> no dip", sw.deep_dip(mild, after(len(mild5)), "C"), False)
+check("for puts a deep red candle is good news", sw.deep_dip(deep, after(len(drop5)), "P"), False)
+pop5 = flat5 + [(100.0, 100.30, 100.0, 100.28)]
+check("for puts a deep GREEN candle is the dip", sw.deep_dip(bars(pop5), after(len(pop5)), "P"), True)
+check("too little history -> no dip", sw.deep_dip(bars(flat5[:6]), after(6), "C"), False)
 
 print("\nrunner mode")
 check("+60% on a slow grind -> take the profit", E(pct=0.60, strong=False), "target")
 check("+60% breaking out hard -> become a runner", E(pct=0.60, strong=True), "runner")
 check("runner keeps going above +60%", E(pct=1.50, runner=True), None)
 check("runner: deep red candle -> sell", E(pct=1.50, runner=True, dip=True), "runner_dip")
-check("runner: falls back under +60% -> sell", E(pct=0.55, runner=True), "runner_floor")
+# the floor keeps 40% of the best gain, never less than +30%
+check("peaked at +98%, dip to +51% -> holds", E(pct=0.51, runner=True, peak_pct=0.98), None)
+check("peaked at +98%, dip to +38% -> sell", E(pct=0.38, runner=True, peak_pct=0.98), "runner_floor")
+check("peaked at +300%, dip to +110% -> sell", E(pct=1.10, runner=True, peak_pct=3.0), "runner_floor")
+check("just qualified, never below +30%", E(pct=0.29, runner=True, peak_pct=0.61), "runner_floor")
+check("+35% with a +61% peak -> holds", E(pct=0.35, runner=True, peak_pct=0.61), None)
 check("runner ignores the decay clock", E(pct=0.90, runner=True, aged=True, r_now=0.1), None)
 check("runner still obeys the stop", E(pct=0.90, runner=True, stop_broken=True), "swing_stop")
-check("runner still out at 14:45", E(pct=2.0, runner=True, asof_t=T(14, 45)), "eod")
+check("runner may hold past 14:45", E(pct=2.0, runner=True, asof_t=T(14, 45)), None)
+check("an ordinary trade is out at 14:45", E(pct=0.3, r_now=0.9, asof_t=T(14, 45)), "eod")
+check("even a runner is out at 15:45", E(pct=2.0, runner=True, asof_t=T(15, 45)), "eod")
 
 print("\nincomplete chains are refused")
 class FakeTicker:

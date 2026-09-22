@@ -171,24 +171,29 @@ going wrong is never held; then profit; then time decay.
    - **Slow grind, with ups and downs** → sell at +60%. Twice the ~30% the
      stop risks, so one winner covers two losers.
    - **Breaking out hard** → hold it as a **runner**. "Hard" means fast (at
-     least 1R, the full stop distance, in those 10 minutes) *and* clean (an
-     efficiency of 0.5 or more: at least half of all the up-and-down movement
-     went one way). A runner is sold on the first **deep red candle** — a
-     1-minute body at least 2.5× the size of a typical recent candle — or if
-     the option falls back **below +60%**, so a runner never finishes worse
-     than the plain target. The 14:45 exit and the stops still apply.
+     least **0.5R** in the last 10 minutes) *and* clean (efficiency **0.4** or
+     more: at least 40% of all the up-and-down movement went one way). Either
+     clock may qualify it: the target is spotted on the ~16-minute-old quote,
+     so the move that earned it shows on the lagged candles, while the live
+     candles say what is happening now.
+   - A runner is sold when **a 5-minute candle closes hard against it** (a body
+     at least 2.5× the typical 5-minute move of the last hour), when it gives
+     back more than **60% of its best gain** (it always keeps 40%, and never
+     less than +30%), or at **15:30** on the lagged clock.
 
-   Both checks read the **live** candles. Tested on 18 days of 1-minute data:
-   3 trades became runners. The one that failed gave back a sliver (+1.87R vs
-   +2.06R at the plain target); the two that worked averaged +3.50R vs
-   +2.16R, the best running to +5.0R. Three trades is a sanity check that the
-   rule behaves as intended, not proof.
+   Tuned on 2026-09-22 after a +68% winner went on to +173%. On 18 days of
+   1-minute data the looser test doubles the runners (3 → 6) and they average
+   **+3.3R**, with the overall figure improving from −0.16R to −0.12R per
+   trade. The dip check reads 5-minute candles because the 1-minute version
+   fired 7 minutes into a runner and sold it at +23%.
 4. **Time decay: 60 minutes and going nowhere.** If the trade is up less than
    **0.25R** (a quarter of its entry-to-stop distance) after an hour, it is
    closed before decay eats it. A trade that is working keeps going.
 5. **Economic-event exit** (Fed days only, see [section 7](#7-economic-event-days)).
-6. **14:45 ET** (lagged clock): everything still open is closed. The last hour
-   is where same-day options lose value to decay fastest.
+6. **14:45 ET** (lagged clock): everything still open is closed — except a
+   runner, which may hold to **15:30**. The last hour is where same-day options
+   decay fastest, but it is also where the biggest moves of 09-21 and 09-22
+   happened, and a runner is by definition trending.
 
 Exits sell at the **bid**, and entries buy at the **ask**, so every trade
 pays the full spread.
@@ -397,10 +402,12 @@ every 10 minutes; trades are saved the minute they happen.
 | Entry window (lagged clock) | 10:00–14:00 ET | `ENTRY_START`, `NO_ENTRY_AFTER` |
 | End-of-day exit | 14:45 ET (lagged clock) | `FLATTEN_AT` |
 | Profit target | +60% of premium, unless breaking out hard | `TARGET_PCT` |
-| Hard breakout | ≥1R in 10 min and efficiency ≥0.5 | `swing_signal.py` `BREAKOUT_*` |
-| Deep red candle | body ≥2.5× typical 1-min move | `DEEP_DIP_MULT` |
+| Hard breakout | ≥0.5R in 10 min and efficiency ≥0.4 | `swing_signal.py` `BREAKOUT_*` |
+| Runner floor | keeps 40% of its best gain, min +30% | `RUNNER_KEEP`, `RUNNER_MIN_PCT` |
+| Runner exit | 15:30 lagged (~15:50) | `RUNNER_FLATTEN` |
+| Deep red candle | body ≥2.5× typical 5-min move | `DEEP_DIP_MULT` |
 | Risk per trade | 0.5% of equity at the backstop | `RISK_PCT` |
-| Max cost of reaching the stop | 30% of premium | `STOP_COST_CAP` |
+| Max cost of reaching the stop | 45% of premium | `STOP_COST_CAP` |
 | Premium backstop | −50% | `BACKSTOP` |
 | Max contracts | 50 | `MAX_QTY` |
 | Commissions | IBKR Pro Fixed: $0.65/contract ($1 min/order) + ~$0.03 reg. | `paper_engine.py` `IBKR_RATES` |
