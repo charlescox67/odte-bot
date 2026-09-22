@@ -26,19 +26,20 @@ b = pe.Book(cash=10_000.0)
 p = b.open(symbol="SPY", contract=pe.occ("SPY","2026-09-10","C",759.0), right="C",
            strike=759.0, expiry="2026-09-10", qty=2, ask=0.55,
            underlying=758.74, reason="test")
-check("cash after buy 2 @ 0.55", b.cash, 10_000.0 - 110.0)
+# IBKR fee on 2 contracts: max($1, 2 x $0.65) + 2 x $0.03 = $1.36
+check("cash after buy 2 @ 0.55 + $1.36 fee", b.cash, 10_000.0 - 110.0 - 1.36)
 check("cost", p.cost, 110.0)
 
 print("\nmark to market")
 p.mark = 1.10
-check("unrealised pnl at 1.10", p.pnl(), 110.0)
-check("unrealised pct", round(p.pnl_pct(), 4), 1.0)
-check("equity", b.equity(), 10_000.0 - 110.0 + 220.0)
+check("unrealised pnl at 1.10, net of the $1.36 paid", p.pnl(), 108.64)
+check("net return on cost", round(p.pnl_pct(), 4), round(108.64 / 110.0, 4))
+check("equity (cash already paid the fee)", b.equity(), 10_000.0 - 110.0 - 1.36 + 220.0)
 
 print("\nclose at the BID, not the mid")
 b.close(p, bid=1.05, reason="target")
-check("cash after sell", b.cash, 10_000.0 - 110.0 + 210.0)
-check("realised pnl", p.pnl(), 100.0)
+check("cash after sell (fee in and out)", b.cash, 10_000.0 - 110.0 + 210.0 - 2 * 1.36)
+check("realised pnl, net of $2.72 fees", p.pnl(), 97.28)
 check("status", p.status, "closed")
 check("open positions", len(b.open_positions), 0)
 check("trade logged", pe.TRADES.exists(), True)
@@ -68,7 +69,8 @@ check("0DTE NOT settled at 15:59", len(b3.open_positions), 2)
 b3.settle_expired(lambda pos: {"SPY": 756.30}.get(pos.symbol), now=AFTER_CLOSE)
 check("ITM settles to intrinsic 6.30", itm.exit_price, 6.30)
 check("OTM expires worthless", otm.exit_price, 0.0)
-check("OTM loses the full premium", otm.pnl(), -20.0)
+# opening fee only: max($1 minimum, $0.65) + $0.03; expiry is free
+check("OTM loses the premium plus its opening fee", otm.pnl(), -21.03)
 check("both closed", len(b3.open_positions), 0)
 
 print("\nunknown price must NOT settle at zero")
@@ -92,6 +94,26 @@ for label, fn in [
 
 print("\nOCC symbol format")
 check("occ", pe.occ("SPY","2026-09-10","C",759.0), "SPY260910C00759000")
+
+print("\nIBKR Pro fixed commissions")
+check("$0.65 at $0.10 and up", pe.fee_per_contract(0.42), 0.68)
+check("$0.50 from $0.05 to $0.10", pe.fee_per_contract(0.07), 0.53)
+check("$0.25 under $0.05", pe.fee_per_contract(0.03), 0.28)
+check("1 contract hits the $1 minimum", pe.order_fee(1, 0.42), 1.03)
+check("20 contracts", pe.order_fee(20, 0.42), 13.60)
+check("fees can be switched off", (lambda: (setattr(pe, "CHARGE_FEES", False),
+      pe.order_fee(20, 0.42), setattr(pe, "CHARGE_FEES", True))[1])(), 0.0)
+b7 = pe.Book(cash=10_000.0)
+q7 = b7.open(symbol="SPY", contract="f", right="C", strike=1.0, expiry="2026-09-23",
+             qty=20, ask=0.42, underlying=1.0, reason="t")
+check("rules see the option's move, not fees", q7.move_pct(0.672), 0.60)
+b7.close(q7, bid=0.672, reason="target")
+check("round trip fees on 20", q7.fees, 27.20)
+check("+60% on the option nets less after fees", round(q7.pnl(), 2), round(20 * 100 * 0.252 - 27.20, 2))
+q8 = b7.open(symbol="SPY", contract="g", right="C", strike=1.0, expiry="2026-09-23",
+             qty=5, ask=0.42, underlying=1.0, reason="t")
+b7.close(q8, bid=0.0, reason="t")
+check("selling at zero isn't charged", q8.fees, pe.order_fee(5, 0.42))
 
 print("\nbackward compatibility")
 import json

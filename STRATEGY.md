@@ -259,11 +259,26 @@ bot made its decision, never before it.
 - **No peeking.** Decisions use only bars that had finished by the lagged
   time. The tests check this directly.
 
+**Commissions (modelled since 2026-09-22): IBKR Pro, Fixed schedule.**
+Every buy and every sell pays, per contract: **$0.65** when the option costs
+$0.10 or more, $0.50 from $0.05 to $0.10, $0.25 below that, with a **$1.00
+minimum per order**, plus an estimated $0.03 per contract of regulatory fees
+(a deliberately high guess: IBKR's site blocks automated reads, so the exact
+pass-through wasn't confirmed). Expiry and exercise are not charged.
+
+| Typical trade (0.5% risk, $100k) | Contracts | Round-trip fees | Share of premium |
+|---|---|---|---|
+| SPY ATM, late day (0.42) | 22 | $29.92 | **3.2%** |
+| SPY ATM, morning (1.37) | 7 | $9.52 | 1.0% |
+| QQQ ATM (1.03) | 9 | $12.24 | 1.3% |
+
+Cheap contracts cost the most in fees, because you buy more of them. Sizing
+includes both commissions, so a stopped trade still risks 0.5% *after* costs.
+Exit rules (+60%, −50%) read the option's price move; `pnl` in the trade log
+is net of fees, which get their own `fees` column. On Tiered pricing
+(instead of Fixed), exchange and clearing fees are added separately.
+
 **What it doesn't model:**
-- **Commissions and exchange fees.** Typically about $0.65 per contract per
-  side at retail brokers. A 10-contract round trip costs roughly $13 that the
-  book doesn't deduct — worth noting now that positions run to tens of
-  contracts of cheap SPY and QQQ options.
 - **Fill size.** It assumes 1–10 contracts fill at the displayed bid or ask.
   That's realistic for these very liquid contracts at this size, but not at a
   much bigger size.
@@ -366,7 +381,7 @@ All state lives on the [`state` branch](https://github.com/charlescox67/odte-bot
 
 | File | What it shows |
 |---|---|
-| [`trades.csv`](https://github.com/charlescox67/odte-bot/blob/state/trades.csv) | One row per **closed** trade: prices, contracts, `cost` and `proceeds` in dollars, `pnl`, exit reason, the pullback traded (`setup`), both stops, spread, event-day tag, `exit_basis` (`quote` or `estimated`), and the recorded Bollinger/Dow context |
+| [`trades.csv`](https://github.com/charlescox67/odte-bot/blob/state/trades.csv) | One row per **closed** trade: prices, contracts, `cost`, `proceeds` and `fees` in dollars, `pnl` (net of fees), exit reason, the pullback traded (`setup`), both stops, spread, event-day tag, `exit_basis` (`quote` or `estimated`), and the recorded Bollinger/Dow context |
 | [`book.json`](https://github.com/charlescox67/odte-bot/blob/state/book.json) | Cash and **open** positions |
 | [`logs/`](https://github.com/charlescox67/odte-bot/tree/state/logs) | Every minute's decision for each market: trend, VWAP, latest swing low and high, and why it did or didn't trade |
 
@@ -388,6 +403,7 @@ every 10 minutes; trades are saved the minute they happen.
 | Max cost of reaching the stop | 30% of premium | `STOP_COST_CAP` |
 | Premium backstop | −50% | `BACKSTOP` |
 | Max contracts | 50 | `MAX_QTY` |
+| Commissions | IBKR Pro Fixed: $0.65/contract ($1 min/order) + ~$0.03 reg. | `paper_engine.py` `IBKR_RATES` |
 | Max spread | 10% of ask | `MAX_SPREAD` |
 | Entries per market per day | 3 | `MAX_ENTRIES_PER_DAY` |
 | Daily loss stop | −2% | `DAILY_LOSS_LIMIT` |

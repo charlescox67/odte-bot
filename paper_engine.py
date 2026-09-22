@@ -29,9 +29,33 @@ STATE_DIR = Path(os.environ.get("ODTE_STATE_DIR") or Path(__file__).parent)
 BOOK = STATE_DIR / "book.json"
 TRADES = STATE_DIR / "trades.csv"
 MULTIPLIER = 100  # US equity and index options
+
+# ---- IBKR Pro commissions (Fixed schedule, US options) -------------------
+# Per contract, by option price per share; $1.00 minimum per order.
+# Regulatory pass-throughs (mainly the Options Regulatory Fee) are not
+# confirmed from IBKR's site, which blocks automated reads: REG_FEE is a
+# deliberately high estimate. Expiry/exercise is not charged.
+CHARGE_FEES = True
+IBKR_RATES = ((0.10, 0.65), (0.05, 0.50), (0.00, 0.25))
+IBKR_MIN_ORDER = 1.00
+REG_FEE_PER_CONTRACT = 0.03
+
+
+def fee_per_contract(price: float) -> float:
+    """Commission + regulatory fee for one contract at this option price."""
+    rate = next(r for floor, r in IBKR_RATES if price >= floor)
+    return rate + REG_FEE_PER_CONTRACT
+
+
+def order_fee(qty: int, price: float) -> float:
+    """What one order of `qty` contracts costs at IBKR Pro Fixed."""
+    if not CHARGE_FEES or qty <= 0:
+        return 0.0
+    rate = next(r for floor, r in IBKR_RATES if price >= floor)
+    return round(max(IBKR_MIN_ORDER, qty * rate) + qty * REG_FEE_PER_CONTRACT, 2)
 TRADE_COLUMNS = ["id", "symbol", "contract", "right", "strike", "expiry", "qty",
                  "entry_time", "entry_price", "underlying_at_entry", "entry_reason",
-                 "exit_time", "exit_price", "exit_reason", "cost", "proceeds",
+                 "exit_time", "exit_price", "exit_reason", "cost", "proceeds", "fees",
                  "pnl", "pnl_pct",
                  "signal_symbol", "setup", "stop_at_entry", "stop_final",
                  "spread_at_entry", "event_day", "exit_basis",
@@ -65,6 +89,7 @@ class Position:
     event_day: str = ""
     exit_basis: str = ""      # "quote" or "estimated" (live-adjusted)
     runner: bool = False      # reached +60% while breaking out hard
+    fees: float = 0.0         # commissions + regulatory fees paid so far
     # recorded at entry, not used as rules (see swing_signal.bollinger)
     bb_pct: float | None = None       # position in Bollinger Bands, 5m
     bb_squeeze: bool | None = None
@@ -74,10 +99,21 @@ class Position:
     def cost(self) -> float:
         return self.entry_price * self.qty * MULTIPLIER
 
-    def pnl(self, price: float | None = None) -> float:
+    def gross_pnl(self, price: float | None = None) -> float:
         px = self.exit_price if self.exit_price is not None else (
             price if price is not None else self.mark)
         return (px - self.entry_price) * self.qty * MULTIPLIER
+
+    def pnl(self, price: float | None = None) -> float:
+        """Net of every fee paid so far. An open trade has paid to get in."""
+        return self.gross_pnl(price) - self.fees
+
+    def move_pct(self, price: float | None = None) -> float:
+        """How far the OPTION PRICE has moved. Exit rules (+60%, -50%) read
+        this; fees are accounting, not a reason to exit."""
+        if not self.entry_price:
+            return 0.0
+        return self.gross_pnl(price) / self.cost
 
     def pnl_pct(self, price: float | None = None) -> float:
         if not self.entry_price:
@@ -123,7 +159,8 @@ class Book:
             right=right, strike=strike, expiry=expiry, qty=qty,
             entry_price=ask, entry_time=ts.isoformat(), entry_reason=reason,
             underlying_at_entry=underlying, mark=ask, **context)
-        cost = pos.cost
+        pos.fees = order_fee(qty, ask)
+        cost = pos.cost + pos.fees
         if cost > self.cash:
             raise ValueError(f"insufficient cash: need {cost:.2f} have {self.cash:.2f}")
         self.cash -= cost
@@ -131,14 +168,16 @@ class Book:
         return pos
 
     def close(self, pos: Position, *, bid: float, reason: str,
-              ts: datetime | None = None) -> Position:
+              ts: datetime | None = None, charge: bool = True) -> Position:
         ts = ts or datetime.now(timezone.utc)
         pos.exit_price = max(0.0, bid)
         pos.exit_time = ts.isoformat()
         pos.exit_reason = reason
         pos.status = "closed"
         pos.mark = pos.exit_price
-        self.cash += pos.exit_price * pos.qty * MULTIPLIER
+        fee = order_fee(pos.qty, pos.exit_price) if charge and pos.exit_price > 0 else 0.0
+        pos.fees += fee
+        self.cash += pos.exit_price * pos.qty * MULTIPLIER - fee
         self._log(pos)
         return pos
 
@@ -164,7 +203,7 @@ class Book:
                 continue
             intrinsic = (max(0.0, spot - pos.strike) if pos.right == "C"
                          else max(0.0, pos.strike - spot))
-            done.append(self.close(pos, bid=intrinsic, reason="expired"))
+            done.append(self.close(pos, bid=intrinsic, reason="expired", charge=False))
         return done
 
     def _log(self, pos: Position) -> None:
@@ -182,6 +221,7 @@ class Book:
                         pos.underlying_at_entry, pos.entry_reason, pos.exit_time,
                         pos.exit_price, pos.exit_reason,
                         f"{pos.cost:.2f}", f"{pos.exit_price * pos.qty * MULTIPLIER:.2f}",
+                        f"{pos.fees:.2f}",
                         f"{pos.pnl():.2f}", f"{pos.pnl_pct():.4f}",
                         pos.signal_symbol or "", pos.setup, pos.stop_at_entry,
                         pos.stop_underlying, pos.spread_at_entry, pos.event_day, pos.exit_basis,
@@ -208,6 +248,7 @@ def _upgrade_log() -> None:
     for r in rows:
         mult = float(r["qty"]) * MULTIPLIER
         r.setdefault("cost", f"{float(r['entry_price']) * mult:.2f}")
+        r.setdefault("fees", "0.00")      # trades before 2026-09-22 paid none
         if "proceeds" not in r:
             r["proceeds"] = (f"{float(r['exit_price']) * mult:.2f}"
                              if r.get("exit_price") else "")

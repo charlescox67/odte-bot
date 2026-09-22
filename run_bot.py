@@ -129,9 +129,10 @@ def et_date(iso: str):
 def size_qty(equity: float, ask: float, risk_mult: float = 1.0) -> int:
     """Contracts such that hitting the 50% backstop loses RISK_PCT of equity.
     0 means the contract is too expensive for the risk budget: skip it."""
-    per_contract = ask * pe.MULTIPLIER * BACKSTOP
-    if per_contract <= 0:
+    if ask <= 0:
         return 0
+    # the loss at the backstop, plus commission in and out
+    per_contract = ask * pe.MULTIPLIER * BACKSTOP + 2 * pe.fee_per_contract(ask)
     return min(MAX_QTY, int(equity * RISK_PCT * risk_mult // per_contract))
 
 
@@ -279,7 +280,7 @@ def manage(book: pe.Book, sym: str, t_now: datetime, asof: datetime,
             pos.mark = adjust_mark(quoted, delta, live_px, lagged_px)
             pos.exit_basis = "estimated" if pos.mark < quoted else "quote"
             held = t_now - datetime.fromisoformat(pos.entry_time).astimezone(ET)
-            pct = pos.pnl_pct(pos.mark)
+            pct = pos.move_pct(pos.mark)
             stop_broken = False
             if sig_bars is not None and pos.stop_underlying is not None:
                 new = sw.trail_stop(sig_bars, asof, pos.right, pos.stop_underlying)
@@ -310,7 +311,7 @@ def manage(book: pe.Book, sym: str, t_now: datetime, asof: datetime,
             if reason:
                 book.close(pos, bid=pos.mark, reason=reason)
                 print(f"  CLOSE {pos.contract} x{pos.qty} @ {pos.mark:.2f} ({reason}) "
-                      f"pnl ${pos.pnl():+.2f} ({pct:+.0%})")
+                      f"pnl ${pos.pnl():+.2f} after ${pos.fees:.2f} fees ({pct:+.0%} on the option)")
 
 
 def consider_entry(book: pe.Book, sym: str, sig_sym: str, sig_bars,

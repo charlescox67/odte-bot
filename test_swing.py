@@ -87,7 +87,8 @@ check("not hit while price above", sw.stop_hit(df, after(15), "C", 101.9), False
 check("hit once close is below", sw.stop_hit(df, after(15), "C", 103.0), True)
 
 print("\nsizing: 0.5% of equity lost at the 50% backstop, any account size")
-check("SPY ask 0.42 on $100k", rb.size_qty(100_000, 0.42), 23)
+# 500 / (0.42 x 100 x 50% + 2 x $0.68 fees) = 22.4
+check("SPY ask 0.42 on $100k", rb.size_qty(100_000, 0.42), 22)
 check("same rule on a $20k account", rb.size_qty(20_000, 0.42), 4)
 check("cheap contract hits the cap", rb.size_qty(100_000, 0.10), rb.MAX_QTY)
 check("too expensive for the budget", rb.size_qty(100_000, 25.0), 0)
