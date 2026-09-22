@@ -43,6 +43,11 @@ RISK_PCT = 0.005                # of equity, lost if the backstop is hit
 BACKSTOP = 0.50                 # exit if the option loses half its premium
 MAX_QTY = 50                    # SPY/QQQ 0DTE trade thousands per minute
 MAX_SPREAD = 0.10               # skip if bid-ask exceeds 10% of the ask
+# Yahoo sometimes serves a gutted chain: on 2026-09-22 the QQQ 0DTE puts
+# within $8 of spot listed ONE strike (750, with QQQ at 744), and the bot
+# bought a deep in-the-money put. The nearest quoted strike must sit within
+# 0.25% of the price (at least $1), or the entry waits for a complete chain.
+MAX_STRIKE_GAP = 0.0025
 MAX_ENTRIES_PER_DAY = 3         # per market
 DAILY_LOSS_LIMIT = 0.02         # of start-of-day equity: no new entries past it
 TIME_STOP_MIN = 60
@@ -227,6 +232,10 @@ def chain_quote(symbol: str, expiry: str, right: str, spot: float):
     if tbl.empty:
         return None, None, None
     row = tbl.iloc[(tbl.strike - spot).abs().argsort().iloc[0]]
+    if abs(row.strike - spot) > max(1.0, MAX_STRIKE_GAP * spot):
+        print(f"  ! {symbol} chain incomplete: nearest quoted strike {row.strike:g} "
+              f"is {abs(row.strike - spot):.2f} from {spot:.2f}")
+        return None, None, None
     return row, float(row.strike), tbl
 
 

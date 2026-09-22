@@ -188,6 +188,22 @@ check("runner ignores the decay clock", E(pct=0.90, runner=True, aged=True, r_no
 check("runner still obeys the stop", E(pct=0.90, runner=True, stop_broken=True), "swing_stop")
 check("runner still out at 14:45", E(pct=2.0, runner=True, asof_t=T(14, 45)), "eod")
 
+print("\nincomplete chains are refused")
+class FakeTicker:
+    def __init__(self, strikes): self.strikes, self.options = strikes, ("2026-09-22",)
+    def option_chain(self, exp):
+        t = pd.DataFrame({"strike": self.strikes, "bid": 1.0, "ask": 1.05,
+                          "contractSymbol": [f"Q{k:g}" for k in self.strikes]})
+        return type("C", (), {"calls": t, "puts": t})()
+real_ticker = rb.yf.Ticker
+rb.yf.Ticker = lambda sym: FakeTicker([750.0])                       # the 09-22 gutted chain
+row, k, _ = rb.chain_quote("QQQ", "2026-09-22", "P", 744.29)
+check("only a strike $5.71 away -> skip", row, None)
+rb.yf.Ticker = lambda sym: FakeTicker([743.0, 744.0, 745.0, 750.0])
+row, k, _ = rb.chain_quote("QQQ", "2026-09-22", "P", 744.29)
+check("complete chain -> nearest strike", k, 744.0)
+rb.yf.Ticker = real_ticker
+
 print("\ndaily loss limit")
 import tempfile
 from pathlib import Path
