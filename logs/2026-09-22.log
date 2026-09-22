@@ -2,3 +2,27 @@
 SPY: no setup as of 12:15 | trend down | vwap 773.75 | last low 772.65@1155 high 773.11@1145 | close 773.36
 QQQ: no setup as of 12:15 | trend none | vwap 744.52 | last low 744.01@1155 high 745.44@1115 | close 744.89
 equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-22 12:40:37 EDT (signals as of 12:20) ---
+SPY: no setup as of 12:20 | trend down | vwap 773.75 | last low 772.65@1155 high 773.40@1205 | close 773.07
+QQQ: no setup as of 12:20 | trend none | vwap 744.53 | last low 744.01@1155 high 745.15@1205 | close 744.54
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-22 12:41:00 EDT (signals as of 12:21) ---
+SPY: no setup as of 12:21 | trend down | vwap 773.74 | last low 772.65@1155 high 773.40@1205 | close 773.07
+QQQ: no setup as of 12:21 | trend none | vwap 744.53 | last low 744.01@1155 high 745.15@1205 | close 744.54
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-22 12:42:00 EDT (signals as of 12:22) ---
+SPY: no setup as of 12:22 | trend down | vwap 773.74 | last low 772.65@1155 high 773.40@1205 | close 773.07
+QQQ: no setup as of 12:22 | trend none | vwap 744.53 | last low 744.01@1155 high 745.15@1205 | close 744.54
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-22 12:43:00 EDT (signals as of 12:23) ---
+SPY: no setup as of 12:23 | trend down | vwap 773.74 | last low 772.65@1155 high 773.40@1205 | close 773.07
+QQQ: no setup as of 12:23 | trend none | vwap 744.53 | last low 744.01@1155 high 745.15@1205 | close 744.54
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-22 12:44:00 EDT (signals as of 12:24) ---
+SPY: no setup as of 12:24 | trend down | vwap 773.74 | last low 772.65@1155 high 773.40@1205 | close 773.07
+QQQ: no setup as of 12:24 | trend none | vwap 744.53 | last low 744.01@1155 high 745.15@1205 | close 744.54
+equity $99,920.00 | cash $99,920.00 | open 0 | closed 3
+--- tick 2026-09-22 12:45:00 EDT (signals as of 12:25) ---
+SPY: no setup as of 12:25 | trend down | vwap 773.73 | last low 772.65@1155 high 773.40@1205 | close 772.76
+  OPEN  QQQ260922P00750000 x1 @ ask 5.93 (bid 5.69) QQQ 744.29 | stop 745.15 (delta -0.50)
+equity $99,920.00 | cash $99,327.00 | open 1 | closed 3
