@@ -1,5 +1,5 @@
 {
-  "cash": 99803.5,
+  "cash": 98835.5,
   "positions": [
     {
       "id": "ea4251b8",
@@ -103,6 +103,32 @@
       "spread_at_entry": 0.24,
       "event_day": "",
       "exit_basis": "estimated",
+      "runner": false
+    },
+    {
+      "id": "39668f5d",
+      "symbol": "QQQ",
+      "contract": "QQQ260922C00745000",
+      "right": "C",
+      "strike": 745.0,
+      "expiry": "2026-09-22",
+      "qty": 11,
+      "entry_price": 0.88,
+      "entry_time": "2026-09-22T17:10:01.540320+00:00",
+      "entry_reason": "swing L1225",
+      "underlying_at_entry": 745.3150024414062,
+      "status": "open",
+      "mark": 0.88,
+      "exit_price": null,
+      "exit_time": null,
+      "exit_reason": null,
+      "signal_symbol": "QQQ",
+      "setup": "L1225",
+      "stop_at_entry": 744.8393267657306,
+      "stop_underlying": 744.8393267657306,
+      "spread_at_entry": 0.01,
+      "event_day": "",
+      "exit_basis": "",
       "runner": false
     }
   ]
