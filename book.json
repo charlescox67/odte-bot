@@ -23,7 +23,8 @@
       "stop_at_entry": 769.8099975585938,
       "stop_underlying": 770.5189819335938,
       "spread_at_entry": 0.1,
-      "event_day": ""
+      "event_day": "",
+      "exit_basis": ""
     },
     {
       "id": "b21f0db1",
@@ -47,7 +48,8 @@
       "stop_at_entry": 736.9400024414062,
       "stop_underlying": 738.5,
       "spread_at_entry": 0.01,
-      "event_day": ""
+      "event_day": "",
+      "exit_basis": ""
     },
     {
       "id": "9704f857",
@@ -71,7 +73,8 @@
       "stop_at_entry": 771.7999877929688,
       "stop_underlying": 771.7999877929688,
       "spread_at_entry": 0.1,
-      "event_day": ""
+      "event_day": "",
+      "exit_basis": ""
     }
   ]
 }
