@@ -63,7 +63,7 @@ jobs:
         run: |
           python - <<'PY'
           import yfinance as yf
-          for sym in ("^SPX", "QQQ"):
+          for sym in ("SPY", "QQQ"):
               t = yf.Ticker(sym); exp = t.options[0]
               ch = t.option_chain(exp)
               n = int(((ch.calls.bid > 0) & (ch.calls.ask > 0)).sum())

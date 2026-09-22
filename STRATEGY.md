@@ -145,7 +145,8 @@ Because contract counts round down, real risk per trade is usually a little
 
 ## 5. Exits
 
-Checked every minute. Whichever happens **first** closes the trade:
+Checked every minute, **in this order**: losses first, so a trade that is
+going wrong is never held; then profit; then time decay.
 
 1. **Swing stop, on live prices.** SPY and QQQ price data is real time, while
    option quotes are ~16 minutes behind. So the stop is checked against the
@@ -164,16 +165,16 @@ Checked every minute. Whichever happens **first** closes the trade:
      says `estimated` or `quote` for every trade.
 2. **The option loses 50% of its premium.** This backstop uses the option
    quote (adjusted as above), so it keeps working even when chart data fails.
-3. **60 minutes after entry — but only if the trade is going nowhere.** If it
-   is up at least **0.25R** (a quarter of the distance from entry to its
-   initial stop), the clock is ignored and the trailing stop takes over. A
-   strategy that rides swings shouldn't sell a working trade because an hour
-   passed.
-4. **Economic-event exit** (Fed days only, see [section 7](#7-economic-event-days)).
-5. **15:45 ET**: everything still open is closed.
-
-There's **no fixed profit target**. The trailing stop decides when a winner
-ends.
+3. **Take the profit at +60%.** Twice the ~30% the capped stop risks, so
+   winners pay for two losers. Checked on the option price as marked (only
+   ever adjusted down from the delayed quote), so a booked profit is one the
+   feed actually printed.
+4. **Time decay: 60 minutes and going nowhere.** If the trade is up less than
+   **0.25R** (a quarter of its entry-to-stop distance) after an hour, it is
+   closed before decay eats it. A trade that is working keeps going.
+5. **Economic-event exit** (Fed days only, see [section 7](#7-economic-event-days)).
+6. **14:45 ET** (lagged clock): everything still open is closed. The last hour
+   is where same-day options lose value to decay fastest.
 
 Exits sell at the **bid**, and entries buy at the **ask**, so every trade
 pays the full spread.
@@ -347,7 +348,8 @@ every 10 minutes; trades are saved the minute they happen.
 | Lagged clock (entries, quotes) | 20 min | `run_bot.py` `LAG_MIN` |
 | Stops checked on | live price | `live_price`, `adjust_mark` |
 | Entry window (lagged clock) | 10:00–14:00 ET | `ENTRY_START`, `NO_ENTRY_AFTER` |
-| End-of-day exit | 15:45 ET | `FLATTEN_AT` |
+| End-of-day exit | 14:45 ET (lagged clock) | `FLATTEN_AT` |
+| Profit target | +60% of premium | `TARGET_PCT` |
 | Risk per trade | 0.5% of equity at the backstop | `RISK_PCT` |
 | Max cost of reaching the stop | 30% of premium | `STOP_COST_CAP` |
 | Premium backstop | −50% | `BACKSTOP` |
@@ -371,7 +373,8 @@ every 10 minutes; trades are saved the minute they happen.
 | `event_calendar.py` | Economic-release and Fed dates and the rules for those days. |
 | `paper_engine.py` | The paper book: cash, positions, settlement, trade log. |
 | `cloud_loop.py` | Runs one tick per minute for a session on GitHub Actions and saves state to the `state` branch. |
-| `.github/workflows/session.yml` | Starts a job every hour on the hour plus 7 minutes, 09:07–16:07 ET, weekdays. One job waits behind the running one, so a late or dropped start is covered. |
+| `.github/workflows/session.yml` | Starts the session. GitHub's scheduler is best-effort (on 2026-09-22 it dropped every slot), so there are three starters: slots every 10 minutes 08:00–10:50 ET plus hourly backups; jobs that hit the 6-hour limit dispatch their own successor; and `kick.sh` on the Mac starts one if none is running. |
+| `kick.sh` | Mac backup starter (launchd, every 30 min while awake in market hours). |
 | `test_swing.py`, `test_engine.py` | Tests that run before every session; the session doesn't start if they fail. |
 | `screen_swing.py` | The 60-day historical check above. |
 
