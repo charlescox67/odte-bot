@@ -6,12 +6,17 @@ export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
 cd "$(dirname "$0")" || exit 1
 DOW=$(TZ=America/New_York date +%u)
 HHMM=$(TZ=America/New_York date +%H%M)
+log() { echo "$(TZ=America/New_York date '+%F %T') ET  $1" >> logs/kick.log; }
 [ "$DOW" -gt 5 ] && exit 0
-[ "$HHMM" \< "0900" ] && exit 0
-[ "$HHMM" \> "1530" ] && exit 0
+if [ "$HHMM" \< "0900" ] || [ "$HHMM" \> "1530" ]; then
+  log "asleep or outside 09:00-15:30 ET ($HHMM) - nothing to do"; exit 0
+fi
 ACTIVE=$(gh run list --workflow session.yml --limit 10 --json status \
          --jq '[.[] | select(.status=="in_progress" or .status=="queued" or .status=="pending")] | length' 2>>logs/kick.err)
 if [ "$ACTIVE" = "0" ]; then
-  gh workflow run session.yml 2>>logs/kick.err \
-    && echo "$(TZ=America/New_York date '+%F %T') ET  no session running -> dispatched" >> logs/kick.log
+  gh workflow run session.yml 2>>logs/kick.err && log "no session running -> dispatched"
+elif [ -z "$ACTIVE" ]; then
+  log "could not reach GitHub (gh failed) - see kick.err"
+else
+  log "$ACTIVE session run(s) already active - left alone"
 fi

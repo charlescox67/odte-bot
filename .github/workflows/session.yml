@@ -10,6 +10,11 @@ name: session
 # open (up to 45 min); runs outside the session exit immediately.
 on:
   schedule:
+    # 2026-09-23: of ~11 morning slots, GitHub fired none; the only schedules
+    # that have ever run were at 20:07 UTC. 12:00-14:00 UTC is peak load for
+    # scheduled jobs, so slots there get dropped. Try quieter hours first and
+    # let those early jobs wait for the open (MAX_EARLY in cloud_loop.py).
+    - cron: "*/15 10-11 * * 1-5"
     - cron: "*/10 12-14 * * 1-5"
     - cron: "7 15-20 * * 1-5"
   workflow_dispatch:

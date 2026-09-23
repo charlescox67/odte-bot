@@ -23,7 +23,9 @@ from zoneinfo import ZoneInfo
 ET = ZoneInfo("America/New_York")
 FIRST_TICK = dtime(9, 30)
 LAST_TICK = dtime(16, 1)          # one tick past the close, to settle
-MAX_EARLY = timedelta(minutes=45)  # started earlier than this? a later job has it
+MAX_EARLY = timedelta(minutes=170)  # wait for the open rather than hand off:
+                                   # GitHub drops the morning slots, so an early
+                                   # fire may be the only one we get all day
 PUSH_EVERY = 10
 
 BUDGET = timedelta(minutes=int(os.environ.get("BUDGET_MIN", "340")))
