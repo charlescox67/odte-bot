@@ -59,7 +59,7 @@ TRADE_COLUMNS = ["id", "symbol", "contract", "right", "strike", "expiry", "qty",
                  "pnl", "pnl_pct",
                  "signal_symbol", "setup", "stop_at_entry", "stop_final",
                  "spread_at_entry", "event_day", "exit_basis",
-                 "bb_pct", "bb_squeeze", "vs_dow_30m"]
+                 "conviction", "bb_pct", "bb_squeeze", "vs_dow_30m"]
 
 
 @dataclass
@@ -91,6 +91,7 @@ class Position:
     runner: bool = False      # reached +60% while breaking out hard
     fees: float = 0.0         # commissions + regulatory fees paid so far
     peak_pct: float = 0.0     # best option-price gain seen, for the runner floor
+    conviction: str = ""      # "great 3/4" / "decent 1/4" at entry
     # recorded at entry, not used as rules (see swing_signal.bollinger)
     bb_pct: float | None = None       # position in Bollinger Bands, 5m
     bb_squeeze: bool | None = None
@@ -225,7 +226,7 @@ class Book:
                         f"{pos.fees:.2f}",
                         f"{pos.pnl():.2f}", f"{pos.pnl_pct():.4f}",
                         pos.signal_symbol or "", pos.setup, pos.stop_at_entry,
-                        pos.stop_underlying, pos.spread_at_entry, pos.event_day, pos.exit_basis,
+                        pos.stop_underlying, pos.spread_at_entry, pos.event_day, pos.exit_basis, pos.conviction,
                         pos.bb_pct, pos.bb_squeeze, pos.vs_dow_30m])
 
     def equity(self) -> float:

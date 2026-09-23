@@ -86,13 +86,25 @@ check("never loosens", sw.trail_stop(df, after(15), "C", 102.5), 102.5)
 check("not hit while price above", sw.stop_hit(df, after(15), "C", 101.9), False)
 check("hit once close is below", sw.stop_hit(df, after(15), "C", 103.0), True)
 
-print("\nsizing: 0.5% of equity lost at the 50% backstop, any account size")
-# 500 / (0.42 x 100 x 50% + 2 x $0.68 fees) = 22.4
-check("SPY ask 0.42 on $100k", rb.size_qty(100_000, 0.42), 22)
-check("same rule on a $20k account", rb.size_qty(20_000, 0.42), 4)
-check("cheap contract hits the cap", rb.size_qty(100_000, 0.10), rb.MAX_QTY)
-check("too expensive for the budget", rb.size_qty(100_000, 25.0), 0)
-check("half risk on data days", rb.size_qty(100_000, 0.42, 0.5), 11)
+print("\nsizing: premium budget by conviction, scaled to the account")
+check("$7k decent: $500 budget at 1.00 -> 5", rb.size_qty(7_000, 1.00), 5)
+check("$7k great:  $1,000 at 1.00 -> 10", rb.size_qty(7_000, 1.00, great=True), 10)
+check("$7k great at 1.22 (today's QQQ) -> 8", rb.size_qty(7_000, 1.22, great=True), 8)
+check("$7k decent at 1.22 -> 4", rb.size_qty(7_000, 1.22), 4)
+check("scales with the account: $14k great -> 20", rb.size_qty(14_000, 1.00, great=True), 20)
+check("cheap contracts hit the contract cap", rb.size_qty(7_000, 0.10, great=True), rb.MAX_QTY)
+check("half risk on data days", rb.size_qty(7_000, 1.00, 0.5, great=True), 5)
+check("an option pricier than the budget -> skipped", rb.size_qty(7_000, 12.00), 0)
+
+print("\nconviction score")
+G = lambda **k: rb.conviction(**{**dict(stop_capped=True, squeeze=False,
+                                        momentum=False, used=0.4), **k})
+check("nothing going for it", G(), (0, "decent"))
+check("stop reachable only", G(stop_capped=False), (1, "decent"))
+check("stop + squeeze", G(stop_capped=False, squeeze=True), (2, "decent"))
+check("stop + squeeze + momentum -> great", G(stop_capped=False, squeeze=True, momentum=True), (3, "great"))
+check("all four", G(stop_capped=False, squeeze=True, momentum=True, used=0.1), (4, "great"))
+check("no band reading counts as no squeeze", G(squeeze=None, stop_capped=False, momentum=True, used=0.1), (3, "great"))
 
 print("\ndelta straight from the chain")
 tbl = pd.DataFrame({"strike": [770.0, 771.0, 772.0, 773.0],
@@ -256,21 +268,21 @@ check("beat a flat Dow by 1%", round(sw.vs_dow(sym_up, dow_flat, fin(sym_up)), 2
 dow_up = mins([400 + i * (2.0 / 30) for i in range(31)])     # Dow +0.5%
 check("flat while the Dow rose 0.5%", round(sw.vs_dow(mins([100.0] * 31), dow_up, fin(dow_up)), 2), -0.5)
 
-print("\ndaily loss limit")
+print("\ndaily loss limit, now -8% (one great loss is -7%)")
 import tempfile
 from pathlib import Path
 pe.TRADES = Path(tempfile.mkdtemp()) / "trades.csv"
-bk = pe.Book(cash=100_000.0)
-ts = datetime(2026, 9, 22, 11, 0, tzinfo=ET)
-x = bk.open(symbol="QQQ", contract="x", right="C", strike=1.0, expiry="2026-09-22",
-            qty=10, ask=1.5, underlying=1.0, reason="t", ts=ts)
-bk.close(x, bid=0.1, reason="t", ts=ts)   # -1,400
-check("-1.4% -> still allowed", rb.loss_limit_hit(bk, ts.date()), False)
-y = bk.open(symbol="QQQ", contract="y", right="C", strike=1.0, expiry="2026-09-22",
-            qty=10, ask=1.0, underlying=1.0, reason="t", ts=ts)
-bk.close(y, bid=0.3, reason="t", ts=ts)   # -700 -> -2,100 total
-check("-2.1% -> blocked", rb.loss_limit_hit(bk, ts.date()), True)
-check("yesterday's losses don't count", rb.loss_limit_hit(bk, date(2026, 9, 23)), False)
+bk = pe.Book(cash=7_000.0)
+ts = datetime(2026, 9, 24, 11, 0, tzinfo=ET)
+x = bk.open(symbol="QQQ", contract="x", right="C", strike=1.0, expiry="2026-09-24",
+            qty=10, ask=1.00, underlying=1.0, reason="t", ts=ts)   # $1,000 premium
+bk.close(x, bid=0.60, reason="t", ts=ts)                            # -$400 and fees
+check("a great trade down 40% (-5.9%) -> still allowed", rb.loss_limit_hit(bk, ts.date()), False)
+y = bk.open(symbol="QQQ", contract="y", right="C", strike=1.0, expiry="2026-09-24",
+            qty=5, ask=1.00, underlying=1.0, reason="t", ts=ts)
+bk.close(y, bid=0.50, reason="t", ts=ts)                            # another -$250
+check("past -8% of the day's start -> blocked", rb.loss_limit_hit(bk, ts.date()), True)
+check("yesterday's losses don't count", rb.loss_limit_hit(bk, date(2026, 9, 25)), False)
 
 print("\nevent calendar")
 f = ev.day_profile(date(2026, 10, 28))

@@ -46,7 +46,15 @@ FLATTEN_AT = dtime(14, 45)
 # wall) actually executes it rather than leaving it to expiry settlement.
 RUNNER_FLATTEN = dtime(15, 30)
 
-RISK_PCT = 0.005                # of equity, lost if the backstop is hit
+# Sizing is by PREMIUM SPENT, as a share of equity, so it scales with the
+# account: on $7,000 that is $1,000 on a great setup and $500 on a decent one,
+# exactly as asked. Note what that means - a great trade stopped at the 50%
+# backstop loses 7% of the account, and a decent one 3.5%.
+PREMIUM_PCT_GREAT = 1 / 7      # exactly $1,000 on a $7,000 account
+PREMIUM_PCT_DECENT = 1 / 14    # exactly $500
+# Conviction: one point each for a stop that did not need capping, a Bollinger
+# squeeze, momentum already running our way, and a setup still fresh. 3+ = great.
+GREAT_SCORE = 3
 BACKSTOP = 0.50                 # exit if the option loses half its premium
 MAX_QTY = 50                    # SPY/QQQ 0DTE trade thousands per minute
 MAX_SPREAD = 0.10               # skip if bid-ask exceeds 10% of the ask
@@ -67,7 +75,9 @@ MAX_USED_AT_ENTRY = 0.5
 # trades), so this deliberately applies to puts only.
 MIN_BB_FOR_PUTS = 0.0
 MAX_ENTRIES_PER_DAY = 3         # per market
-DAILY_LOSS_LIMIT = 0.02         # of start-of-day equity: no new entries past it
+# One great trade stopped out is -7%, so a -2% daily cap would end the day on
+# the first loss. -8% lets one great loss through and stops after two.
+DAILY_LOSS_LIMIT = 0.08         # of start-of-day equity: no new entries past it
 TIME_STOP_MIN = 60
 # ...but a trade that is working is handed to the trailing stop instead of
 # being closed on the clock. Day one closed a +73% winner at 60 minutes that
@@ -150,14 +160,23 @@ def et_date(iso: str):
     return datetime.fromisoformat(iso).astimezone(ET).date()
 
 
-def size_qty(equity: float, ask: float, risk_mult: float = 1.0) -> int:
-    """Contracts such that hitting the 50% backstop loses RISK_PCT of equity.
-    0 means the contract is too expensive for the risk budget: skip it."""
+def conviction(*, stop_capped: bool, squeeze: bool | None,
+               momentum: bool, used: float) -> tuple[int, str]:
+    """How good the setup looks, 0-4, from what is knowable at entry."""
+    score = sum((not stop_capped,          # the real pivot is within reach
+                 bool(squeeze),            # bands coiled before the move
+                 momentum,                 # already moving our way, fast and clean
+                 used < 0.25))             # barely any room given up since the signal
+    return score, "great" if score >= GREAT_SCORE else "decent"
+
+
+def size_qty(equity: float, ask: float, risk_mult: float = 1.0,
+             great: bool = False) -> int:
+    """Contracts that fit the premium budget for this conviction level."""
     if ask <= 0:
         return 0
-    # the loss at the backstop, plus commission in and out
-    per_contract = ask * pe.MULTIPLIER * BACKSTOP + 2 * pe.fee_per_contract(ask)
-    return min(MAX_QTY, int(equity * RISK_PCT * risk_mult // per_contract))
+    budget = equity * (PREMIUM_PCT_GREAT if great else PREMIUM_PCT_DECENT) * risk_mult
+    return min(MAX_QTY, int(budget // (ask * pe.MULTIPLIER)))
 
 
 def day_pnl(book: pe.Book, day) -> float:
@@ -407,7 +426,13 @@ def consider_entry(book: pe.Book, sym: str, sig_sym: str, sig_bars,
     if used >= MAX_USED_AT_ENTRY:
         print(f"{tag} — already failing on live prices ({used:.0%} of the room "
               f"to the stop used since the signal)"); return
-    qty = size_qty(book.equity(), ask, profile.risk_mult)
+    risk_dist = abs(ref - stop)
+    score, grade = conviction(
+        stop_capped=abs(stop - setup.stop) > 1e-9,
+        squeeze=None if bb is None else bb[1],
+        momentum=sw.breaking_out(sig_bars, asof, setup.side, risk_dist),
+        used=used)
+    qty = size_qty(book.equity(), ask, profile.risk_mult, great=(grade == "great"))
     if qty < 1:
         print(f"{tag} — ask {ask:.2f} too expensive for the risk budget"); return
     # Context recorded for later review; a missing Dow feed never blocks a trade.
@@ -419,10 +444,13 @@ def consider_entry(book: pe.Book, sym: str, sig_sym: str, sig_bars,
                     signal_symbol=sig_sym, setup=setup.pivot_id,
                     stop_at_entry=stop, stop_underlying=stop,
                     spread_at_entry=round(ask - bid, 4), event_day=profile.label,
+                    conviction=f"{grade} {score}/4",
                     bb_pct=None if bb is None else round(bb[0], 3),
                     bb_squeeze=None if bb is None else bb[1],
                     vs_dow_30m=None if rel is None else round(rel, 3))
-    print(f"  OPEN  {pos.contract} x{qty} @ ask {ask:.2f} (bid {bid:.2f}) "
+    print(f"  OPEN  {grade.upper()} {score}/4 ${ask*qty*100:,.0f} premium "
+          f"({ask*qty*100/book.equity():.0%} of equity) | "
+          f"{pos.contract} x{qty} @ ask {ask:.2f} (bid {bid:.2f}) "
           f"{sym} {ref:.2f} | stop {stop:.2f} (delta {delta:+.2f})"
           f" | bands %B {'-' if bb is None else f'{bb[0]:.2f}'}"
           f"{' SQUEEZE' if bb and bb[1] else ''}"
