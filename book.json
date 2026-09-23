@@ -25,7 +25,12 @@
       "spread_at_entry": 0.1,
       "event_day": "",
       "exit_basis": "",
-      "runner": false
+      "runner": false,
+      "fees": 0.0,
+      "peak_pct": 0.0,
+      "bb_pct": null,
+      "bb_squeeze": null,
+      "vs_dow_30m": null
     },
     {
       "id": "b21f0db1",
@@ -51,7 +56,12 @@
       "spread_at_entry": 0.01,
       "event_day": "",
       "exit_basis": "",
-      "runner": false
+      "runner": false,
+      "fees": 0.0,
+      "peak_pct": 0.0,
+      "bb_pct": null,
+      "bb_squeeze": null,
+      "vs_dow_30m": null
     },
     {
       "id": "9704f857",
@@ -77,7 +87,12 @@
       "spread_at_entry": 0.1,
       "event_day": "",
       "exit_basis": "",
-      "runner": false
+      "runner": false,
+      "fees": 0.0,
+      "peak_pct": 0.0,
+      "bb_pct": null,
+      "bb_squeeze": null,
+      "vs_dow_30m": null
     },
     {
       "id": "b02ba9da",
@@ -103,7 +118,12 @@
       "spread_at_entry": 0.24,
       "event_day": "",
       "exit_basis": "estimated",
-      "runner": false
+      "runner": false,
+      "fees": 0.0,
+      "peak_pct": 0.0,
+      "bb_pct": null,
+      "bb_squeeze": null,
+      "vs_dow_30m": null
     },
     {
       "id": "39668f5d",
@@ -129,7 +149,12 @@
       "spread_at_entry": 0.01,
       "event_day": "",
       "exit_basis": "quote",
-      "runner": false
+      "runner": false,
+      "fees": 0.0,
+      "peak_pct": 0.0,
+      "bb_pct": null,
+      "bb_squeeze": null,
+      "vs_dow_30m": null
     },
     {
       "id": "d01cdcd1",
@@ -155,7 +180,12 @@
       "spread_at_entry": 0.06,
       "event_day": "",
       "exit_basis": "quote",
-      "runner": false
+      "runner": false,
+      "fees": 0.0,
+      "peak_pct": 0.0,
+      "bb_pct": null,
+      "bb_squeeze": null,
+      "vs_dow_30m": null
     },
     {
       "id": "f03cc7f3",
@@ -181,7 +211,12 @@
       "spread_at_entry": 0.01,
       "event_day": "",
       "exit_basis": "estimated",
-      "runner": false
+      "runner": false,
+      "fees": 0.0,
+      "peak_pct": 0.0,
+      "bb_pct": null,
+      "bb_squeeze": null,
+      "vs_dow_30m": null
     }
   ]
 }
