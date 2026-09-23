@@ -796,3 +796,10 @@ equity $101,106.60 | cash $99,774.60 | open 1 | closed 8
 SPY: P setup H1215 stop 768.74 (SPY) — already holding
 QQQ: no setup as of 12:44 | trend down | vwap 741.85 | last low 739.94@1220 high 740.91@1215 | close 740.32
 equity $101,124.60 | cash $99,774.60 | open 1 | closed 8
+--- tick 2026-09-23 13:05:00 EDT (signals as of 12:45) ---
+  TRAIL SPY260923P00769000 stop 768.74 -> 768.73
+  RUNNER SPY260923P00769000 at +65%: breaking out hard, holding for a deep red candle (keeps 40% of its best, min +30%)
+SPY: P setup H1230 stop 768.73 (SPY) — already holding
+QQQ: P setup H1230 stop 740.80 (QQQ) — stop pulled in to 740.51 (pivot 740.80 would cost ~58%)
+  OPEN  QQQ260923P00739000 x10 @ ask 0.93 (bid 0.92) QQQ 739.49 | stop 740.51 (delta -0.41) | bands %B -0.01 SQUEEZE | vs Dow -0.13%
+equity $101,315.80 | cash $98,837.80 | open 2 | closed 8
