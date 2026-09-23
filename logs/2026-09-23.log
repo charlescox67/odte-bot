@@ -885,3 +885,8 @@ SPY: P setup H1230 stop 768.73 (SPY) — stop pulled in to 767.56 (pivot 768.73 
 SPY: P setup H1230 stop 768.73 (SPY) — already failing on live prices (56% of the room to the stop used since the signal)
 QQQ: no setup as of 13:05 | trend down | vwap 741.62 | last low 739.94@1220 high 740.80@1230 | close 738.53
 equity $101,497.92 | cash $100,696.79 | open 1 | closed 9
+--- tick 2026-09-23 13:26:00 EDT (signals as of 13:06) ---
+SPY: P setup H1230 stop 768.73 (SPY) — stop pulled in to 767.73 (pivot 768.73 would cost ~97%)
+SPY: P setup H1230 stop 768.73 (SPY) — already failing on live prices (51% of the room to the stop used since the signal)
+QQQ: no setup as of 13:06 | trend down | vwap 741.61 | last low 739.94@1220 high 740.80@1230 | close 738.53
+equity $101,671.18 | cash $100,696.79 | open 1 | closed 9
