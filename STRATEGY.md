@@ -122,6 +122,14 @@ time. The bot never buys cheap far-out-of-the-money lottery tickets.
 **Liquidity check.** If the bid-ask spread is more than **10% of the ask**,
 the trade is skipped.
 
+**No puts into a stretched fall.** If price sits at or below the lower
+Bollinger Band (%B < 0), the put is skipped: buying into an already-extended
+drop is chasing, and the bounce takes the premium. On 2026-09-23 both losing
+trades were exactly that. Over 60 days such puts returned **−0.35R** (12
+trades, 25% winners) against −0.09R for puts entered mid-band. Twelve trades
+is suggestive, not proof, and the mirror case for calls pointed the *other*
+way (+0.35R on 8 trades), so this applies to **puts only**.
+
 **Size.** Always a **percentage of the account**, never a fixed dollar
 amount, so it shrinks and grows with the balance. The number of contracts is
 set so that hitting the 50% loss exit (below) would lose **0.5% of the
@@ -412,6 +420,7 @@ every 10 minutes; trades are saved the minute they happen.
 | Max contracts | 50 | `MAX_QTY` |
 | Commissions | IBKR Pro Fixed: $0.65/contract ($1 min/order) + ~$0.03 reg. | `paper_engine.py` `IBKR_RATES` |
 | Max spread | 10% of ask | `MAX_SPREAD` |
+| No puts below the lower band | %B < 0 | `MIN_BB_FOR_PUTS` |
 | Entries per market per day | 3 | `MAX_ENTRIES_PER_DAY` |
 | Daily loss stop | −2% | `DAILY_LOSS_LIMIT` |
 | Time limit | 60 min, unless up ≥ 0.25R | `TIME_STOP_MIN`, `TIME_STOP_KEEP_R` |
