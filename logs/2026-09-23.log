@@ -558,3 +558,21 @@ equity $100,135.60 | cash $100,135.60 | open 0 | closed 7
 SPY: no setup as of 11:46 | trend down | vwap 770.14 | last low 768.68@1040 high 769.99@1125 | close 769.19
 QQQ: no setup as of 11:46 | trend down | vwap 742.04 | last low 740.96@1115 high 742.40@1120 | close 741.53
 equity $100,135.60 | cash $100,135.60 | open 0 | closed 7
+--- tick 2026-09-23 12:07:00 EDT (signals as of 11:47) ---
+SPY: no setup as of 11:47 | trend down | vwap 770.13 | last low 768.68@1040 high 769.99@1125 | close 769.19
+QQQ: no setup as of 11:47 | trend down | vwap 742.04 | last low 740.96@1115 high 742.40@1120 | close 741.53
+equity $100,135.60 | cash $100,135.60 | open 0 | closed 7
+--- tick 2026-09-23 12:08:00 EDT (signals as of 11:48) ---
+SPY: no setup as of 11:48 | trend down | vwap 770.13 | last low 768.68@1040 high 769.99@1125 | close 769.19
+QQQ: no setup as of 11:48 | trend down | vwap 742.04 | last low 740.96@1115 high 742.40@1120 | close 741.53
+equity $100,135.60 | cash $100,135.60 | open 0 | closed 7
+--- tick 2026-09-23 12:09:00 EDT (signals as of 11:49) ---
+SPY: no setup as of 11:49 | trend down | vwap 770.12 | last low 768.68@1040 high 769.99@1125 | close 769.19
+QQQ: no setup as of 11:49 | trend down | vwap 742.03 | last low 740.96@1115 high 742.40@1120 | close 741.53
+equity $100,135.60 | cash $100,135.60 | open 0 | closed 7
+--- tick 2026-09-23 12:10:00 EDT (signals as of 11:50) ---
+SPY: P setup H1125 stop 769.99 (SPY) — stop pulled in to 769.38 (pivot 769.99 would cost ~77%)
+  OPEN  SPY260923P00769000 x9 @ ask 1.04 (bid 1.03) SPY 768.51 | stop 769.38 (delta -0.54) | bands %B 0.08 SQUEEZE | vs Dow +0.11%
+QQQ: P setup H1120 stop 742.40 (QQQ) — stop pulled in to 741.58 (pivot 742.40 would cost ~80%)
+  OPEN  QQQ260923P00741000 x8 @ ask 1.22 (bid 1.21) QQQ 740.54 | stop 741.58 (delta -0.53) | bands %B 0.43 SQUEEZE | vs Dow +0.11%
+equity $100,124.04 | cash $98,212.04 | open 2 | closed 7
