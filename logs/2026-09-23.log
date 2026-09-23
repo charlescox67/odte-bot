@@ -576,3 +576,7 @@ SPY: P setup H1125 stop 769.99 (SPY) — stop pulled in to 769.38 (pivot 769.99 
 QQQ: P setup H1120 stop 742.40 (QQQ) — stop pulled in to 741.58 (pivot 742.40 would cost ~80%)
   OPEN  QQQ260923P00741000 x8 @ ask 1.22 (bid 1.21) QQQ 740.54 | stop 741.58 (delta -0.53) | bands %B 0.43 SQUEEZE | vs Dow +0.11%
 equity $100,124.04 | cash $98,212.04 | open 2 | closed 7
+--- tick 2026-09-23 12:11:00 EDT (signals as of 11:51) ---
+SPY: no setup as of 11:51 | trend down | vwap 770.11 | last low 768.68@1040 high 769.99@1125 | close 768.51
+QQQ: no setup as of 11:51 | trend down | vwap 742.03 | last low 740.96@1115 high 742.40@1120 | close 740.54
+equity $99,934.13 | cash $98,212.04 | open 2 | closed 7
