@@ -3,7 +3,9 @@
 A paper-trading bot that buys same-day (0DTE) options on the S&P 500 and the
 Nasdaq-100. It trades in the direction of the day's trend, entering after a
 pullback holds and price turns back. It trades an **internal paper book**
-starting at $100,000, runs entirely on **free Yahoo Finance data**, and does
+starting at **$7,000** (restarted from $100,000 on 2026-09-23 — the earlier
+log is in `archive/trades-100k-paper.csv`), runs entirely on **free Yahoo
+Finance data**, and does
 not connect to any broker. It runs on GitHub Actions every trading day.
 
 > **Status: unproven.** A 60-day historical check of these rules was negative
@@ -130,26 +132,40 @@ trades, 25% winners) against −0.09R for puts entered mid-band. Twelve trades
 is suggestive, not proof, and the mirror case for calls pointed the *other*
 way (+0.35R on 8 trades), so this applies to **puts only**.
 
-**Size.** Always a **percentage of the account**, never a fixed dollar
-amount, so it shrinks and grows with the balance. The number of contracts is
-set so that hitting the 50% loss exit (below) would lose **0.5% of the
-account**:
+**Size.** By **premium spent**, as a share of the account, so it scales with
+the balance. How much depends on how good the setup looks:
+
+| Conviction | Premium budget | On a $7,000 account |
+|---|---|---|
+| **great** (3–4 of 4) | 1/7 of equity | **$1,000** |
+| **decent** (0–2) | 1/14 of equity | **$500** |
 
 ```
-contracts = floor( 0.5% of equity / (ask x 100 x 50%) )     capped at 50
+contracts = floor( budget / (ask x 100) )     capped at 50
 ```
+
+**Conviction** scores one point each, all knowable at entry: the pullback's
+own stop was close enough not to need capping; the Bollinger bands were in a
+squeeze; momentum was already running our way (the same test the runner uses);
+and less than 25% of the room to the stop had been given up since the signal.
+The score is logged and stored on every trade, so "great beats decent" can be
+checked rather than assumed.
+
+**What this risks.** A great trade stopped at the 50% backstop loses **7% of
+the account**; if the option went to zero, 14%. That is 14–28× the risk this
+bot ran up to 2026-09-23, and it is why the daily loss limit is −8%.
 
 If that comes out below 1, the contract is too expensive for the risk budget
 and the trade is skipped.
 
 | Example | Math | Contracts |
 |---|---|---|
-| SPY, ask 1.37, $100k | 500 / 68.5 = 7.3 | **7** ($959 spent, $480 at risk) |
-| SPY, ask 1.37, **$20k** | 100 / 68.5 = 1.5 | **1** ($137 spent) |
-| QQQ, ask 0.10, $100k | 500 / 5 = 100 | **50** (the cap) |
-
-Because contract counts round down, real risk per trade is usually a little
-**under** 0.5%.
+| Example ($7,000 account) | Math | Contracts |
+|---|---|---|
+| great, ask 1.00 | 1,000 / 100 | **10** ($1,000) |
+| decent, ask 1.00 | 500 / 100 | **5** ($500) |
+| great, ask 1.22 | 1,000 / 122 | **8** ($976) |
+| great, ask 0.10 | budget buys 100 | **50** (the cap) |
 
 ## 5. Exits
 
@@ -414,7 +430,7 @@ every 10 minutes; trades are saved the minute they happen.
 | Runner floor | keeps 40% of its best gain, min +30% | `RUNNER_KEEP`, `RUNNER_MIN_PCT` |
 | Runner exit | 15:30 lagged (~15:50) | `RUNNER_FLATTEN` |
 | Deep red candle | body ≥2.5× typical 5-min move | `DEEP_DIP_MULT` |
-| Risk per trade | 0.5% of equity at the backstop | `RISK_PCT` |
+| Premium per trade | 1/7 of equity (great), 1/14 (decent) | `PREMIUM_PCT_GREAT`, `PREMIUM_PCT_DECENT` |
 | Max cost of reaching the stop | 45% of premium | `STOP_COST_CAP` |
 | Premium backstop | −50% | `BACKSTOP` |
 | Max contracts | 50 | `MAX_QTY` |
@@ -422,7 +438,7 @@ every 10 minutes; trades are saved the minute they happen.
 | Max spread | 10% of ask | `MAX_SPREAD` |
 | No puts below the lower band | %B < 0 | `MIN_BB_FOR_PUTS` |
 | Entries per market per day | 3 | `MAX_ENTRIES_PER_DAY` |
-| Daily loss stop | −2% | `DAILY_LOSS_LIMIT` |
+| Daily loss stop | −8% | `DAILY_LOSS_LIMIT` |
 | Time limit | 60 min, unless up ≥ 0.25R | `TIME_STOP_MIN`, `TIME_STOP_KEEP_R` |
 | Swing definition | beats 2 bars each side | `swing_signal.py` `PIVOT_K` |
 | Swing must be recent | confirmed within 30 min | `FRESH_BARS` (6 bars) |
