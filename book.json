@@ -1,5 +1,5 @@
 {
-  "cash": 98212.04321044922,
+  "cash": 99774.60321044922,
   "positions": [
     {
       "id": "ea4251b8",
@@ -231,7 +231,7 @@
       "entry_reason": "swing H1125",
       "underlying_at_entry": 768.5100708007812,
       "status": "open",
-      "mark": 1.35,
+      "mark": 1.51,
       "exit_price": null,
       "exit_time": null,
       "exit_reason": null,
@@ -244,7 +244,7 @@
       "exit_basis": "quote",
       "runner": false,
       "fees": 6.12,
-      "peak_pct": 0.29807692307692313,
+      "peak_pct": 0.45192307692307687,
       "bb_pct": 0.079,
       "bb_squeeze": true,
       "vs_dow_30m": 0.115
@@ -261,11 +261,11 @@
       "entry_time": "2026-09-23T16:10:02.543229+00:00",
       "entry_reason": "swing H1120",
       "underlying_at_entry": 740.5399780273438,
-      "status": "open",
-      "mark": 1.77,
-      "exit_price": null,
-      "exit_time": null,
-      "exit_reason": null,
+      "status": "closed",
+      "mark": 1.96,
+      "exit_price": 1.96,
+      "exit_time": "2026-09-23T17:00:01.613830+00:00",
+      "exit_reason": "target",
       "signal_symbol": "QQQ",
       "setup": "H1120",
       "stop_at_entry": 741.5807363211826,
@@ -274,8 +274,8 @@
       "event_day": "",
       "exit_basis": "quote",
       "runner": false,
-      "fees": 5.44,
-      "peak_pct": 0.4508196721311476,
+      "fees": 10.88,
+      "peak_pct": 0.6065573770491803,
       "bb_pct": 0.432,
       "bb_squeeze": true,
       "vs_dow_30m": 0.111
