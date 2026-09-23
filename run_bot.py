@@ -59,6 +59,13 @@ MAX_STRIKE_GAP = 0.0025
 # setup can already be failing by the time it is bought: on 2026-09-22 QQQ had
 # used 34% of the room to the stop before the entry. Skip if half is gone.
 MAX_USED_AT_ENTRY = 0.5
+# No puts while price sits at or below the lower Bollinger band: buying a put
+# into an already-stretched fall is chasing, and the bounce takes the premium.
+# 2026-09-23 lost both trades that way. Over 60 days such puts ran -0.35R
+# (12 trades, 25% wins) against -0.09R for the rest; 12 trades is suggestive,
+# not proof, and the mirror for calls pointed the OTHER way (+0.35R on 8
+# trades), so this deliberately applies to puts only.
+MIN_BB_FOR_PUTS = 0.0
 MAX_ENTRIES_PER_DAY = 3         # per market
 DAILY_LOSS_LIMIT = 0.02         # of start-of-day equity: no new entries past it
 TIME_STOP_MIN = 60
@@ -218,6 +225,11 @@ def progress_r(pos, live_px: float | None) -> float | None:
     return sign * (live_px - pos.underlying_at_entry) / risk
 
 
+def stretched_put(side: str, bb_pct: float | None) -> bool:
+    """A put entered at or below the lower band. None = no reading, so allow."""
+    return side == "P" and bb_pct is not None and bb_pct < MIN_BB_FOR_PUTS
+
+
 def room_used(side: str, entry_px: float, stop: float, live_px: float | None) -> float:
     """Fraction of the entry-to-stop distance already lost on LIVE prices.
     0 = untouched (or moved in our favour), 1+ = the stop is already broken."""
@@ -354,6 +366,10 @@ def consider_entry(book: pe.Book, sym: str, sig_sym: str, sig_bars,
         print(f"{sym}: no setup as of {asof:%H:%M} | {sw.summary(sig_bars, asof)}")
         return
     tag = f"{sym}: {setup.side} setup {setup.pivot_id} stop {setup.stop:.2f} ({sig_sym})"
+    bb = sw.bollinger(sig_bars, asof)
+    if stretched_put(setup.side, None if bb is None else bb[0]):
+        print(f"{tag} — put skipped: %B {bb[0]:+.2f}, price is at/below the lower band")
+        return
     cutoff = min(NO_ENTRY_AFTER, profile.entry_cutoff or NO_ENTRY_AFTER)
     if not ENTRY_START <= asof.time() < cutoff:
         print(f"{tag} — outside entry window {ENTRY_START:%H:%M}-{cutoff:%H:%M}"); return
@@ -395,7 +411,6 @@ def consider_entry(book: pe.Book, sym: str, sig_sym: str, sig_bars,
     if qty < 1:
         print(f"{tag} — ask {ask:.2f} too expensive for the risk budget"); return
     # Context recorded for later review; a missing Dow feed never blocks a trade.
-    bb = sw.bollinger(sig_bars, asof)
     dow = retry(lambda: bars_1m("DIA"), tries=1, label="DIA bars")
     rel = sw.vs_dow(sig_bars, dow, asof) if dow is not None else None
     pos = book.open(symbol=sym, contract=row.contractSymbol, right=setup.side,

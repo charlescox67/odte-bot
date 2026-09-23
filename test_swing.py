@@ -202,6 +202,13 @@ check("runner may hold past 14:45", E(pct=2.0, runner=True, asof_t=T(14, 45)), N
 check("an ordinary trade is out at 14:45", E(pct=0.3, r_now=0.9, asof_t=T(14, 45)), "eod")
 check("even a runner is out at 15:45", E(pct=2.0, runner=True, asof_t=T(15, 45)), "eod")
 
+print("\nno puts into an already-stretched fall")
+check("put at %B -0.09 (today's loser) -> skip", rb.stretched_put("P", -0.09), True)
+check("put at %B -0.01 (today's other) -> skip", rb.stretched_put("P", -0.006), True)
+check("put mid-range -> fine", rb.stretched_put("P", 0.43), False)
+check("call above the upper band -> still allowed", rb.stretched_put("C", 1.20), False)
+check("no band reading yet -> allowed", rb.stretched_put("P", None), False)
+
 print("\nincomplete chains are refused")
 class FakeTicker:
     def __init__(self, strikes): self.strikes, self.options = strikes, ("2026-09-22",)
