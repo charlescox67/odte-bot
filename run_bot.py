@@ -55,6 +55,12 @@ PREMIUM_PCT_DECENT = 1 / 14    # exactly $500
 # Conviction: one point each for a stop that did not need capping, a Bollinger
 # squeeze, momentum already running our way, and a setup still fresh. 3+ = great.
 GREAT_SCORE = 3
+# ...and below 2 the setup is not worth taking at all. Scored against the five
+# real trades to 2026-09-24 this keeps both winners (each exactly 2/4) and
+# blocks two of the three losers, worth +$739. A minimum of 3 would have
+# blocked BOTH winners, so 2 is deliberate. Caveat: the one 3/4 trade lost, so
+# the score is not yet shown to predict anything.
+MIN_CONVICTION = 2
 BACKSTOP = 0.50                 # exit if the option loses half its premium
 MAX_QTY = 50                    # SPY/QQQ 0DTE trade thousands per minute
 MAX_SPREAD = 0.10               # skip if bid-ask exceeds 10% of the ask
@@ -168,6 +174,10 @@ def conviction(*, stop_capped: bool, squeeze: bool | None,
                  momentum,                 # already moving our way, fast and clean
                  used < 0.25))             # barely any room given up since the signal
     return score, "great" if score >= GREAT_SCORE else "decent"
+
+
+def enough_conviction(score: int) -> bool:
+    return score >= MIN_CONVICTION
 
 
 def size_qty(equity: float, ask: float, risk_mult: float = 1.0,
@@ -466,6 +476,9 @@ def consider_entry(book: pe.Book, sym: str, sig_sym: str, sig_bars,
         squeeze=None if bb is None else bb[1],
         momentum=sw.breaking_out(sig_bars, asof, setup.side, risk_dist),
         used=used)
+    if not enough_conviction(score):
+        print(f"{tag} — skipped: conviction {score}/4 is below the {MIN_CONVICTION}/4 minimum")
+        return
     qty = size_qty(book.equity(), ask, profile.risk_mult, great=(grade == "great"))
     if qty < 1:
         print(f"{tag} — ask {ask:.2f} too expensive for the risk budget"); return

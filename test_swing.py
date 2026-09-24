@@ -86,6 +86,13 @@ check("never loosens", sw.trail_stop(df, after(15), "C", 102.5), 102.5)
 check("not hit while price above", sw.stop_hit(df, after(15), "C", 101.9), False)
 check("hit once close is below", sw.stop_hit(df, after(15), "C", 103.0), True)
 
+print("\nminimum conviction to trade at all")
+check("0/4 -> no trade", rb.enough_conviction(0), False)
+check("1/4 (today's loser) -> no trade", rb.enough_conviction(1), False)
+check("2/4 (both of 09-23's winners) -> trade", rb.enough_conviction(2), True)
+check("4/4 -> trade", rb.enough_conviction(4), True)
+check("a 3/4 minimum would have blocked both winners", rb.MIN_CONVICTION, 2)
+
 print("\nsizing: premium budget by conviction, scaled to the account")
 check("$7k decent: $500 budget at 1.00 -> 5", rb.size_qty(7_000, 1.00), 5)
 check("$7k great:  $1,000 at 1.00 -> 10", rb.size_qty(7_000, 1.00, great=True), 10)

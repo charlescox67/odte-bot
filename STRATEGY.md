@@ -138,11 +138,18 @@ the balance. How much depends on how good the setup looks:
 | Conviction | Premium budget | On a $7,000 account |
 |---|---|---|
 | **great** (3–4 of 4) | 1/7 of equity | **$1,000** |
-| **decent** (0–2) | 1/14 of equity | **$500** |
+| **decent** (2) | 1/14 of equity | **$500** |
+| below 2 | not traded | — |
 
 ```
 contracts = floor( budget / (ask x 100) )     capped at 50
 ```
+
+**A setup scoring below 2 is not traded at all.** Against the five real trades
+to 2026-09-24 that keeps both winners (each exactly 2/4) and blocks two of the
+three losers, worth +$739. A 3-of-4 minimum would have blocked *both* winners.
+The one 3/4 trade was a loser, so the score is not yet shown to predict
+anything — it is being recorded on every trade to find out.
 
 **Conviction** scores one point each, all knowable at entry: the pullback's
 own stop was close enough not to need capping; the Bollinger bands were in a
@@ -431,6 +438,7 @@ every 10 minutes; trades are saved the minute they happen.
 | Runner exit | 15:30 lagged (~15:50) | `RUNNER_FLATTEN` |
 | Deep red candle | body ≥2.5× typical 5-min move | `DEEP_DIP_MULT` |
 | Premium per trade | 1/7 of equity (great), 1/14 (decent) | `PREMIUM_PCT_GREAT`, `PREMIUM_PCT_DECENT` |
+| Minimum conviction | 2 of 4 | `MIN_CONVICTION` |
 | Max cost of reaching the stop | 45% of premium | `STOP_COST_CAP` |
 | Premium backstop | −50% | `BACKSTOP` |
 | Max contracts | 50 | `MAX_QTY` |
