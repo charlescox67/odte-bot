@@ -125,6 +125,18 @@ check("a close pivot is left alone", rb.cap_stop("C", 772.80, 772.60, 1.50, 0.50
 check("richer premium allows a wider stop", round(rb.cap_stop("C", 772.80, 770.00, 1.50, 0.50), 2), 771.45)
 check("puts mirror", round(rb.cap_stop("P", 772.80, 774.00, 0.42, -0.50), 3), 773.178)
 
+print("\nmarking a held option after the underlying moved (strike shift)")
+chain = pd.DataFrame({"strike": [736.0, 737.0, 738.0, 739.0, 740.0, 741.0],
+                      "bid": [3.76, 2.98, 2.36, 1.78, 1.28, 0.91],
+                      "ask": [3.89, 3.06, 2.37, 1.79, 1.29, 0.92]})
+# holding the 739 call, underlying falls 2.00 -> read the 741 strike: 0.91
+check("adverse move read off the chain", rb.adjust_mark(1.78, 0.50, 737.0, 739.0, tbl=chain, strike=739.0), 0.91)
+check("interpolates between strikes", round(rb.adjust_mark(1.78, 0.50, 737.5, 739.0, tbl=chain, strike=739.0), 3), 1.095)
+check("less pessimistic than straight delta", rb.adjust_mark(1.78, 0.50, 737.0, 739.0, tbl=chain, strike=739.0) > 1.78 - 0.50 * 2.0, True)
+check("favourable move still keeps the stale quote", rb.adjust_mark(1.78, 0.50, 740.0, 739.0, tbl=chain, strike=739.0), 1.78)
+sparse = pd.DataFrame({"strike": [730.0, 750.0], "bid": [9.0, 0.2], "ask": [9.1, 0.3]})
+check("chain too sparse -> falls back to delta", rb.adjust_mark(1.78, 0.50, 737.0, 739.0, tbl=sparse, strike=739.0), 0.78)
+
 print("\nlive marking never invents a gain")
 check("adverse move marks down now", rb.adjust_mark(5.00, 0.50, 771.0, 772.0), 4.50)
 check("favourable move keeps the stale quote", rb.adjust_mark(5.00, 0.50, 773.0, 772.0), 5.00)

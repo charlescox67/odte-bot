@@ -271,17 +271,50 @@ def live_price(sig_bars, t_now: datetime) -> float | None:
     return None if d is None or d.empty else float(d["close"].iloc[-1])
 
 
+def shifted_bid(tbl, strike: float, move: float) -> float | None:
+    """Value a held option after the underlying moved by `move`, by reading the
+    SHIFTED STRIKE out of the same (stale) chain: value depends on the gap
+    between strike and spot, so a 737 call after a -2.18 move is worth what the
+    739.18 strike was worth. Real quotes, and it captures the curvature that a
+    straight delta estimate misses - on 2026-09-24 that overstated a loss by
+    $34 on two contracts. Interpolates between the bracketing strikes."""
+    target = strike - move
+    t = tbl[(tbl.bid > 0) & (tbl.ask > 0)].sort_values("strike")
+    if t.empty:
+        return None
+    lo = t[t.strike <= target].tail(1)
+    hi = t[t.strike >= target].head(1)
+    if lo.empty or hi.empty:
+        return None
+    k0, b0 = float(lo.strike.iloc[0]), float(lo.bid.iloc[0])
+    k1, b1 = float(hi.strike.iloc[0]), float(hi.bid.iloc[0])
+    if k1 - k0 > 5:              # too sparse to interpolate through
+        return None
+    if k1 == k0:
+        return b0
+    return b0 + (b1 - b0) * (target - k0) / (k1 - k0)
+
+
 def adjust_mark(bid: float, delta: float | None,
-                live_px: float | None, lagged_px: float | None) -> float:
+                live_px: float | None, lagged_px: float | None,
+                tbl=None, strike: float | None = None) -> float:
     """Estimate what the option is worth NOW from a ~16-20 minute old quote
     plus the underlying move since it was taken.
 
     Only ever marks DOWN. A favourable move keeps the stale quote, so the book
     never books a gain the delayed feed has not actually printed; an adverse
     move is recognised immediately, which is the point of using live data."""
-    if delta is None or live_px is None or lagged_px is None:
+    if live_px is None or lagged_px is None:
         return bid
-    return max(0.0, min(bid, bid + delta * (live_px - lagged_px)))
+    move = live_px - lagged_px
+    est = None
+    if tbl is not None and strike is not None:
+        est = shifted_bid(tbl, strike, move)
+    if est is None:                      # fall back to a straight delta estimate
+        if delta is None:
+            return bid
+        est = bid + delta * move
+    return max(0.0, min(bid, est))
 
 
 def chain_quote(symbol: str, expiry: str, right: str, spot: float):
@@ -326,7 +359,8 @@ def manage(book: pe.Book, sym: str, t_now: datetime, asof: datetime,
             live_px = live_price(sig_bars, t_now) if sig_bars is not None else None
             lagged_px = live_price(sig_bars, asof) if sig_bars is not None else None
             delta = est_delta(tbl, pos.strike, pos.right)
-            pos.mark = adjust_mark(quoted, delta, live_px, lagged_px)
+            pos.mark = adjust_mark(quoted, delta, live_px, lagged_px,
+                                   tbl=tbl, strike=pos.strike)
             pos.exit_basis = "estimated" if pos.mark < quoted else "quote"
             held = t_now - datetime.fromisoformat(pos.entry_time).astimezone(ET)
             pct = pos.move_pct(pos.mark)
