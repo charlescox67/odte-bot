@@ -158,3 +158,32 @@ equity $7,000.00 | cash $7,000.00 | open 0 | closed 0
 SPY: no setup as of 10:24 | trend up | vwap 764.87 | last low - high 766.43@1005 | close 766.20
 QQQ: no setup as of 10:24 | trend up | vwap 735.94 | last low 735.58@0955 high 737.59@1005 | close 737.13
 equity $7,000.00 | cash $7,000.00 | open 0 | closed 0
+--- tick 2026-09-24 10:45:00 EDT (signals as of 10:25) ---
+SPY: no setup as of 10:25 | trend up | vwap 764.88 | last low - high 766.43@1005 | close 765.84
+QQQ: no setup as of 10:25 | trend up | vwap 735.94 | last low 735.58@0955 high 737.59@1005 | close 737.27
+equity $7,000.00 | cash $7,000.00 | open 0 | closed 0
+--- tick 2026-09-24 10:46:00 EDT (signals as of 10:26) ---
+SPY: no setup as of 10:26 | trend up | vwap 764.90 | last low - high 766.43@1005 | close 765.84
+QQQ: no setup as of 10:26 | trend up | vwap 735.95 | last low 735.58@0955 high 737.59@1005 | close 737.27
+equity $7,000.00 | cash $7,000.00 | open 0 | closed 0
+--- tick 2026-09-24 10:47:00 EDT (signals as of 10:27) ---
+SPY: no setup as of 10:27 | trend up | vwap 764.91 | last low - high 766.43@1005 | close 765.84
+QQQ: no setup as of 10:27 | trend up | vwap 735.96 | last low 735.58@0955 high 737.59@1005 | close 737.27
+equity $7,000.00 | cash $7,000.00 | open 0 | closed 0
+--- tick 2026-09-24 10:48:00 EDT (signals as of 10:28) ---
+SPY: no setup as of 10:28 | trend up | vwap 764.92 | last low - high 766.43@1005 | close 765.84
+QQQ: no setup as of 10:28 | trend up | vwap 735.97 | last low 735.58@0955 high 737.59@1005 | close 737.27
+equity $7,000.00 | cash $7,000.00 | open 0 | closed 0
+--- tick 2026-09-24 10:49:00 EDT (signals as of 10:29) ---
+SPY: no setup as of 10:29 | trend up | vwap 764.92 | last low - high 766.43@1005 | close 765.84
+QQQ: no setup as of 10:29 | trend up | vwap 735.99 | last low 735.58@0955 high 737.59@1005 | close 737.27
+equity $7,000.00 | cash $7,000.00 | open 0 | closed 0
+--- tick 2026-09-24 10:50:00 EDT (signals as of 10:30) ---
+SPY: no setup as of 10:30 | trend up | vwap 764.93 | last low 765.62@1015 high 766.43@1005 | close 766.04
+QQQ: C setup L1015 stop 736.35 (QQQ) — stop pulled in to 736.59 (pivot 736.35 would cost ~53%)
+QQQ: C setup L1015 stop 736.35 (QQQ) — already failing on live prices (65% of the room to the stop used since the signal)
+equity $7,000.00 | cash $7,000.00 | open 0 | closed 0
+--- tick 2026-09-24 10:51:00 EDT (signals as of 10:31) ---
+SPY: no setup as of 10:31 | trend up | vwap 764.93 | last low 765.62@1015 high 766.43@1005 | close 766.04
+  OPEN  DECENT 1/4 $404 premium (6% of equity) | QQQ260924C00737000 x2 @ ask 2.02 (bid 2.01) QQQ 737.37 | stop 736.35 (delta +0.59) | bands %B - | vs Dow +0.06%
+equity $6,998.64 | cash $6,594.64 | open 1 | closed 0
