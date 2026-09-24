@@ -686,3 +686,9 @@ equity $6,956.19 | cash $6,071.19 | open 2 | closed 1
 SPY: no setup as of 12:35 | trend up | vwap 765.03 | last low 763.65@1210 high 768.40@1215 | close 766.86
 QQQ: no setup as of 12:35 | trend up | vwap 736.57 | last low 735.00@1210 high 740.77@1215 | close 739.27
 equity $7,023.19 | cash $6,071.19 | open 2 | closed 1
+--- tick 2026-09-24 12:56:00 EDT (signals as of 12:36) ---
+  CLOSE SPY260924C00767000 x3 @ 1.94 (target) pnl $+214.92 after $4.08 fees (+60% on the option)
+SPY: no setup as of 12:36 | trend up | vwap 765.03 | last low 763.65@1210 high 768.40@1215 | close 766.86
+  RUNNER QQQ260924C00739000 at +77%: breaking out hard, holding for a deep red candle (keeps 40% of its best, min +30%)
+QQQ: no setup as of 12:36 | trend up | vwap 736.57 | last low 735.00@1210 high 740.77@1215 | close 739.27
+equity $7,227.15 | cash $6,651.15 | open 1 | closed 2
