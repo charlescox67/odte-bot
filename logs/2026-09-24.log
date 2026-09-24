@@ -600,3 +600,29 @@ equity $6,763.59 | cash $6,763.59 | open 0 | closed 1
 SPY: no setup as of 12:14 | trend down | vwap 764.66 | last low 763.43@1145 high 764.43@1150 | close 763.89
 QQQ: no setup as of 12:14 | trend down | vwap 735.98 | last low 734.98@1145 high 736.42@1150 | close 735.38
 equity $6,763.59 | cash $6,763.59 | open 0 | closed 1
+--- tick 2026-09-24 12:35:41 EDT (signals as of 12:15) ---
+SPY: no setup as of 12:15 | trend down | vwap 764.66 | last low 763.43@1145 high 764.43@1150 | close 764.62
+QQQ: no setup as of 12:15 | trend none | vwap 735.98 | last low 734.98@1145 high 736.42@1150 | close 736.29
+equity $6,763.59 | cash $6,763.59 | open 0 | closed 1
+--- tick 2026-09-24 12:36:00 EDT (signals as of 12:16) ---
+SPY: no setup as of 12:16 | trend down | vwap 764.68 | last low 763.43@1145 high 764.43@1150 | close 764.62
+QQQ: no setup as of 12:16 | trend none | vwap 736.01 | last low 734.98@1145 high 736.42@1150 | close 736.29
+equity $6,763.59 | cash $6,763.59 | open 0 | closed 1
+--- tick 2026-09-24 12:37:00 EDT (signals as of 12:17) ---
+SPY: no setup as of 12:17 | trend down | vwap 764.74 | last low 763.43@1145 high 764.43@1150 | close 764.62
+QQQ: no setup as of 12:17 | trend none | vwap 736.09 | last low 734.98@1145 high 736.42@1150 | close 736.29
+equity $6,763.59 | cash $6,763.59 | open 0 | closed 1
+--- tick 2026-09-24 12:38:00 EDT (signals as of 12:18) ---
+SPY: no setup as of 12:18 | trend down | vwap 764.79 | last low 763.43@1145 high 764.43@1150 | close 764.62
+QQQ: no setup as of 12:18 | trend none | vwap 736.15 | last low 734.98@1145 high 736.42@1150 | close 736.29
+equity $6,763.59 | cash $6,763.59 | open 0 | closed 1
+--- tick 2026-09-24 12:39:00 EDT (signals as of 12:19) ---
+SPY: no setup as of 12:19 | trend down | vwap 764.86 | last low 763.43@1145 high 764.43@1150 | close 764.62
+QQQ: no setup as of 12:19 | trend none | vwap 736.23 | last low 734.98@1145 high 736.42@1150 | close 736.29
+equity $6,763.59 | cash $6,763.59 | open 0 | closed 1
+--- tick 2026-09-24 12:40:00 EDT (signals as of 12:20) ---
+SPY: C setup L1145 stop 763.43 (SPY) — stop pulled in to 765.76 (pivot 763.43 would cost ~141%)
+  OPEN  DECENT 2/4 $363 premium (5% of equity) | SPY260924C00767000 x3 @ ask 1.21 (bid 1.19) SPY 766.85 | stop 765.76 (delta +0.50) | bands %B 1.28 | vs Dow +0.01%
+QQQ: C setup L1145 stop 734.98 (QQQ) — stop pulled in to 737.80 (pivot 734.98 would cost ~137%)
+  OPEN  DECENT 2/4 $326 premium (5% of equity) | QQQ260924C00739000 x2 @ ask 1.63 (bid 1.62) QQQ 739.18 | stop 737.80 (delta +0.53) | bands %B 1.35 | vs Dow +0.12%
+equity $6,760.19 | cash $6,071.19 | open 2 | closed 1
