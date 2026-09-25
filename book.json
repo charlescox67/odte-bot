@@ -213,7 +213,7 @@
       "signal_symbol": "SPY",
       "setup": "L1255",
       "stop_at_entry": 770.5968518708881,
-      "stop_underlying": 770.5968518708881,
+      "stop_underlying": 770.5999755859375,
       "spread_at_entry": 0.01,
       "event_day": "",
       "exit_basis": "quote",
