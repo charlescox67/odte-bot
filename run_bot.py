@@ -50,8 +50,11 @@ RUNNER_FLATTEN = dtime(15, 30)
 # account: on $7,000 that is $1,000 on a great setup and $500 on a decent one,
 # exactly as asked. Note what that means - a great trade stopped at the 50%
 # backstop loses 7% of the account, and a decent one 3.5%.
-PREMIUM_PCT_GREAT = 1 / 7      # exactly $1,000 on a $7,000 account
-PREMIUM_PCT_DECENT = 1 / 14    # exactly $500
+# One size for every trade until the conviction score earns its keep: both 3/4
+# trades so far LOST while 2/4 went 4-for-5, and on 2026-09-25 the score put
+# $1,050 on the loser and $430 on the winner, turning +$298/-$299 into a flat
+# day. $800 is the midpoint of the $1,000/$500 it replaces.
+PREMIUM_PCT = 4 / 35           # exactly $800 on a $7,000 account
 # Conviction: one point each for a stop that did not need capping, a Bollinger
 # squeeze, momentum already running our way, and a setup still fresh. 3+ = great.
 GREAT_SCORE = 3
@@ -176,17 +179,24 @@ def conviction(*, stop_capped: bool, squeeze: bool | None,
     return score, "great" if score >= GREAT_SCORE else "decent"
 
 
+def bridge_move(side: str, live_px: float | None, lagged_px: float | None) -> float:
+    """The move in the trade's favour across the gap between the two clocks -
+    the stretch neither the lagged bars nor the live 10-minute window can see."""
+    if live_px is None or lagged_px is None:
+        return 0.0
+    return (live_px - lagged_px) * (1.0 if side == "C" else -1.0)
+
+
 def enough_conviction(score: int) -> bool:
     return score >= MIN_CONVICTION
 
 
-def size_qty(equity: float, ask: float, risk_mult: float = 1.0,
-             great: bool = False) -> int:
-    """Contracts that fit the premium budget for this conviction level."""
+def size_qty(equity: float, ask: float, risk_mult: float = 1.0) -> int:
+    """Contracts that fit the flat premium budget. Conviction still gates entry
+    (MIN_CONVICTION) and is recorded, but no longer changes the size."""
     if ask <= 0:
         return 0
-    budget = equity * (PREMIUM_PCT_GREAT if great else PREMIUM_PCT_DECENT) * risk_mult
-    return min(MAX_QTY, int(budget // (ask * pe.MULTIPLIER)))
+    return min(MAX_QTY, int(equity * PREMIUM_PCT * risk_mult // (ask * pe.MULTIPLIER)))
 
 
 def day_pnl(book: pe.Book, day) -> float:
@@ -401,8 +411,15 @@ def manage(book: pe.Book, sym: str, t_now: datetime, asof: datetime,
                 # the lagged bars, while the live bars say what is happening
                 # now. On 2026-09-22 the lagged clock said "breaking out" and
                 # the live clock said "stalling" for the same trade.
+                # Three windows, because the lag splits the move in two: the
+                # live bars, the lagged bars, and the BRIDGE between them. On
+                # 2026-09-25 a burst ran 11:54-12:10, i.e. after the lagged
+                # clock and before the live 10-minute window - the target fired
+                # at 12:14 with both tests reading "stalled" (one missed by a
+                # cent) and a +173% move was banked at +69%.
                 strong=live and (sw.breaking_out(sig_bars, t_now, pos.right, risk)
-                                 or sw.breaking_out(sig_bars, asof, pos.right, risk)),
+                                 or sw.breaking_out(sig_bars, asof, pos.right, risk)
+                                 or bridge_move(pos.right, live_px, lagged_px) >= risk),
                 dip=live and pos.runner and sw.deep_dip(sig_bars, t_now, pos.right))
             if reason == "runner":
                 pos.runner = True
@@ -479,7 +496,7 @@ def consider_entry(book: pe.Book, sym: str, sig_sym: str, sig_bars,
     if not enough_conviction(score):
         print(f"{tag} — skipped: conviction {score}/4 is below the {MIN_CONVICTION}/4 minimum")
         return
-    qty = size_qty(book.equity(), ask, profile.risk_mult, great=(grade == "great"))
+    qty = size_qty(book.equity(), ask, profile.risk_mult)
     if qty < 1:
         print(f"{tag} — ask {ask:.2f} too expensive for the risk budget"); return
     # Context recorded for later review; a missing Dow feed never blocks a trade.
