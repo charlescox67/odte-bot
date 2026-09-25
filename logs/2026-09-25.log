@@ -659,3 +659,8 @@ equity $7,250.08 | cash $6,740.08 | open 1 | closed 5
 SPY: no setup as of 11:53 | trend down | vwap 768.45 | last low 768.34@1110 high 769.78@1130 | close 768.29
 QQQ: no setup as of 11:53 | trend down | vwap 742.57 | last low 742.42@1120 high 743.82@1130 | close 741.91
 equity $7,290.08 | cash $6,740.08 | open 1 | closed 5
+--- tick 2026-09-25 12:14:00 EDT (signals as of 11:54) ---
+  CLOSE SPY260925C00769000 x5 @ 1.47 (target) pnl $+298.20 after $6.80 fees (+71% on the option)
+SPY: no setup as of 11:54 | trend down | vwap 768.45 | last low 768.34@1110 high 769.78@1130 | close 768.29
+QQQ: no setup as of 11:54 | trend down | vwap 742.56 | last low 742.42@1120 high 743.82@1130 | close 741.91
+equity $7,471.68 | cash $7,471.68 | open 0 | closed 6
