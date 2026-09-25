@@ -1183,3 +1183,7 @@ equity $7,401.48 | cash $6,411.48 | open 1 | closed 6
 SPY: C setup L1335 stop 770.51 (SPY) — outside entry window 10:00-14:00
 QQQ: no setup as of 14:01 | trend up | vwap 743.21 | last low 744.42@1335 high 745.39@1315 | close 745.02
 equity $7,311.48 | cash $6,411.48 | open 1 | closed 6
+--- tick 2026-09-25 14:22:00 EDT (signals as of 14:02) ---
+SPY: C setup L1335 stop 770.51 (SPY) — outside entry window 10:00-14:00
+QQQ: no setup as of 14:02 | trend up | vwap 743.21 | last low 744.42@1335 high 745.39@1315 | close 745.02
+equity $7,265.72 | cash $6,411.48 | open 1 | closed 6
