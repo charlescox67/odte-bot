@@ -132,47 +132,45 @@ trades, 25% winners) against −0.09R for puts entered mid-band. Twelve trades
 is suggestive, not proof, and the mirror case for calls pointed the *other*
 way (+0.35R on 8 trades), so this applies to **puts only**.
 
-**Size.** By **premium spent**, as a share of the account, so it scales with
-the balance. How much depends on how good the setup looks:
+**Size.** One flat **premium budget** for every trade, as a share of the
+account so it scales: **4/35 of equity**, which is **$800** on $7,000.
 
 | Conviction | Premium budget | On a $7,000 account |
 |---|---|---|
-| **great** (3–4 of 4) | 1/7 of equity | **$1,000** |
-| **decent** (2) | 1/14 of equity | **$500** |
+| 2 or more of 4 | 4/35 of equity | **$800** |
 | below 2 | not traded | — |
 
 ```
-contracts = floor( budget / (ask x 100) )     capped at 50
+contracts = floor( (4/35 of equity) / (ask x 100) )     capped at 50
 ```
+
+**Conviction no longer sets the size.** It did until 2026-09-25 ($1,000 on a
+great setup, $500 on a decent one) and has not earned it: both 3/4 trades so
+far **lost**, 2/4 trades went 4-for-5, and on 09-25 the score put $1,050 on
+the loser and $430 on the winner — which is exactly why a +$298 winner and a
+−$299 loser netted to nothing. The score still gates entry and is recorded on
+every trade, so it can be judged on evidence later.
 
 **A setup scoring below 2 is not traded at all.** Against the five real trades
 to 2026-09-24 that keeps both winners (each exactly 2/4) and blocks two of the
 three losers, worth +$739. A 3-of-4 minimum would have blocked *both* winners.
-The one 3/4 trade was a loser, so the score is not yet shown to predict
-anything — it is being recorded on every trade to find out.
 
 **Conviction** scores one point each, all knowable at entry: the pullback's
 own stop was close enough not to need capping; the Bollinger bands were in a
 squeeze; momentum was already running our way (the same test the runner uses);
 and less than 25% of the room to the stop had been given up since the signal.
-The score is logged and stored on every trade, so "great beats decent" can be
-checked rather than assumed.
 
-**What this risks.** A great trade stopped at the 50% backstop loses **7% of
-the account**; if the option went to zero, 14%. That is 14–28× the risk this
-bot ran up to 2026-09-23, and it is why the daily loss limit is −8%.
+**What this risks.** An $800 position stopped at the 50% backstop loses about
+**5.7% of the account**, and about 4% at the usual chart stop. That is still
+8–11× the risk this bot ran up to 2026-09-23, and it is why the daily loss
+limit is −8% — roughly one bad trade, then trading stops for the day.
 
-If that comes out below 1, the contract is too expensive for the risk budget
-and the trade is skipped.
-
-| Example | Math | Contracts |
-|---|---|---|
 | Example ($7,000 account) | Math | Contracts |
 |---|---|---|
-| great, ask 1.00 | 1,000 / 100 | **10** ($1,000) |
-| decent, ask 1.00 | 500 / 100 | **5** ($500) |
-| great, ask 1.22 | 1,000 / 122 | **8** ($976) |
-| great, ask 0.10 | budget buys 100 | **50** (the cap) |
+| ask 1.00 | 800 / 100 | **8** ($800) |
+| ask 1.22 | 800 / 122 | **6** ($732) |
+| ask 0.70 | 800 / 70 | **11** ($770) |
+| ask 0.10 | budget buys 80 | **50** (the cap) |
 
 ## 5. Exits
 
@@ -203,10 +201,13 @@ going wrong is never held; then profit; then time decay.
      stop risks, so one winner covers two losers.
    - **Breaking out hard** → hold it as a **runner**. "Hard" means fast (at
      least **0.5R** in the last 10 minutes) *and* clean (efficiency **0.4** or
-     more: at least 40% of all the up-and-down movement went one way). Either
-     clock may qualify it: the target is spotted on the ~16-minute-old quote,
-     so the move that earned it shows on the lagged candles, while the live
-     candles say what is happening now.
+     more: at least 40% of all the up-and-down movement went one way).
+     **Three windows are tested**: the live candles, the lagged candles, and
+     the **bridge** between the two clocks (a move of 1R or more across that
+     gap counts). The bridge exists because the lag splits a burst in half: on
+     2026-09-25 a run happened between the two clocks, both tests read
+     "stalled" — one missed by a single cent — and a move worth +173% was
+     banked at +69%.
    - A runner is sold when **a 5-minute candle closes hard against it** (a body
      at least 2.5× the typical 5-minute move of the last hour), when it gives
      back more than **60% of its best gain** (it always keeps 40%, and never
@@ -433,11 +434,11 @@ every 10 minutes; trades are saved the minute they happen.
 | Entry window (lagged clock) | 10:00–14:00 ET | `ENTRY_START`, `NO_ENTRY_AFTER` |
 | End-of-day exit | 14:45 ET (lagged clock) | `FLATTEN_AT` |
 | Profit target | +60% of premium, unless breaking out hard | `TARGET_PCT` |
-| Hard breakout | ≥0.5R in 10 min and efficiency ≥0.4 | `swing_signal.py` `BREAKOUT_*` |
+| Hard breakout | ≥0.5R in 10 min, efficiency ≥0.4, on live / lagged / bridge | `BREAKOUT_*`, `bridge_move` |
 | Runner floor | keeps 40% of its best gain, min +30% | `RUNNER_KEEP`, `RUNNER_MIN_PCT` |
 | Runner exit | 15:30 lagged (~15:50) | `RUNNER_FLATTEN` |
 | Deep red candle | body ≥2.5× typical 5-min move | `DEEP_DIP_MULT` |
-| Premium per trade | 1/7 of equity (great), 1/14 (decent) | `PREMIUM_PCT_GREAT`, `PREMIUM_PCT_DECENT` |
+| Premium per trade | 4/35 of equity (~$800 on $7k) | `PREMIUM_PCT` |
 | Minimum conviction | 2 of 4 | `MIN_CONVICTION` |
 | Max cost of reaching the stop | 45% of premium | `STOP_COST_CAP` |
 | Premium backstop | −50% | `BACKSTOP` |
