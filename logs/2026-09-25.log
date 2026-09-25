@@ -633,3 +633,8 @@ SPY: P setup H1130 stop 769.78 (SPY) — already holding
 QQQ: P setup H1130 stop 743.82 (QQQ) — stop pulled in to 743.05 (pivot 743.82 would cost ~68%)
 QQQ: P setup H1130 stop 743.82 (QQQ) — already failing on live prices (259% of the room to the stop used since the signal)
 equity $7,025.08 | cash $6,740.08 | open 1 | closed 5
+--- tick 2026-09-25 12:08:00 EDT (signals as of 11:48) ---
+SPY: P setup H1130 stop 769.78 (SPY) — already holding
+QQQ: P setup H1130 stop 743.82 (QQQ) — stop pulled in to 742.97 (pivot 743.82 would cost ~72%)
+QQQ: P setup H1130 stop 743.82 (QQQ) — already failing on live prices (262% of the room to the stop used since the signal)
+equity $7,040.08 | cash $6,740.08 | open 1 | closed 5
