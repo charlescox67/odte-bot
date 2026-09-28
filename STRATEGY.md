@@ -124,6 +124,13 @@ time. The bot never buys cheap far-out-of-the-money lottery tickets.
 **Liquidity check.** If the bid-ask spread is more than **10% of the ask**,
 the trade is skipped.
 
+**Bollinger readings span sessions.** The 20-bar window may reach back into
+the previous day, so %B and the squeeze exist from the first tick. Session-only
+bands needed 100 minutes of trading, and on 2026-09-28 a 09:39 start left them
+blank until 11:19 — with the puts filter and one conviction point disabled for
+the whole morning. (For the record: the reading at that morning's losing entry
+would have been **+0.18**, so the filter would *not* have blocked it.)
+
 **No puts into a stretched fall.** If price sits at or below the lower
 Bollinger Band (%B < 0), the put is skipped: buying into an already-extended
 drop is chasing, and the bounce takes the premium. On 2026-09-23 both losing

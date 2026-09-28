@@ -224,8 +224,22 @@ BB_BARS, BB_STD = 20, 2.0
 def bollinger(df_1m: pd.DataFrame, asof: datetime) -> tuple[float, bool] | None:
     """(%B, squeeze) on 5-minute bars. %B: 0 = lower band, 0.5 = middle,
     1 = upper band, >1 = closed above it. Squeeze: band width in the bottom
-    fifth of the session so far, the setup that often precedes a breakout."""
-    c = to_5m(df_1m, asof)["close"]
+    fifth of the window, the setup that often precedes a breakout.
+
+    Deliberately NOT session-filtered: the 20-bar window may reach back into
+    the previous session, so the reading exists from the first tick of the day.
+    Session-only bands needed 100 minutes of trading, and on 2026-09-28 a late
+    start left %B blank until 11:19 - blinding the "no puts below the lower
+    band" rule for the one trade that needed it (-$403, bought 0.4 off the
+    day's low). Pass a multi-day frame to get the early reading; a single-day
+    frame still works and simply warms up later.
+    """
+    d = df_1m[df_1m.index + timedelta(minutes=1) <= asof]
+    if d.empty:
+        return None
+    b = d.resample("5min", label="left", closed="left").agg({"close": "last"}).dropna()
+    b = b[b.index + timedelta(minutes=5) <= asof]
+    c = b["close"]
     if len(c) < BB_BARS:
         return None
     mid = c.rolling(BB_BARS).mean(); sd = c.rolling(BB_BARS).std()

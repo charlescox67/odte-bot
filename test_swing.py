@@ -271,8 +271,9 @@ check("calls mirror", round(rb.room_used("C", 100.0, 99.0, 99.6), 2), 0.4)
 check("no live price -> no judgement", rb.room_used("C", 100.0, 99.0, None), 0.0)
 
 print("\nrecorded context: Bollinger Bands and strength vs the Dow")
-def mins(closes):
-    idx = pd.DatetimeIndex([DAY + timedelta(minutes=i) for i in range(len(closes))])
+def mins(closes, day_offset=0):
+    base = DAY + timedelta(days=day_offset)
+    idx = pd.DatetimeIndex([base + timedelta(minutes=i) for i in range(len(closes))])
     return pd.DataFrame({"open": closes, "high": closes, "low": closes, "close": closes,
                          "volume": 1000}, index=idx)
 fin = lambda df: df.index[-1] + timedelta(minutes=1)
@@ -285,11 +286,25 @@ check("sitting mid-range -> %B between 0 and 1", 0 <= sw.bollinger(calm_mid, fin
 wide_then_tight = mins([100 + (0.8 if (i // 5) % 2 else 0) for i in range(80)] +
                        [100.4 + (0.02 if (i // 5) % 2 else 0) for i in range(120)])
 check("bands narrowing -> squeeze", sw.bollinger(wide_then_tight, fin(wide_then_tight))[1], True)
-check("too few bars -> nothing", sw.bollinger(mins(quiet[:50]), fin(mins(quiet[:50]))), None)
+
+# the 09-28 blind spot: only 30 minutes into a session
+today_only = mins(quiet[:30], day_offset=1)
+check("one session, 30 min in -> no reading (the old blind spot)",
+      sw.bollinger(today_only, fin(today_only)), None)
+yesterday = mins(quiet, day_offset=0)                 # a full prior session
+two_days = pd.concat([yesterday, today_only])
+bb2 = sw.bollinger(two_days, fin(today_only))
+check("with yesterday's bars -> a reading exists at 30 min", bb2 is not None, True)
+check("...and it is a sane %B", -1 <= bb2[0] <= 2, True)
+stretched = pd.concat([yesterday, mins([100.0 - 0.6 * (i / 10) for i in range(30)], day_offset=1)])
+bbs = sw.bollinger(stretched, fin(today_only))
+check("a sharp early drop reads below the lower band", bbs[0] < 0, True)
+check("so the puts-only filter would now block it", rb.stretched_put("P", bbs[0]), True)
+
 sym_up = mins([100 + i * (1.0 / 30) for i in range(31)])     # +1% in 30 min
 dow_flat = mins([400.0] * 31)
 check("beat a flat Dow by 1%", round(sw.vs_dow(sym_up, dow_flat, fin(sym_up)), 2), 1.0)
-dow_up = mins([400 + i * (2.0 / 30) for i in range(31)])     # Dow +0.5%
+dow_up = mins([400 + i * (2.0 / 30) for i in range(31)])
 check("flat while the Dow rose 0.5%", round(sw.vs_dow(mins([100.0] * 31), dow_up, fin(dow_up)), 2), -0.5)
 
 print("\ndaily loss limit, now -8% (one great loss is -7%)")

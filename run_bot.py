@@ -154,8 +154,8 @@ def close_on(symbol: str, day: str) -> float | None:
     return retry(go, label=f"{symbol} close {day}")
 
 
-def bars_1m(symbol: str):
-    df = yf.download(symbol, period="1d", interval="1m",
+def bars_1m(symbol: str, period: str = "1d"):
+    df = yf.download(symbol, period=period, interval="1m",
                      progress=False, auto_adjust=False)
     if df.empty:
         return df
@@ -446,7 +446,10 @@ def consider_entry(book: pe.Book, sym: str, sig_sym: str, sig_bars,
         print(f"{sym}: no setup as of {asof:%H:%M} | {sw.summary(sig_bars, asof)}")
         return
     tag = f"{sym}: {setup.side} setup {setup.pivot_id} stop {setup.stop:.2f} ({sig_sym})"
-    bb = sw.bollinger(sig_bars, asof)
+    # Two days of bars so the Bollinger window can reach into yesterday: with
+    # one day the reading is blank for the first 100 minutes of trading.
+    wide = retry(lambda: bars_1m(sig_sym, "2d"), tries=1, label=f"{sig_sym} 2d bars")
+    bb = sw.bollinger(wide if wide is not None else sig_bars, asof)
     if stretched_put(setup.side, None if bb is None else bb[0]):
         print(f"{tag} — put skipped: %B {bb[0]:+.2f}, price is at/below the lower band")
         return
