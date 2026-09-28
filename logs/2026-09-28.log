@@ -766,3 +766,9 @@ SPY: C setup L1205 stop 765.14 (SPY) — stop pulled in to 768.11 (pivot 765.14 
 SPY: C setup L1205 stop 765.14 (SPY) — already failing on live prices (202% of the room to the stop used since the signal)
 QQQ: no setup as of 12:27 | trend up | vwap 736.13 | last low 735.05@1205 high 735.81@1135 | close 738.24
 equity $6,993.47 | cash $6,549.61 | open 1 | closed 9
+--- tick 2026-09-28 12:48:00 EDT (signals as of 12:28) ---
+SPY: C setup L1205 stop 765.14 (SPY) — stop pulled in to 768.18 (pivot 765.14 would cost ~195%)
+SPY: C setup L1205 stop 765.14 (SPY) — already failing on live prices (232% of the room to the stop used since the signal)
+  CLOSE QQQ260928C00737000 x3 @ 1.00 (backstop) pnl $-332.76 after $4.08 fees (-52% on the option)
+QQQ: no setup as of 12:28 | trend up | vwap 736.21 | last low 735.05@1205 high 735.81@1135 | close 738.24
+equity $6,848.90 | cash $6,848.90 | open 0 | closed 10
