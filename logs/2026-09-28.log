@@ -327,3 +327,8 @@ SPY: no setup as of 10:40 | trend down | vwap 767.68 | last low 766.98@1010 high
 QQQ: P setup H1020 stop 737.53 (QQQ) — stop pulled in to 736.86 (pivot 737.53 would cost ~62%)
   OPEN  DECENT 2/4 $768 premium (10% of equity) | QQQ260928P00735000 x3 @ ask 2.56 (bid 2.55) QQQ 735.07 | stop 736.86 (delta -0.65) | bands %B - | vs Dow -0.16%
 equity $7,576.83 | cash $5,673.83 | open 2 | closed 7
+--- tick 2026-09-28 11:01:00 EDT (signals as of 10:41) ---
+  RUNNER SPY260928P00767000 at +79%: breaking out hard, holding for a deep red candle (keeps 40% of its best, min +30%)
+SPY: no setup as of 10:41 | trend down | vwap 767.66 | last low 766.98@1010 high 767.92@1020 | close 766.44
+QQQ: no setup as of 10:41 | trend down | vwap 738.12 | last low 735.31@1010 high 737.53@1020 | close 735.07
+equity $7,871.83 | cash $5,673.83 | open 2 | closed 7
