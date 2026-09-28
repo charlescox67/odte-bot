@@ -137,6 +137,21 @@ check("a close pivot is left alone", rb.cap_stop("C", 772.80, 772.60, 1.50, 0.50
 check("richer premium allows a wider stop", round(rb.cap_stop("C", 772.80, 770.00, 1.50, 0.50), 2), 771.45)
 check("puts mirror", round(rb.cap_stop("P", 772.80, 774.00, 0.42, -0.50), 3), 773.178)
 
+print("\nthe chain's own reference price (put-call parity)")
+calls_t = pd.DataFrame({"strike": [735.0, 736.0, 737.0, 738.0, 739.0],
+                        "bid": [3.10, 2.40, 1.80, 1.30, 0.92],
+                        "ask": [3.20, 2.50, 1.90, 1.40, 1.00]})
+puts_t = pd.DataFrame({"strike": [735.0, 736.0, 737.0, 738.0, 739.0],
+                       "bid": [1.05, 1.35, 1.75, 2.25, 2.85],
+                       "ask": [1.15, 1.45, 1.85, 2.35, 2.95]})
+ref = rb.chain_ref_price(calls_t, puts_t)
+# these synthetic mids imply 737.05, and that is what parity should return
+check("parity recovers the chain's spot", round(ref, 2), 737.05)
+check("it ignores the live price entirely", ref is not None and abs(ref - 737.0) < 0.5, True)
+one_sided = calls_t.assign(bid=0.0)
+check("no two-sided quotes -> None", rb.chain_ref_price(one_sided, puts_t), None)
+check("garbage -> None, never an exception", rb.chain_ref_price(pd.DataFrame(), pd.DataFrame()), None)
+
 print("\nmarking a held option after the underlying moved (strike shift)")
 chain = pd.DataFrame({"strike": [736.0, 737.0, 738.0, 739.0, 740.0, 741.0],
                       "bid": [3.76, 2.98, 2.36, 1.78, 1.28, 0.91],

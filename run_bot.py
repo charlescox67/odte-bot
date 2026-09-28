@@ -291,6 +291,29 @@ def live_price(sig_bars, t_now: datetime) -> float | None:
     return None if d is None or d.empty else float(d["close"].iloc[-1])
 
 
+def chain_ref_price(calls, puts) -> float | None:
+    """The underlying price THIS chain is actually pricing off, from put-call
+    parity: near the money, strike + call - put = spot. No assumption about how
+    stale the feed is.
+
+    Assuming the lag equals LAG_MIN was wrong: the real quote lag is ~16 min,
+    not 20, and on 2026-09-28 QQQ moved 1.6 points inside that 4-minute
+    discrepancy. The mark came out 0.60 too low, tripped the 50% backstop, and
+    closed a trade that was only 24% down."""
+    try:
+        m = calls.merge(puts, on="strike", suffixes=("_c", "_p"))
+        m = m[(m.bid_c > 0) & (m.ask_c > 0) & (m.bid_p > 0) & (m.ask_p > 0)].copy()
+        if m.empty:
+            return None
+        m["cm"] = (m.bid_c + m.ask_c) / 2
+        m["pm"] = (m.bid_p + m.ask_p) / 2
+        m["gap"] = (m.cm - m.pm).abs()          # smallest gap = at the money
+        near = m.nsmallest(3, "gap")
+        return float((near.strike + near.cm - near.pm).median())
+    except Exception:
+        return None
+
+
 def shifted_bid(tbl, strike: float, move: float) -> float | None:
     """Value a held option after the underlying moved by `move`, by reading the
     SHIFTED STRIKE out of the same (stale) chain: value depends on the gap
@@ -377,7 +400,10 @@ def manage(book: pe.Book, sym: str, t_now: datetime, asof: datetime,
                 continue
             quoted = float(hit.iloc[0].bid)
             live_px = live_price(sig_bars, t_now) if sig_bars is not None else None
-            lagged_px = live_price(sig_bars, asof) if sig_bars is not None else None
+            # What the CHAIN thinks the underlying is, not what it was LAG_MIN ago.
+            lagged_px = chain_ref_price(chain.calls, chain.puts)
+            if lagged_px is None and sig_bars is not None:
+                lagged_px = live_price(sig_bars, asof)
             delta = est_delta(tbl, pos.strike, pos.right)
             pos.mark = adjust_mark(quoted, delta, live_px, lagged_px,
                                    tbl=tbl, strike=pos.strike)
