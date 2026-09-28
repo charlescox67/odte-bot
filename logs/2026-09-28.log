@@ -772,3 +772,45 @@ SPY: C setup L1205 stop 765.14 (SPY) — already failing on live prices (232% of
   CLOSE QQQ260928C00737000 x3 @ 1.00 (backstop) pnl $-332.76 after $4.08 fees (-52% on the option)
 QQQ: no setup as of 12:28 | trend up | vwap 736.21 | last low 735.05@1205 high 735.81@1135 | close 738.24
 equity $6,848.90 | cash $6,848.90 | open 0 | closed 10
+--- tick 2026-09-28 12:49:00 EDT (signals as of 12:29) ---
+SPY: C setup L1205 stop 765.14 (SPY) — stop pulled in to 767.92 (pivot 765.14 would cost ~176%)
+SPY: C setup L1205 stop 765.14 (SPY) — already failing on live prices (229% of the room to the stop used since the signal)
+QQQ: no setup as of 12:29 | trend up | vwap 736.24 | last low 735.05@1205 high 735.81@1135 | close 738.24
+equity $6,848.90 | cash $6,848.90 | open 0 | closed 10
+--- tick 2026-09-28 12:50:00 EDT (signals as of 12:30) ---
+SPY: C setup L1205 stop 765.14 (SPY) — stop pulled in to 767.80 (pivot 765.14 would cost ~176%)
+SPY: C setup L1205 stop 765.14 (SPY) — already failing on live prices (200% of the room to the stop used since the signal)
+QQQ: no setup as of 12:30 | trend up | vwap 736.26 | last low 735.05@1205 high 735.81@1135 | close 739.43
+equity $6,848.90 | cash $6,848.90 | open 0 | closed 10
+--- tick 2026-09-28 12:51:00 EDT (signals as of 12:31) ---
+SPY: C setup L1205 stop 765.14 (SPY) — stop pulled in to 767.21 (pivot 765.14 would cost ~134%)
+SPY: C setup L1205 stop 765.14 (SPY) — already failing on live prices (131% of the room to the stop used since the signal)
+QQQ: no setup as of 12:31 | trend up | vwap 736.28 | last low 735.05@1205 high 735.81@1135 | close 739.43
+equity $6,848.90 | cash $6,848.90 | open 0 | closed 10
+--- tick 2026-09-28 12:52:00 EDT (signals as of 12:32) ---
+SPY: C setup L1205 stop 765.14 (SPY) — stop pulled in to 767.21 (pivot 765.14 would cost ~133%)
+SPY: C setup L1205 stop 765.14 (SPY) — already failing on live prices (132% of the room to the stop used since the signal)
+QQQ: no setup as of 12:32 | trend up | vwap 736.29 | last low 735.05@1205 high 735.81@1135 | close 739.43
+equity $6,848.90 | cash $6,848.90 | open 0 | closed 10
+--- tick 2026-09-28 12:53:00 EDT (signals as of 12:33) ---
+SPY: C setup L1205 stop 765.14 (SPY) — stop pulled in to 766.55 (pivot 765.14 would cost ~109%)
+SPY: C setup L1205 stop 765.14 (SPY) — already failing on live prices (55% of the room to the stop used since the signal)
+QQQ: no setup as of 12:33 | trend up | vwap 736.32 | last low 735.05@1205 high 735.81@1135 | close 739.43
+equity $6,848.90 | cash $6,848.90 | open 0 | closed 10
+--- tick 2026-09-28 12:54:00 EDT (signals as of 12:34) ---
+SPY: C setup L1205 stop 765.14 (SPY) — stop pulled in to 766.85 (pivot 765.14 would cost ~127%)
+SPY: C setup L1205 stop 765.14 (SPY) — already failing on live prices (70% of the room to the stop used since the signal)
+QQQ: no setup as of 12:34 | trend up | vwap 736.33 | last low 735.05@1205 high 735.81@1135 | close 739.43
+equity $6,848.90 | cash $6,848.90 | open 0 | closed 10
+--- tick 2026-09-28 12:55:00 EDT (signals as of 12:35) ---
+SPY: no setup as of 12:35 | trend up | vwap 766.63 | last low 765.14@1205 high 765.77@1110 | close 767.83
+QQQ: no setup as of 12:35 | trend up | vwap 736.34 | last low 735.05@1205 high 735.81@1135 | close 738.76
+equity $6,848.90 | cash $6,848.90 | open 0 | closed 10
+--- tick 2026-09-28 12:56:00 EDT (signals as of 12:36) ---
+SPY: no setup as of 12:36 | trend up | vwap 766.64 | last low 765.14@1205 high 765.77@1110 | close 767.83
+QQQ: no setup as of 12:36 | trend up | vwap 736.35 | last low 735.05@1205 high 735.81@1135 | close 738.76
+equity $6,848.90 | cash $6,848.90 | open 0 | closed 10
+--- tick 2026-09-28 12:57:00 EDT (signals as of 12:37) ---
+SPY: no setup as of 12:37 | trend up | vwap 766.65 | last low 765.14@1205 high 765.77@1110 | close 767.83
+QQQ: no setup as of 12:37 | trend up | vwap 736.35 | last low 735.05@1205 high 735.81@1135 | close 738.76
+equity $6,848.90 | cash $6,848.90 | open 0 | closed 10
