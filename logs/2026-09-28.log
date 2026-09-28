@@ -735,3 +735,7 @@ SPY: no setup as of 12:20 | trend none | vwap 766.39 | last low 765.14@1205 high
 QQQ: C setup L1205 stop 735.05 (QQQ) — stop pulled in to 735.53 (pivot 735.05 would cost ~61%)
   OPEN  DECENT 2/4 $630 premium (9% of equity) | QQQ260928C00737000 x3 @ ask 2.10 (bid 2.08) QQQ 736.88 | stop 735.53 (delta +0.70) | bands %B 0.98 | vs Dow +0.13%
 equity $7,179.61 | cash $6,549.61 | open 1 | closed 9
+--- tick 2026-09-28 12:41:00 EDT (signals as of 12:21) ---
+SPY: no setup as of 12:21 | trend none | vwap 766.40 | last low 765.14@1205 high 765.77@1110 | close 766.55
+QQQ: no setup as of 12:21 | trend up | vwap 735.97 | last low 735.05@1205 high 735.81@1135 | close 736.88
+equity $7,275.61 | cash $6,549.61 | open 1 | closed 9
