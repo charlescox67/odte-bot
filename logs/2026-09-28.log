@@ -1058,3 +1058,7 @@ equity $7,181.66 | cash $7,181.66 | open 0 | closed 9
   OPEN  DECENT 2/4 $812 premium (11% of equity) | SPY260928C00767000 x7 @ ask 1.16 (bid 1.15) SPY 767.38 | stop 766.85 (delta +0.60) | bands %B 0.54 | vs Dow +0.02%
 QQQ: no setup as of 13:50 | trend up | vwap 736.61 | last low 736.65@1305 high 738.51@1335 | close 738.31
 equity $7,176.90 | cash $6,364.90 | open 1 | closed 9
+--- tick 2026-09-28 14:11:00 EDT (signals as of 13:51) ---
+SPY: no setup as of 13:51 | trend up | vwap 766.82 | last low 766.85@1335 high 767.52@1330 | close 767.38
+QQQ: no setup as of 13:51 | trend up | vwap 736.62 | last low 736.65@1305 high 738.51@1335 | close 738.31
+equity $7,148.90 | cash $6,364.90 | open 1 | closed 9
