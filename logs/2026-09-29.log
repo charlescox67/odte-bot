@@ -713,3 +713,8 @@ SPY: P setup H1145 stop 764.29 (SPY) — stop pulled in to 763.79 (pivot 764.29 
 SPY: P setup H1145 stop 764.29 (SPY) — already failing on live prices (53% of the room to the stop used since the signal)
 QQQ: P setup H1150 stop 737.88 (QQQ) — already holding
 equity $6,775.45 | cash $6,155.45 | open 1 | closed 10
+--- tick 2026-09-29 12:27:00 EDT (signals as of 12:07) ---
+SPY: P setup H1145 stop 764.29 (SPY) — stop pulled in to 763.94 (pivot 764.29 would cost ~60%)
+SPY: P setup H1145 stop 764.29 (SPY) — skipped: conviction 0/4 is below the 2/4 minimum
+QQQ: P setup H1150 stop 737.88 (QQQ) — already holding
+equity $6,770.45 | cash $6,155.45 | open 1 | closed 10
