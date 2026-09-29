@@ -322,6 +322,17 @@ Exit rules (+60%, −50%) read the option's price move; `pnl` in the trade log
 is net of fees, which get their own `fees` column. On Tiered pricing
 (instead of Fixed), exchange and clearing fees are added separately.
 
+**Known flaw, not yet fixed (awaiting live quotes).** The mark is only ever
+adjusted **down**, so the book cannot claim a gain the delayed feed has not
+printed. That is right for booking a closed trade and wrong for deciding one:
+the 50% backstop, the +60% target and the runner floor all read that
+pessimistic mark, so a position moving in our favour can have its stale quote
+drift into the backstop and be closed as a 50% loser. Measured on 2026-09-29
+with a QQQ put: stale bid 1.18 (−23%) against a strike-shift fair value of
+1.98 (+29%) — the book understated an open winner by $399. The plan is to let
+risk decisions use fair value while a closed trade still books the
+conservative price; it will ship with the `LAG_MIN = 0` switch.
+
 **What it doesn't model:**
 - **Fill size.** It assumes 1–10 contracts fill at the displayed bid or ask.
   That's realistic for these very liquid contracts at this size, but not at a
