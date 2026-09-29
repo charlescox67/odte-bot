@@ -518,3 +518,43 @@ equity $6,923.85 | cash $6,923.85 | open 0 | closed 10
 SPY: no setup as of 11:19 | trend down | vwap 765.29 | last low 764.49@1045 high 765.58@1055 | close 764.16
 QQQ: no setup as of 11:19 | trend none | vwap 738.63 | last low 737.33@1010 high 740.08@1055 | close 738.50
 equity $6,923.85 | cash $6,923.85 | open 0 | closed 10
+--- tick 2026-09-29 11:40:00 EDT (signals as of 11:20) ---
+SPY: P setup H1055 stop 765.58 (SPY) — put skipped: %B -0.20, price is at/below the lower band
+QQQ: no setup as of 11:20 | trend down | vwap 738.62 | last low 737.33@1010 high 740.08@1055 | close 737.23
+equity $6,923.85 | cash $6,923.85 | open 0 | closed 10
+--- tick 2026-09-29 11:41:00 EDT (signals as of 11:21) ---
+SPY: P setup H1055 stop 765.58 (SPY) — put skipped: %B -0.20, price is at/below the lower band
+QQQ: no setup as of 11:21 | trend down | vwap 738.60 | last low 737.33@1010 high 740.08@1055 | close 737.23
+equity $6,923.85 | cash $6,923.85 | open 0 | closed 10
+--- tick 2026-09-29 11:42:00 EDT (signals as of 11:22) ---
+SPY: P setup H1055 stop 765.58 (SPY) — put skipped: %B -0.20, price is at/below the lower band
+QQQ: no setup as of 11:22 | trend down | vwap 738.59 | last low 737.33@1010 high 740.08@1055 | close 737.23
+equity $6,923.85 | cash $6,923.85 | open 0 | closed 10
+--- tick 2026-09-29 11:43:00 EDT (signals as of 11:23) ---
+SPY: P setup H1055 stop 765.58 (SPY) — put skipped: %B -0.20, price is at/below the lower band
+QQQ: no setup as of 11:23 | trend down | vwap 738.58 | last low 737.33@1010 high 740.08@1055 | close 737.23
+equity $6,923.85 | cash $6,923.85 | open 0 | closed 10
+--- tick 2026-09-29 11:44:00 EDT (signals as of 11:24) ---
+SPY: P setup H1055 stop 765.58 (SPY) — put skipped: %B -0.20, price is at/below the lower band
+QQQ: no setup as of 11:24 | trend down | vwap 738.57 | last low 737.33@1010 high 740.08@1055 | close 737.23
+equity $6,923.85 | cash $6,923.85 | open 0 | closed 10
+--- tick 2026-09-29 11:45:00 EDT (signals as of 11:25) ---
+SPY: P setup H1055 stop 765.58 (SPY) — put skipped: %B -0.15, price is at/below the lower band
+QQQ: no setup as of 11:25 | trend down | vwap 738.55 | last low 737.33@1010 high 740.08@1055 | close 736.65
+equity $6,923.85 | cash $6,923.85 | open 0 | closed 10
+--- tick 2026-09-29 11:46:00 EDT (signals as of 11:26) ---
+SPY: P setup H1055 stop 765.58 (SPY) — put skipped: %B -0.15, price is at/below the lower band
+QQQ: no setup as of 11:26 | trend down | vwap 738.53 | last low 737.33@1010 high 740.08@1055 | close 736.65
+equity $6,923.85 | cash $6,923.85 | open 0 | closed 10
+--- tick 2026-09-29 11:47:00 EDT (signals as of 11:27) ---
+SPY: P setup H1055 stop 765.58 (SPY) — put skipped: %B -0.15, price is at/below the lower band
+QQQ: no setup as of 11:27 | trend down | vwap 738.51 | last low 737.33@1010 high 740.08@1055 | close 736.65
+equity $6,923.85 | cash $6,923.85 | open 0 | closed 10
+--- tick 2026-09-29 11:48:00 EDT (signals as of 11:28) ---
+SPY: P setup H1055 stop 765.58 (SPY) — put skipped: %B -0.15, price is at/below the lower band
+QQQ: no setup as of 11:28 | trend down | vwap 738.49 | last low 737.33@1010 high 740.08@1055 | close 736.65
+equity $6,923.85 | cash $6,923.85 | open 0 | closed 10
+--- tick 2026-09-29 11:49:00 EDT (signals as of 11:29) ---
+SPY: P setup H1055 stop 765.58 (SPY) — put skipped: %B -0.15, price is at/below the lower band
+QQQ: no setup as of 11:29 | trend down | vwap 738.47 | last low 737.33@1010 high 740.08@1055 | close 736.65
+equity $6,923.85 | cash $6,923.85 | open 0 | closed 10
