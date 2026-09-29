@@ -1131,3 +1131,48 @@ equity $6,871.45 | cash $6,871.45 | open 0 | closed 11
 SPY: no setup as of 13:49 | trend down | vwap 764.38 | last low 762.35@1315 high 763.56@1225 | close 763.27
 QQQ: no setup as of 13:49 | trend down | vwap 737.88 | last low 735.72@1315 high 737.38@1225 | close 736.62
 equity $6,871.45 | cash $6,871.45 | open 0 | closed 11
+--- tick 2026-09-29 14:10:00 EDT (signals as of 13:50) ---
+SPY: no setup as of 13:50 | trend down | vwap 764.38 | last low 762.35@1315 high 763.56@1225 | close 763.05
+QQQ: no setup as of 13:50 | trend down | vwap 737.88 | last low 735.72@1315 high 737.21@1335 | close 736.43
+equity $6,871.45 | cash $6,871.45 | open 0 | closed 11
+--- tick 2026-09-29 14:11:00 EDT (signals as of 13:51) ---
+SPY: no setup as of 13:51 | trend down | vwap 764.37 | last low 762.35@1315 high 763.56@1225 | close 763.05
+QQQ: no setup as of 13:51 | trend down | vwap 737.88 | last low 735.72@1315 high 737.21@1335 | close 736.43
+equity $6,871.45 | cash $6,871.45 | open 0 | closed 11
+--- tick 2026-09-29 14:12:00 EDT (signals as of 13:52) ---
+SPY: no setup as of 13:52 | trend down | vwap 764.37 | last low 762.35@1315 high 763.56@1225 | close 763.05
+QQQ: no setup as of 13:52 | trend down | vwap 737.88 | last low 735.72@1315 high 737.21@1335 | close 736.43
+equity $6,871.45 | cash $6,871.45 | open 0 | closed 11
+--- tick 2026-09-29 14:13:00 EDT (signals as of 13:53) ---
+SPY: no setup as of 13:53 | trend down | vwap 764.37 | last low 762.35@1315 high 763.56@1225 | close 763.05
+QQQ: no setup as of 13:53 | trend down | vwap 737.87 | last low 735.72@1315 high 737.21@1335 | close 736.43
+equity $6,871.45 | cash $6,871.45 | open 0 | closed 11
+--- tick 2026-09-29 14:14:00 EDT (signals as of 13:54) ---
+SPY: no setup as of 13:54 | trend down | vwap 764.37 | last low 762.35@1315 high 763.56@1225 | close 763.05
+QQQ: no setup as of 13:54 | trend down | vwap 737.87 | last low 735.72@1315 high 737.21@1335 | close 736.43
+equity $6,871.45 | cash $6,871.45 | open 0 | closed 11
+--- tick 2026-09-29 14:15:00 EDT (signals as of 13:55) ---
+SPY: no setup as of 13:55 | trend down | vwap 764.37 | last low 762.35@1315 high 763.56@1225 | close 762.74
+QQQ: P setup H1335 stop 737.21 (QQQ) — stop pulled in to 736.85 (pivot 737.21 would cost ~64%)
+QQQ: P setup H1335 stop 737.21 (QQQ) — already failing on live prices (156% of the room to the stop used since the signal)
+equity $6,871.45 | cash $6,871.45 | open 0 | closed 11
+--- tick 2026-09-29 14:16:00 EDT (signals as of 13:56) ---
+SPY: no setup as of 13:56 | trend down | vwap 764.36 | last low 762.35@1315 high 763.56@1225 | close 762.74
+QQQ: P setup H1335 stop 737.21 (QQQ) — stop pulled in to 736.60 (pivot 737.21 would cost ~82%)
+QQQ: P setup H1335 stop 737.21 (QQQ) — already failing on live prices (191% of the room to the stop used since the signal)
+equity $6,871.45 | cash $6,871.45 | open 0 | closed 11
+--- tick 2026-09-29 14:17:00 EDT (signals as of 13:57) ---
+SPY: no setup as of 13:57 | trend down | vwap 764.36 | last low 762.35@1315 high 763.56@1225 | close 762.74
+QQQ: P setup H1335 stop 737.21 (QQQ) — stop pulled in to 736.45 (pivot 737.21 would cost ~92%)
+QQQ: P setup H1335 stop 737.21 (QQQ) — already failing on live prices (227% of the room to the stop used since the signal)
+equity $6,871.45 | cash $6,871.45 | open 0 | closed 11
+--- tick 2026-09-29 14:18:00 EDT (signals as of 13:58) ---
+SPY: no setup as of 13:58 | trend down | vwap 764.36 | last low 762.35@1315 high 763.56@1225 | close 762.74
+QQQ: P setup H1335 stop 737.21 (QQQ) — stop pulled in to 736.26 (pivot 737.21 would cost ~102%)
+QQQ: P setup H1335 stop 737.21 (QQQ) — already failing on live prices (247% of the room to the stop used since the signal)
+equity $6,871.45 | cash $6,871.45 | open 0 | closed 11
+--- tick 2026-09-29 14:19:00 EDT (signals as of 13:59) ---
+SPY: no setup as of 13:59 | trend down | vwap 764.35 | last low 762.35@1315 high 763.56@1225 | close 762.74
+QQQ: P setup H1335 stop 737.21 (QQQ) — stop pulled in to 736.20 (pivot 737.21 would cost ~109%)
+QQQ: P setup H1335 stop 737.21 (QQQ) — already failing on live prices (269% of the room to the stop used since the signal)
+equity $6,871.45 | cash $6,871.45 | open 0 | closed 11
