@@ -951,3 +951,23 @@ SPY: no setup as of 13:04 | trend down | vwap 764.50 | last low 762.40@1245 high
   CLOSE QQQ260929P00737000 x5 @ 1.44 (time_stop) pnl $-52.40 after $6.80 fees (-6% on the option)
 QQQ: no setup as of 13:04 | trend down | vwap 738.02 | last low 735.34@1245 high 737.38@1225 | close 736.13
 equity $6,871.45 | cash $6,871.45 | open 0 | closed 11
+--- tick 2026-09-29 13:25:00 EDT (signals as of 13:05) ---
+SPY: no setup as of 13:05 | trend down | vwap 764.49 | last low 762.40@1245 high 763.56@1225 | close 762.70
+QQQ: no setup as of 13:05 | trend down | vwap 738.02 | last low 735.34@1245 high 737.38@1225 | close 735.96
+equity $6,871.45 | cash $6,871.45 | open 0 | closed 11
+--- tick 2026-09-29 13:26:00 EDT (signals as of 13:06) ---
+SPY: no setup as of 13:06 | trend down | vwap 764.49 | last low 762.40@1245 high 763.56@1225 | close 762.70
+QQQ: no setup as of 13:06 | trend down | vwap 738.02 | last low 735.34@1245 high 737.38@1225 | close 735.96
+equity $6,871.45 | cash $6,871.45 | open 0 | closed 11
+--- tick 2026-09-29 13:27:00 EDT (signals as of 13:07) ---
+SPY: no setup as of 13:07 | trend down | vwap 764.49 | last low 762.40@1245 high 763.56@1225 | close 762.70
+QQQ: no setup as of 13:07 | trend down | vwap 738.01 | last low 735.34@1245 high 737.38@1225 | close 735.96
+equity $6,871.45 | cash $6,871.45 | open 0 | closed 11
+--- tick 2026-09-29 13:28:00 EDT (signals as of 13:08) ---
+SPY: no setup as of 13:08 | trend down | vwap 764.48 | last low 762.40@1245 high 763.56@1225 | close 762.70
+QQQ: no setup as of 13:08 | trend down | vwap 738.01 | last low 735.34@1245 high 737.38@1225 | close 735.96
+equity $6,871.45 | cash $6,871.45 | open 0 | closed 11
+--- tick 2026-09-29 13:29:00 EDT (signals as of 13:09) ---
+SPY: no setup as of 13:09 | trend down | vwap 764.48 | last low 762.40@1245 high 763.56@1225 | close 762.70
+QQQ: no setup as of 13:09 | trend down | vwap 738.01 | last low 735.34@1245 high 737.38@1225 | close 735.96
+equity $6,871.45 | cash $6,871.45 | open 0 | closed 11
