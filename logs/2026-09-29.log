@@ -854,3 +854,7 @@ SPY: no setup as of 12:40 | trend down | vwap 764.66 | last low 762.65@1205 high
   TRAIL QQQ260929P00737000 stop 737.44 -> 737.38
 QQQ: no setup as of 12:40 | trend down | vwap 738.19 | last low 736.43@1215 high 737.38@1225 | close 736.95
 equity $7,026.24 | cash $6,155.45 | open 1 | closed 10
+--- tick 2026-09-29 13:01:00 EDT (signals as of 12:41) ---
+SPY: no setup as of 12:41 | trend down | vwap 764.65 | last low 762.65@1205 high 763.56@1225 | close 763.41
+QQQ: no setup as of 12:41 | trend down | vwap 738.18 | last low 736.43@1215 high 737.38@1225 | close 736.95
+equity $7,140.91 | cash $6,155.45 | open 1 | closed 10
