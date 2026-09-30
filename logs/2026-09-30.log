@@ -652,3 +652,8 @@ equity $6,567.69 | cash $5,567.69 | open 2 | closed 11
 SPY: C setup L1110 stop 767.75 (SPY) — already holding
 QQQ: no setup as of 11:52 | trend up | vwap 742.55 | last low 742.73@1120 high 744.39@1130 | close 744.97
 equity $6,584.69 | cash $5,567.69 | open 2 | closed 11
+--- tick 2026-09-30 12:13:00 EDT (signals as of 11:53) ---
+  CLOSE SPY260930C00768000 x3 @ 1.36 (time_stop) pnl $-187.08 after $4.08 fees (-31% on the option)
+  OPEN  DECENT 2/4 $747 premium (11% of equity) | SPY260930C00769000 x9 @ ask 0.83 (bid 0.82) SPY 768.57 | stop 767.75 (delta +0.45) | bands %B 0.93 | vs Dow +0.17%
+QQQ: no setup as of 11:53 | trend up | vwap 742.56 | last low 742.73@1120 high 744.39@1130 | close 744.97
+equity $6,683.53 | cash $5,220.53 | open 2 | closed 12
