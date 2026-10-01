@@ -1352,3 +1352,19 @@ SPY: no setup as of 14:45 | trend up | vwap 762.17 | last low 762.20@1405 high 7
   CLOSE QQQ261001C00740000 x2 @ 3.10 (eod) pnl $+63.14 after $2.72 fees (+12% on the option)
 QQQ: no setup as of 14:45 | trend up | vwap 740.42 | last low 740.44@1405 high 744.67@1345 | close 742.84
 equity $5,873.06 | cash $5,873.06 | open 0 | closed 17
+--- tick 2026-10-01 15:06:00 EDT (signals as of 14:46) ---
+SPY: no setup as of 14:46 | trend up | vwap 762.17 | last low 762.20@1405 high 765.15@1430 | close 764.33
+QQQ: no setup as of 14:46 | trend up | vwap 740.42 | last low 740.44@1405 high 744.67@1345 | close 742.84
+equity $5,873.06 | cash $5,873.06 | open 0 | closed 17
+--- tick 2026-10-01 15:07:00 EDT (signals as of 14:47) ---
+SPY: no setup as of 14:47 | trend up | vwap 762.17 | last low 762.20@1405 high 765.15@1430 | close 764.33
+QQQ: no setup as of 14:47 | trend up | vwap 740.43 | last low 740.44@1405 high 744.67@1345 | close 742.84
+equity $5,873.06 | cash $5,873.06 | open 0 | closed 17
+--- tick 2026-10-01 15:08:00 EDT (signals as of 14:48) ---
+SPY: no setup as of 14:48 | trend up | vwap 762.18 | last low 762.20@1405 high 765.15@1430 | close 764.33
+QQQ: no setup as of 14:48 | trend up | vwap 740.43 | last low 740.44@1405 high 744.67@1345 | close 742.84
+equity $5,873.06 | cash $5,873.06 | open 0 | closed 17
+--- tick 2026-10-01 15:09:00 EDT (signals as of 14:49) ---
+SPY: no setup as of 14:49 | trend up | vwap 762.18 | last low 762.20@1405 high 765.15@1430 | close 764.33
+QQQ: no setup as of 14:49 | trend up | vwap 740.43 | last low 740.44@1405 high 744.67@1345 | close 742.84
+equity $5,873.06 | cash $5,873.06 | open 0 | closed 17
