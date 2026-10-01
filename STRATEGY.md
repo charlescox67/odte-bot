@@ -131,13 +131,18 @@ blank until 11:19 — with the puts filter and one conviction point disabled for
 the whole morning. (For the record: the reading at that morning's losing entry
 would have been **+0.18**, so the filter would *not* have blocked it.)
 
-**No puts into a stretched fall.** If price sits at or below the lower
-Bollinger Band (%B < 0), the put is skipped: buying into an already-extended
-drop is chasing, and the bounce takes the premium. On 2026-09-23 both losing
-trades were exactly that. Over 60 days such puts returned **−0.35R** (12
-trades, 25% winners) against −0.09R for puts entered mid-band. Twelve trades
-is suggestive, not proof, and the mirror case for calls pointed the *other*
-way (+0.35R on 8 trades), so this applies to **puts only**.
+**Removed 2026-10-01: the "no puts below the lower band" filter.** It ran from
+09-23, skipping puts whenever %B < 0, and blocked 6 live setups — **every one
+of which would have won**: SPY at 767.05 (+8.9R), 765.99 (+4.6R), QQQ at
+737.30 (+6.2R), SPY at 764.86 (+3.5R), QQQ at 737.24 (+13.6R), and worst, SPY
+blocked at 768.26 on 09-30 which then fell to 762.20 — **+28R** — while the
+bot bought three calls into that same decline and lost on all three.
+
+The reasoning was backwards: %B < 0 means price sits at the bottom of its
+recent range, and in a genuine downtrend that is exactly where a put pays,
+because this strategy trades continuation. The 60-day backtest behind it
+covered 12 trades and was called suggestive rather than proof when it shipped.
+%B is still recorded on every trade; it is no longer a rule.
 
 **Size.** One flat **premium budget** for every trade, as a share of the
 account so it scales: **4/35 of equity**, which is **$800** on $7,000.
@@ -463,7 +468,6 @@ every 10 minutes; trades are saved the minute they happen.
 | Max contracts | 50 | `MAX_QTY` |
 | Commissions | IBKR Pro Fixed: $0.65/contract ($1 min/order) + ~$0.03 reg. | `paper_engine.py` `IBKR_RATES` |
 | Max spread | 10% of ask | `MAX_SPREAD` |
-| No puts below the lower band | %B < 0 | `MIN_BB_FOR_PUTS` |
 | Entries per market per day | 3 | `MAX_ENTRIES_PER_DAY` |
 | Daily loss stop | −8% | `DAILY_LOSS_LIMIT` |
 | Time limit | 60 min, unless up ≥ 0.25R | `TIME_STOP_MIN`, `TIME_STOP_KEEP_R` |
