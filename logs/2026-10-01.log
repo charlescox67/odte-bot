@@ -429,3 +429,7 @@ equity $6,165.88 | cash $6,165.88 | open 0 | closed 14
 QQQ: P setup H1040 stop 740.86 (QQQ) — stop pulled in to 740.75 (pivot 740.86 would cost ~47%)
   OPEN  DECENT 2/4 $660 premium (11% of equity) | QQQ261001P00739000 x3 @ ask 2.20 (bid 2.19) QQQ 738.86 | stop 740.75 (delta -0.52) | bands %B 0.27 | vs Dow +0.16%
 equity $6,161.80 | cash $4,889.80 | open 2 | closed 14
+--- tick 2026-10-01 11:17:00 EDT (signals as of 10:57) ---
+SPY: no setup as of 10:57 | trend down | vwap 762.41 | last low 759.78@1020 high 762.18@1040 | close 760.47
+QQQ: no setup as of 10:57 | trend down | vwap 740.63 | last low 736.91@1020 high 740.86@1040 | close 738.85
+equity $6,082.49 | cash $4,889.80 | open 2 | closed 14
