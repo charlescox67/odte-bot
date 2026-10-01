@@ -1,5 +1,5 @@
 {
-  "cash": 5254.56113287892,
+  "cash": 5873.056328191417,
   "positions": [
     {
       "id": "c4bc1a41",
@@ -525,11 +525,11 @@
       "entry_time": "2026-10-01T17:40:01.211737+00:00",
       "entry_reason": "swing L1255",
       "underlying_at_entry": 740.3699951171875,
-      "status": "open",
-      "mark": 2.8998457519530976,
-      "exit_price": null,
-      "exit_time": null,
-      "exit_reason": null,
+      "status": "closed",
+      "mark": 3.099275976562485,
+      "exit_price": 3.099275976562485,
+      "exit_time": "2026-10-01T19:05:00.929275+00:00",
+      "exit_reason": "eod",
       "signal_symbol": "QQQ",
       "setup": "L1255",
       "stop_at_entry": 738.6327128872224,
@@ -538,7 +538,7 @@
       "event_day": "",
       "exit_basis": "estimated",
       "runner": false,
-      "fees": 1.36,
+      "fees": 2.72,
       "peak_pct": 0.4945848375451263,
       "conviction": "decent 2/4",
       "bb_pct": 1.113,
