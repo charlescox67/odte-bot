@@ -601,3 +601,9 @@ equity $6,007.42 | cash $4,889.80 | open 2 | closed 14
 SPY: no setup as of 11:39 | trend down | vwap 761.88 | last low 758.79@1110 high 762.18@1040 | close 759.55
 QQQ: no setup as of 11:39 | trend down | vwap 740.10 | last low 736.27@1110 high 740.86@1040 | close 737.22
 equity $6,112.93 | cash $4,889.80 | open 2 | closed 14
+--- tick 2026-10-01 12:00:00 EDT (signals as of 11:40) ---
+  TRAIL SPY261001P00761000 stop 762.18 -> 761.33
+SPY: no setup as of 11:40 | trend down | vwap 761.88 | last low 758.79@1110 high 761.33@1125 | close 760.51
+  TRAIL QQQ261001P00739000 stop 740.75 -> 739.78
+QQQ: no setup as of 11:40 | trend down | vwap 740.09 | last low 736.27@1110 high 739.78@1125 | close 737.95
+equity $6,043.72 | cash $4,889.80 | open 2 | closed 14
