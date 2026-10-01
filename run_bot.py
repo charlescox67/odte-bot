@@ -76,13 +76,14 @@ MAX_STRIKE_GAP = 0.0025
 # setup can already be failing by the time it is bought: on 2026-09-22 QQQ had
 # used 34% of the room to the stop before the entry. Skip if half is gone.
 MAX_USED_AT_ENTRY = 0.5
-# No puts while price sits at or below the lower Bollinger band: buying a put
-# into an already-stretched fall is chasing, and the bounce takes the premium.
-# 2026-09-23 lost both trades that way. Over 60 days such puts ran -0.35R
-# (12 trades, 25% wins) against -0.09R for the rest; 12 trades is suggestive,
-# not proof, and the mirror for calls pointed the OTHER way (+0.35R on 8
-# trades), so this deliberately applies to puts only.
-MIN_BB_FOR_PUTS = 0.0
+# The "no puts below the lower Bollinger band" filter lived here from
+# 2026-09-23 to 2026-10-01 and was REMOVED: it blocked 6 live setups and every
+# one of them would have won, the worst miss being a SPY put blocked at 768.26
+# that then fell to 762.20 (+28R) while the bot bought three calls into the
+# same decline. %B < 0 means price is at the bottom of its recent range, which
+# in a real downtrend is where puts PAY, not where they fail. The 60-day
+# backtest that justified it rested on 12 trades. Do not reinstate it without
+# evidence stronger than that.
 MAX_ENTRIES_PER_DAY = 3         # per market
 # One great trade stopped out is -7%, so a -2% daily cap would end the day on
 # the first loss. -8% lets one great loss through and stops after two.
@@ -262,11 +263,6 @@ def progress_r(pos, live_px: float | None) -> float | None:
         return None
     sign = 1.0 if pos.right == "C" else -1.0
     return sign * (live_px - pos.underlying_at_entry) / risk
-
-
-def stretched_put(side: str, bb_pct: float | None) -> bool:
-    """A put entered at or below the lower band. None = no reading, so allow."""
-    return side == "P" and bb_pct is not None and bb_pct < MIN_BB_FOR_PUTS
 
 
 def room_used(side: str, entry_px: float, stop: float, live_px: float | None) -> float:
@@ -476,9 +472,6 @@ def consider_entry(book: pe.Book, sym: str, sig_sym: str, sig_bars,
     # one day the reading is blank for the first 100 minutes of trading.
     wide = retry(lambda: bars_1m(sig_sym, "2d"), tries=1, label=f"{sig_sym} 2d bars")
     bb = sw.bollinger(wide if wide is not None else sig_bars, asof)
-    if stretched_put(setup.side, None if bb is None else bb[0]):
-        print(f"{tag} — put skipped: %B {bb[0]:+.2f}, price is at/below the lower band")
-        return
     cutoff = min(NO_ENTRY_AFTER, profile.entry_cutoff or NO_ENTRY_AFTER)
     if not ENTRY_START <= asof.time() < cutoff:
         print(f"{tag} — outside entry window {ENTRY_START:%H:%M}-{cutoff:%H:%M}"); return

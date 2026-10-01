@@ -253,13 +253,6 @@ check("runner may hold past 14:45", E(pct=2.0, runner=True, asof_t=T(14, 45)), N
 check("an ordinary trade is out at 14:45", E(pct=0.3, r_now=0.9, asof_t=T(14, 45)), "eod")
 check("even a runner is out at 15:45", E(pct=2.0, runner=True, asof_t=T(15, 45)), "eod")
 
-print("\nno puts into an already-stretched fall")
-check("put at %B -0.09 (today's loser) -> skip", rb.stretched_put("P", -0.09), True)
-check("put at %B -0.01 (today's other) -> skip", rb.stretched_put("P", -0.006), True)
-check("put mid-range -> fine", rb.stretched_put("P", 0.43), False)
-check("call above the upper band -> still allowed", rb.stretched_put("C", 1.20), False)
-check("no band reading yet -> allowed", rb.stretched_put("P", None), False)
-
 print("\nincomplete chains are refused")
 class FakeTicker:
     def __init__(self, strikes): self.strikes, self.options = strikes, ("2026-09-22",)
@@ -314,7 +307,7 @@ check("...and it is a sane %B", -1 <= bb2[0] <= 2, True)
 stretched = pd.concat([yesterday, mins([100.0 - 0.6 * (i / 10) for i in range(30)], day_offset=1)])
 bbs = sw.bollinger(stretched, fin(today_only))
 check("a sharp early drop reads below the lower band", bbs[0] < 0, True)
-check("so the puts-only filter would now block it", rb.stretched_put("P", bbs[0]), True)
+check("a sharp early drop still reads below the band", bbs[0] < 0, True)
 
 sym_up = mins([100 + i * (1.0 / 30) for i in range(31)])     # +1% in 30 min
 dow_flat = mins([400.0] * 31)
