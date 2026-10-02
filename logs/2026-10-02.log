@@ -498,3 +498,53 @@ event day: NFP (risk x0.5)
 SPY: no setup as of 10:49 | trend up | vwap 771.08 | last low 771.30@1030 high 772.49@1025 | close 772.13
 QQQ: no setup as of 10:49 | trend up | vwap 751.90 | last low 753.19@1030 high 754.53@1025 | close 753.55
 equity $5,873.06 | cash $5,873.06 | open 0 | closed 17
+--- tick 2026-10-02 11:10:00 EDT (signals as of 10:50) ---
+event day: NFP (risk x0.5)
+SPY: no setup as of 10:50 | trend up | vwap 771.09 | last low 771.30@1030 high 772.49@1025 | close 772.08
+QQQ: no setup as of 10:50 | trend up | vwap 751.90 | last low 753.19@1030 high 754.53@1025 | close 753.44
+equity $5,873.06 | cash $5,873.06 | open 0 | closed 17
+--- tick 2026-10-02 11:11:00 EDT (signals as of 10:51) ---
+event day: NFP (risk x0.5)
+SPY: no setup as of 10:51 | trend up | vwap 771.09 | last low 771.30@1030 high 772.49@1025 | close 772.08
+QQQ: no setup as of 10:51 | trend up | vwap 751.92 | last low 753.19@1030 high 754.53@1025 | close 753.44
+equity $5,873.06 | cash $5,873.06 | open 0 | closed 17
+--- tick 2026-10-02 11:12:00 EDT (signals as of 10:52) ---
+event day: NFP (risk x0.5)
+SPY: no setup as of 10:52 | trend up | vwap 771.10 | last low 771.30@1030 high 772.49@1025 | close 772.08
+QQQ: no setup as of 10:52 | trend up | vwap 751.92 | last low 753.19@1030 high 754.53@1025 | close 753.44
+equity $5,873.06 | cash $5,873.06 | open 0 | closed 17
+--- tick 2026-10-02 11:13:00 EDT (signals as of 10:53) ---
+event day: NFP (risk x0.5)
+SPY: no setup as of 10:53 | trend up | vwap 771.10 | last low 771.30@1030 high 772.49@1025 | close 772.08
+QQQ: no setup as of 10:53 | trend up | vwap 751.93 | last low 753.19@1030 high 754.53@1025 | close 753.44
+equity $5,873.06 | cash $5,873.06 | open 0 | closed 17
+--- tick 2026-10-02 11:14:00 EDT (signals as of 10:54) ---
+event day: NFP (risk x0.5)
+SPY: no setup as of 10:54 | trend up | vwap 771.10 | last low 771.30@1030 high 772.49@1025 | close 772.08
+QQQ: no setup as of 10:54 | trend up | vwap 751.93 | last low 753.19@1030 high 754.53@1025 | close 753.44
+equity $5,873.06 | cash $5,873.06 | open 0 | closed 17
+--- tick 2026-10-02 11:15:00 EDT (signals as of 10:55) ---
+event day: NFP (risk x0.5)
+SPY: no setup as of 10:55 | trend none | vwap 771.10 | last low 771.30@1030 high 772.65@1040 | close 770.94
+QQQ: no setup as of 10:55 | trend none | vwap 751.93 | last low 753.19@1030 high 754.34@1040 | close 751.76
+equity $5,873.06 | cash $5,873.06 | open 0 | closed 17
+--- tick 2026-10-02 11:16:00 EDT (signals as of 10:56) ---
+event day: NFP (risk x0.5)
+SPY: no setup as of 10:56 | trend none | vwap 771.10 | last low 771.30@1030 high 772.65@1040 | close 770.94
+QQQ: no setup as of 10:56 | trend none | vwap 751.93 | last low 753.19@1030 high 754.34@1040 | close 751.76
+equity $5,873.06 | cash $5,873.06 | open 0 | closed 17
+--- tick 2026-10-02 11:17:00 EDT (signals as of 10:57) ---
+event day: NFP (risk x0.5)
+SPY: no setup as of 10:57 | trend none | vwap 771.11 | last low 771.30@1030 high 772.65@1040 | close 770.94
+QQQ: no setup as of 10:57 | trend none | vwap 751.93 | last low 753.19@1030 high 754.34@1040 | close 751.76
+equity $5,873.06 | cash $5,873.06 | open 0 | closed 17
+--- tick 2026-10-02 11:18:00 EDT (signals as of 10:58) ---
+event day: NFP (risk x0.5)
+SPY: no setup as of 10:58 | trend none | vwap 771.11 | last low 771.30@1030 high 772.65@1040 | close 770.94
+QQQ: no setup as of 10:58 | trend none | vwap 751.93 | last low 753.19@1030 high 754.34@1040 | close 751.76
+equity $5,873.06 | cash $5,873.06 | open 0 | closed 17
+--- tick 2026-10-02 11:19:00 EDT (signals as of 10:59) ---
+event day: NFP (risk x0.5)
+SPY: no setup as of 10:59 | trend none | vwap 771.11 | last low 771.30@1030 high 772.65@1040 | close 770.94
+QQQ: no setup as of 10:59 | trend none | vwap 751.94 | last low 753.19@1030 high 754.34@1040 | close 751.76
+equity $5,873.06 | cash $5,873.06 | open 0 | closed 17
