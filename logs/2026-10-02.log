@@ -1437,3 +1437,8 @@ event day: NFP (risk x0.5)
 SPY: no setup as of 14:40 | trend down | vwap 770.05 | last low 768.50@1425 high 769.47@1350 | close 768.84
 QQQ: P setup H1410 stop 749.23 (QQQ) — outside entry window 10:00-14:00
 equity $5,735.77 | cash $5,470.64 | open 1 | closed 18
+--- tick 2026-10-02 15:01:00 EDT (signals as of 14:41) ---
+event day: NFP (risk x0.5)
+SPY: no setup as of 14:41 | trend down | vwap 770.05 | last low 768.50@1425 high 769.47@1350 | close 768.84
+QQQ: P setup H1410 stop 749.23 (QQQ) — outside entry window 10:00-14:00
+equity $5,709.50 | cash $5,470.64 | open 1 | closed 18
