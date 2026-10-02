@@ -604,3 +604,8 @@ SPY: no setup as of 11:10 | trend down | vwap 771.01 | last low 771.30@1030 high
 QQQ: P setup H1040 stop 754.34 (QQQ) — stop pulled in to 751.67 (pivot 754.34 would cost ~118%)
   OPEN  DECENT 2/4 $193 premium (3% of equity) | QQQ261002P00750000 x1 @ ask 1.93 (bid 1.92) QQQ 750.02 | stop 751.67 (delta -0.53) | bands %B 0.00 | vs Dow -0.18% | NFP
 equity $5,872.03 | cash $5,679.03 | open 1 | closed 17
+--- tick 2026-10-02 11:31:00 EDT (signals as of 11:11) ---
+event day: NFP (risk x0.5)
+SPY: no setup as of 11:11 | trend down | vwap 770.98 | last low 771.30@1030 high 772.65@1040 | close 769.03
+QQQ: no setup as of 11:11 | trend down | vwap 751.82 | last low 753.19@1030 high 754.34@1040 | close 750.02
+equity $5,862.03 | cash $5,679.03 | open 1 | closed 17
