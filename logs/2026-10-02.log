@@ -980,3 +980,8 @@ event day: NFP (risk x0.5)
 SPY: no setup as of 12:25 | trend down | vwap 770.36 | last low 768.51@1150 high 769.91@1210 | close 769.11
   OPEN  GREAT 3/4 $302 premium (5% of equity) | QQQ261002P00750000 x2 @ ask 1.51 (bid 1.50) QQQ 749.72 | stop 750.91 (delta -0.54) | bands %B 0.39 | vs Dow +0.06% | NFP
 equity $5,772.64 | cash $5,470.64 | open 1 | closed 18
+--- tick 2026-10-02 12:46:00 EDT (signals as of 12:26) ---
+event day: NFP (risk x0.5)
+SPY: no setup as of 12:26 | trend down | vwap 770.36 | last low 768.51@1150 high 769.91@1210 | close 769.11
+QQQ: no setup as of 12:26 | trend down | vwap 751.26 | last low 749.15@1150 high 750.91@1200 | close 749.72
+equity $5,736.64 | cash $5,470.64 | open 1 | closed 18
