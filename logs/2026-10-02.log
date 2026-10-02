@@ -829,3 +829,8 @@ event day: NFP (risk x0.5)
 SPY: P setup H1140 stop 769.51 (SPY) — already failing on live prices (107% of the room to the stop used since the signal)
 QQQ: no setup as of 11:55 | trend down | vwap 751.33 | last low 747.53@1125 high 754.34@1040 | close 749.34
 equity $5,789.43 | cash $5,679.03 | open 1 | closed 17
+--- tick 2026-10-02 12:16:00 EDT (signals as of 11:56) ---
+event day: NFP (risk x0.5)
+SPY: P setup H1140 stop 769.51 (SPY) — already failing on live prices (113% of the room to the stop used since the signal)
+QQQ: no setup as of 11:56 | trend down | vwap 751.32 | last low 747.53@1125 high 754.34@1040 | close 749.34
+equity $5,787.28 | cash $5,679.03 | open 1 | closed 17
