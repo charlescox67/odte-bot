@@ -16,7 +16,7 @@ on:
     # let those early jobs wait for the open (MAX_EARLY in cloud_loop.py).
     - cron: "*/15 10-11 * * 1-5"
     - cron: "*/10 12-14 * * 1-5"
-    - cron: "7 15-20 * * 1-5"
+    - cron: "*/10 15-20 * * 1-5"   # dense through the session too, as backup
   workflow_dispatch:
     inputs:
       budget_min:

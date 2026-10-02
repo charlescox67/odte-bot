@@ -26,7 +26,9 @@ LAST_TICK = dtime(16, 1)          # one tick past the close, to settle
 MAX_EARLY = timedelta(minutes=170)  # wait for the open rather than hand off:
                                    # GitHub drops the morning slots, so an early
                                    # fire may be the only one we get all day
-PUSH_EVERY = 10
+PUSH_EVERY = 5    # a heartbeat as much as a log push: the Mac watchdog calls
+                  # a session dead when the state branch goes quiet, so pushing
+                  # every 5 ticks lets it judge that after 8 minutes, not 14
 
 BUDGET = timedelta(minutes=int(os.environ.get("BUDGET_MIN", "340")))
 STATE = Path(os.environ["ODTE_STATE_DIR"]).resolve()
