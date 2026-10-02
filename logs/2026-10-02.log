@@ -1372,3 +1372,8 @@ event day: NFP (risk x0.5)
 SPY: P setup H1350 stop 769.47 (SPY) — outside entry window 10:00-14:00
 QQQ: P setup H1410 stop 749.23 (QQQ) — outside entry window 10:00-14:00
 equity $5,739.91 | cash $5,470.64 | open 1 | closed 18
+--- tick 2026-10-02 14:48:00 EDT (signals as of 14:28) ---
+event day: NFP (risk x0.5)
+SPY: P setup H1350 stop 769.47 (SPY) — outside entry window 10:00-14:00
+QQQ: P setup H1410 stop 749.23 (QQQ) — outside entry window 10:00-14:00
+equity $5,736.64 | cash $5,470.64 | open 1 | closed 18
