@@ -1387,3 +1387,23 @@ equity $6,003.32 | cash $6,003.32 | open 0 | closed 22
 SPY: C setup L1445 stop 774.98 (SPY) — outside entry window 10:00-14:00
 QQQ: no setup as of 15:01 | trend up | vwap 753.05 | last low 754.60@1405 high 755.70@1440 | close 755.73
 equity $6,003.32 | cash $6,003.32 | open 0 | closed 22
+--- tick 2026-10-05 15:23:03 EDT (signals as of 15:03) ---
+SPY: C setup L1445 stop 774.98 (SPY) — outside entry window 10:00-14:00
+QQQ: no setup as of 15:03 | trend up | vwap 753.09 | last low 754.60@1405 high 755.70@1440 | close 755.73
+equity $6,003.32 | cash $6,003.32 | open 0 | closed 22
+--- tick 2026-10-05 15:24:00 EDT (signals as of 15:04) ---
+SPY: C setup L1445 stop 774.98 (SPY) — outside entry window 10:00-14:00
+QQQ: no setup as of 15:04 | trend up | vwap 753.10 | last low 754.60@1405 high 755.70@1440 | close 755.73
+equity $6,003.32 | cash $6,003.32 | open 0 | closed 22
+--- tick 2026-10-05 15:25:00 EDT (signals as of 15:05) ---
+SPY: C setup L1445 stop 774.98 (SPY) — outside entry window 10:00-14:00
+QQQ: C setup L1450 stop 755.37 (QQQ) — outside entry window 10:00-14:00
+equity $6,003.32 | cash $6,003.32 | open 0 | closed 22
+--- tick 2026-10-05 15:26:00 EDT (signals as of 15:06) ---
+SPY: C setup L1445 stop 774.98 (SPY) — outside entry window 10:00-14:00
+QQQ: C setup L1450 stop 755.37 (QQQ) — outside entry window 10:00-14:00
+equity $6,003.32 | cash $6,003.32 | open 0 | closed 22
+--- tick 2026-10-05 15:27:00 EDT (signals as of 15:07) ---
+SPY: C setup L1445 stop 774.98 (SPY) — outside entry window 10:00-14:00
+QQQ: C setup L1450 stop 755.37 (QQQ) — outside entry window 10:00-14:00
+equity $6,003.32 | cash $6,003.32 | open 0 | closed 22
