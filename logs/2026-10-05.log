@@ -358,3 +358,7 @@ equity $5,730.65 | cash $5,730.65 | open 0 | closed 19
 SPY: no setup as of 10:50 | trend up | vwap 771.17 | last low 771.67@1030 high 772.96@1025 | close 772.40
   OPEN  DECENT 2/4 $648 premium (11% of equity) | QQQ261005C00753000 x4 @ ask 1.62 (bid 1.61) QQQ 753.48 | stop 752.63 (delta +0.63) | bands %B 0.77 | vs Dow +0.15%
 equity $5,727.93 | cash $5,079.93 | open 1 | closed 19
+--- tick 2026-10-05 11:11:00 EDT (signals as of 10:51) ---
+SPY: no setup as of 10:51 | trend up | vwap 771.17 | last low 771.67@1030 high 772.96@1025 | close 772.40
+QQQ: no setup as of 10:51 | trend up | vwap 751.83 | last low 752.63@1030 high 753.94@1025 | close 753.48
+equity $5,655.93 | cash $5,079.93 | open 1 | closed 19
