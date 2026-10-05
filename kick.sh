@@ -10,6 +10,11 @@
 #     a run looks active but the bot has not written to the `state` branch for
 #     STALE_MIN minutes, cancel it and dispatch a replacement.
 #
+# EVERY network call is wrapped in a timeout. On 2026-10-05 `gh workflow run`
+# hung for 74 minutes: the script never logged or exited, and launchd will not
+# start a second copy of a job that is still running, so the watchdog meant to
+# catch a hung session was itself hung all morning. Nothing here may block.
+#
 # Env overrides exist for testing: STALE_MIN, DRY_RUN=1, FORCE_WINDOW=1.
 # launchd gives a minimal PATH, so set a known one. KICK_BIN prepends a
 # directory and exists only so tests can stub out `gh`.
@@ -17,8 +22,19 @@ export PATH="${KICK_BIN:+$KICK_BIN:}/opt/homebrew/bin:/usr/local/bin:/usr/bin:/b
 cd "$(dirname "$0")" || exit 1
 STALE_MIN=${STALE_MIN:-8}       # the bot pushes at least every 5 ticks
 DRY_RUN=${DRY_RUN:-0}
+NET_TIMEOUT=${NET_TIMEOUT:-45}  # hard ceiling on any single network call
 log() { echo "$(TZ=America/New_York date '+%F %T') ET  $1" >> logs/kick.log; }
-act() { [ "$DRY_RUN" = "1" ] && { log "DRY RUN would: $*"; return 0; }; "$@"; }
+# macOS has no coreutils `timeout`, so run the command in the background and
+# kill it if it overruns. Returns 124 on timeout, like GNU timeout does.
+run() {
+  "$@" & local pid=$! waited=0
+  while kill -0 "$pid" 2>/dev/null; do
+    [ "$waited" -ge "$NET_TIMEOUT" ] && { kill -9 "$pid" 2>/dev/null; wait "$pid" 2>/dev/null; return 124; }
+    sleep 1; waited=$((waited + 1))
+  done
+  wait "$pid"
+}
+act() { [ "$DRY_RUN" = "1" ] && { log "DRY RUN would: $*"; return 0; }; run "$@"; }
 
 DOW=$(TZ=America/New_York date +%u)
 HHMM=$(TZ=America/New_York date +%H%M)
@@ -34,7 +50,7 @@ fi
 # On a scheduled wake the network is often not up yet, so retry rather than
 # waiting for the next run - by then the open has passed.
 for attempt in 1 2 3 4; do
-  RUNS=$(gh run list --workflow session.yml --limit 10 \
+  RUNS=$(run gh run list --workflow session.yml --limit 10 \
          --json status,databaseId,createdAt 2>>logs/kick.err)
   [ -n "$RUNS" ] && break
   log "GitHub unreachable (attempt $attempt) - waiting for the network"
@@ -48,13 +64,18 @@ ACTIVE=$(printf '%s' "$RUNS" | jq '[.[] | select(.status=="in_progress" or .stat
 echo "$(TZ=America/New_York date '+%F %T') ET active=$ACTIVE" > logs/kick.last
 
 if [ "$ACTIVE" = "0" ]; then
-  act gh workflow run session.yml 2>>logs/kick.err && log "no session running -> dispatched"
+  if act gh workflow run session.yml 2>>logs/kick.err; then
+    log "no session running -> dispatched"
+  else
+    log "dispatch failed or timed out (exit $?) - will retry next run"
+  fi
   exit 0
 fi
 
 # Something is active. Is it alive? The bot pushes the log every 10 ticks and
 # the book whenever it changes, so silence longer than STALE_MIN means dead.
-git fetch -q origin state 2>>logs/kick.err
+run git fetch -q origin state 2>>logs/kick.err \
+  || log "git fetch of the state branch failed or timed out"
 LAST=$(git log -1 --format=%ct origin/state 2>>logs/kick.err)
 NOW=$(date +%s)
 RUN_ID=$(printf '%s' "$RUNS" | jq -r 'map(select(.status=="in_progress")) | sort_by(.createdAt) | last | .databaseId // empty')
