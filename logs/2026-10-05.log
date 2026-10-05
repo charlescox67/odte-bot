@@ -788,3 +788,24 @@ equity $5,903.48 | cash $5,903.48 | open 0 | closed 21
 SPY: no setup as of 12:35 | trend up | vwap 771.92 | last low 772.85@1220 high 773.48@1150 | close 773.67
 QQQ: no setup as of 12:35 | trend up | vwap 752.42 | last low 752.83@1220 high 753.97@1150 | close 753.86
 equity $5,903.48 | cash $5,903.48 | open 0 | closed 21
+--- tick 2026-10-05 12:56:00 EDT (signals as of 12:36) ---
+SPY: no setup as of 12:36 | trend up | vwap 771.93 | last low 772.85@1220 high 773.48@1150 | close 773.67
+QQQ: no setup as of 12:36 | trend up | vwap 752.42 | last low 752.83@1220 high 753.97@1150 | close 753.86
+equity $5,903.48 | cash $5,903.48 | open 0 | closed 21
+--- tick 2026-10-05 12:57:00 EDT (signals as of 12:37) ---
+SPY: no setup as of 12:37 | trend up | vwap 771.94 | last low 772.85@1220 high 773.48@1150 | close 773.67
+QQQ: no setup as of 12:37 | trend up | vwap 752.43 | last low 752.83@1220 high 753.97@1150 | close 753.86
+equity $5,903.48 | cash $5,903.48 | open 0 | closed 21
+--- tick 2026-10-05 12:58:00 EDT (signals as of 12:38) ---
+SPY: no setup as of 12:38 | trend up | vwap 771.94 | last low 772.85@1220 high 773.48@1150 | close 773.67
+QQQ: no setup as of 12:38 | trend up | vwap 752.43 | last low 752.83@1220 high 753.97@1150 | close 753.86
+equity $5,903.48 | cash $5,903.48 | open 0 | closed 21
+--- tick 2026-10-05 12:59:00 EDT (signals as of 12:39) ---
+SPY: no setup as of 12:39 | trend up | vwap 771.95 | last low 772.85@1220 high 773.48@1150 | close 773.67
+QQQ: no setup as of 12:39 | trend up | vwap 752.44 | last low 752.83@1220 high 753.97@1150 | close 753.86
+equity $5,903.48 | cash $5,903.48 | open 0 | closed 21
+--- tick 2026-10-05 13:00:00 EDT (signals as of 12:40) ---
+SPY: C setup L1220 stop 772.85 (SPY) — stop pulled in to 773.24 (pivot 772.85 would cost ~69%)
+  OPEN  DECENT 2/4 $594 premium (10% of equity) | SPY261005C00774000 x6 @ ask 0.99 (bid 0.98) SPY 773.98 | stop 773.24 (delta +0.60) | bands %B 1.04 | vs Dow -0.07%
+QQQ: no setup as of 12:40 | trend up | vwap 752.44 | last low 752.83@1220 high 753.97@1150 | close 753.95
+equity $5,899.40 | cash $5,305.40 | open 1 | closed 21
