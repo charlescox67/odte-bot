@@ -1,5 +1,5 @@
 {
-  "cash": 5305.400835027353,
+  "cash": 6003.3208350273535,
   "positions": [
     {
       "id": "c4bc1a41",
@@ -685,11 +685,11 @@
       "entry_time": "2026-10-05T17:00:00.995665+00:00",
       "entry_reason": "swing L1220",
       "underlying_at_entry": 773.97998046875,
-      "status": "open",
-      "mark": 1.11,
-      "exit_price": null,
-      "exit_time": null,
-      "exit_reason": null,
+      "status": "closed",
+      "mark": 1.17,
+      "exit_price": 1.17,
+      "exit_time": "2026-10-05T19:05:00.930156+00:00",
+      "exit_reason": "eod",
       "signal_symbol": "SPY",
       "setup": "L1220",
       "stop_at_entry": 773.2436168323864,
@@ -698,7 +698,7 @@
       "event_day": "",
       "exit_basis": "quote",
       "runner": false,
-      "fees": 4.08,
+      "fees": 8.16,
       "peak_pct": 0.32323232323232326,
       "conviction": "decent 2/4",
       "bb_pct": 1.042,
