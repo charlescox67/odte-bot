@@ -399,3 +399,8 @@ SPY: C setup L1030 stop 771.67 (SPY) — stop pulled in to 772.04 (pivot 771.67 
 SPY: C setup L1030 stop 771.67 (SPY) — skipped: conviction 1/4 is below the 2/4 minimum
 QQQ: no setup as of 11:00 | trend up | vwap 751.89 | last low 752.63@1030 high 753.94@1025 | close 753.98
 equity $5,696.72 | cash $5,079.93 | open 1 | closed 19
+--- tick 2026-10-05 11:21:00 EDT (signals as of 11:01) ---
+SPY: C setup L1030 stop 771.67 (SPY) — stop pulled in to 772.07 (pivot 771.67 would cost ~70%)
+SPY: C setup L1030 stop 771.67 (SPY) — skipped: conviction 1/4 is below the 2/4 minimum
+QQQ: no setup as of 11:01 | trend up | vwap 751.90 | last low 752.63@1030 high 753.94@1025 | close 753.98
+equity $5,694.69 | cash $5,079.93 | open 1 | closed 19
