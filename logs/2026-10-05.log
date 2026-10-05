@@ -981,3 +981,8 @@ SPY: C setup L1305 stop 773.77 (SPY) — already holding
 QQQ: C setup L1305 stop 753.68 (QQQ) — stop pulled in to 753.97 (pivot 753.68 would cost ~69%)
 QQQ: C setup L1305 stop 753.68 (QQQ) — skipped: conviction 1/4 is below the 2/4 minimum
 equity $5,719.40 | cash $5,305.40 | open 1 | closed 21
+--- tick 2026-10-05 13:43:00 EDT (signals as of 13:23) ---
+SPY: C setup L1305 stop 773.77 (SPY) — already holding
+QQQ: C setup L1305 stop 753.68 (QQQ) — stop pulled in to 754.06 (pivot 753.68 would cost ~76%)
+QQQ: C setup L1305 stop 753.68 (QQQ) — skipped: conviction 1/4 is below the 2/4 minimum
+equity $5,731.40 | cash $5,305.40 | open 1 | closed 21
