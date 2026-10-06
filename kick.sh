@@ -23,6 +23,7 @@ cd "$(dirname "$0")" || exit 1
 STALE_MIN=${STALE_MIN:-8}       # the bot pushes at least every 5 ticks
 DRY_RUN=${DRY_RUN:-0}
 NET_TIMEOUT=${NET_TIMEOUT:-45}  # hard ceiling on any single network call
+FIRST_PUSH_MIN=7                # a live session pushes within ~6 min of its first tick
 log() { echo "$(TZ=America/New_York date '+%F %T') ET  $1" >> logs/kick.log; }
 # macOS has no coreutils `timeout`, so run the command in the background and
 # kill it if it overruns. Returns 124 on timeout, like GNU timeout does.
@@ -79,17 +80,27 @@ run git fetch -q origin state 2>>logs/kick.err \
 LAST=$(git log -1 --format=%ct origin/state 2>>logs/kick.err)
 NOW=$(date +%s)
 RUN_ID=$(printf '%s' "$RUNS" | jq -r 'map(select(.status=="in_progress")) | sort_by(.createdAt) | last | .databaseId // empty')
-RUN_AGE=$(printf '%s' "$RUNS" | jq -r --arg now "$NOW" 'map(select(.status=="in_progress")) | sort_by(.createdAt) | last | if . == null then 0 else (($now|tonumber) - (.createdAt|fromdate)) / 60 | floor end')
+RUN_START=$(printf '%s' "$RUNS" | jq -r 'map(select(.status=="in_progress")) | sort_by(.createdAt) | last | if . == null then 0 else (.createdAt|fromdate) end')
 [ -z "$LAST" ] && { log "could not read the state branch - left $ACTIVE run(s) alone"; exit 0; }
 STALE=$(( (NOW - LAST) / 60 ))
 
-# A freshly started run has not pushed yet, so only judge runs older than the
-# same threshold - otherwise the watchdog kills healthy new sessions.
-if [ -n "$RUN_ID" ] && [ "$STALE" -ge "$STALE_MIN" ] && [ "${RUN_AGE:-0}" -ge "$STALE_MIN" ]; then
-  log "ZOMBIE: run $RUN_ID is ${RUN_AGE}m old but state is ${STALE}m stale -> cancel + redispatch"
+# When SHOULD this run have pushed? Not simply "7 minutes after it started":
+# a session dispatched before the bell waits for the open (MAX_EARLY allows
+# nearly 3 hours of it) and pushes nothing until 09:30. On 2026-10-06 that cost
+# two healthy sessions - killed at 09:14 and 09:25 for being "1033m stale",
+# which was merely yesterday's close. So measure from the first tick it could
+# possibly have taken: whichever is later, its own start or today's open.
+OPEN_EPOCH=${KICK_OPEN_EPOCH:-$(TZ=America/New_York python3 -c "import datetime; print(int(datetime.datetime.now().replace(hour=9, minute=30, second=0, microsecond=0).timestamp()))")}   # KICK_OPEN_EPOCH exists only for tests
+EXPECT=$RUN_START
+[ "$OPEN_EPOCH" -gt "$EXPECT" ] && EXPECT=$OPEN_EPOCH
+EXPECT=$(( EXPECT + FIRST_PUSH_MIN * 60 ))
+if [ -n "$RUN_ID" ] && [ "$NOW" -gt "$EXPECT" ] && [ "$STALE" -ge "$STALE_MIN" ]; then
+  log "ZOMBIE: run $RUN_ID should have pushed by now but state is ${STALE}m stale -> cancel + redispatch"
   act gh run cancel "$RUN_ID" 2>>logs/kick.err
   sleep 8
   act gh workflow run session.yml 2>>logs/kick.err && log "replacement dispatched"
+elif [ "$NOW" -le "$EXPECT" ]; then
+  echo "$(TZ=America/New_York date '+%F %T') ET active=$ACTIVE, not due to push yet ($(( (EXPECT - NOW) / 60 ))m)" > logs/kick.last
 else
   echo "$(TZ=America/New_York date '+%F %T') ET active=$ACTIVE state ${STALE}m old" > logs/kick.last
 fi
