@@ -1204,3 +1204,23 @@ equity $5,724.47 | cash $5,724.47 | open 0 | closed 23
 SPY: no setup as of 14:09 | trend none | vwap 779.91 | last low 778.90@1320 high 780.08@1335 | close 780.14
 QQQ: no setup as of 14:09 | trend none | vwap 761.19 | last low 759.73@1320 high 761.08@1335 | close 761.49
 equity $5,724.47 | cash $5,724.47 | open 0 | closed 23
+--- tick 2026-10-06 14:30:00 EDT (signals as of 14:10) ---
+SPY: no setup as of 14:10 | trend none | vwap 779.91 | last low 779.57@1355 high 780.08@1335 | close 780.18
+QQQ: no setup as of 14:10 | trend up | vwap 761.19 | last low 760.56@1355 high 761.08@1335 | close 761.39
+equity $5,724.47 | cash $5,724.47 | open 0 | closed 23
+--- tick 2026-10-06 14:31:00 EDT (signals as of 14:11) ---
+SPY: no setup as of 14:11 | trend none | vwap 779.91 | last low 779.57@1355 high 780.08@1335 | close 780.18
+QQQ: no setup as of 14:11 | trend up | vwap 761.19 | last low 760.56@1355 high 761.08@1335 | close 761.39
+equity $5,724.47 | cash $5,724.47 | open 0 | closed 23
+--- tick 2026-10-06 14:32:00 EDT (signals as of 14:12) ---
+SPY: no setup as of 14:12 | trend none | vwap 779.91 | last low 779.57@1355 high 780.08@1335 | close 780.18
+QQQ: no setup as of 14:12 | trend up | vwap 761.19 | last low 760.56@1355 high 761.08@1335 | close 761.39
+equity $5,724.47 | cash $5,724.47 | open 0 | closed 23
+--- tick 2026-10-06 14:33:00 EDT (signals as of 14:13) ---
+SPY: no setup as of 14:13 | trend none | vwap 779.91 | last low 779.57@1355 high 780.08@1335 | close 780.18
+QQQ: no setup as of 14:13 | trend up | vwap 761.19 | last low 760.56@1355 high 761.08@1335 | close 761.39
+equity $5,724.47 | cash $5,724.47 | open 0 | closed 23
+--- tick 2026-10-06 14:34:00 EDT (signals as of 14:14) ---
+SPY: no setup as of 14:14 | trend none | vwap 779.91 | last low 779.57@1355 high 780.08@1335 | close 780.18
+QQQ: no setup as of 14:14 | trend up | vwap 761.19 | last low 760.56@1355 high 761.08@1335 | close 761.39
+equity $5,724.47 | cash $5,724.47 | open 0 | closed 23
