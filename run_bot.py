@@ -58,12 +58,14 @@ PREMIUM_PCT = 4 / 35           # exactly $800 on a $7,000 account
 # Conviction: one point each for a stop that did not need capping, a Bollinger
 # squeeze, momentum already running our way, and a setup still fresh. 3+ = great.
 GREAT_SCORE = 3
-# ...and below 2 the setup is not worth taking at all. Scored against the five
-# real trades to 2026-09-24 this keeps both winners (each exactly 2/4) and
-# blocks two of the three losers, worth +$739. A minimum of 3 would have
-# blocked BOTH winners, so 2 is deliberate. Caveat: the one 3/4 trade lost, so
-# the score is not yet shown to predict anything.
-MIN_CONVICTION = 2
+# The 2-of-4 minimum ran from 09-24 to 10-06 and is GONE: it blocked 10 setups
+# and, replayed through this bot's own stop/target/time rules, 9 of 10 would
+# have won at a mean of +1.83R, with 7 reaching the target - while the 22
+# trades it did take averaged about -0.3R. The score is inverted, not merely
+# uninformative: both non-runner 3/4 trades lost and all three target hits came
+# from 2/4 setups. It shipped on a 5-trade sample, which was too few. The score
+# is still computed and recorded so it can keep being tested; it gates nothing.
+MIN_CONVICTION = 0
 BACKSTOP = 0.50                 # exit if the option loses half its premium
 MAX_QTY = 50                    # SPY/QQQ 0DTE trade thousands per minute
 MAX_SPREAD = 0.10               # skip if bid-ask exceeds 10% of the ask
@@ -515,9 +517,6 @@ def consider_entry(book: pe.Book, sym: str, sig_sym: str, sig_bars,
         squeeze=None if bb is None else bb[1],
         momentum=sw.breaking_out(sig_bars, asof, setup.side, risk_dist),
         used=used)
-    if not enough_conviction(score):
-        print(f"{tag} — skipped: conviction {score}/4 is below the {MIN_CONVICTION}/4 minimum")
-        return
     qty = size_qty(book.equity(), ask, profile.risk_mult)
     if qty < 1:
         print(f"{tag} — ask {ask:.2f} too expensive for the risk budget"); return

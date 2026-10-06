@@ -149,8 +149,7 @@ account so it scales: **4/35 of equity**, which is **$800** on $7,000.
 
 | Conviction | Premium budget | On a $7,000 account |
 |---|---|---|
-| 2 or more of 4 | 4/35 of equity | **$800** |
-| below 2 | not traded | — |
+| any score | 4/35 of equity | **$800** |
 
 ```
 contracts = floor( (4/35 of equity) / (ask x 100) )     capped at 50
@@ -163,9 +162,15 @@ the loser and $430 on the winner — which is exactly why a +$298 winner and a
 −$299 loser netted to nothing. The score still gates entry and is recorded on
 every trade, so it can be judged on evidence later.
 
-**A setup scoring below 2 is not traded at all.** Against the five real trades
-to 2026-09-24 that keeps both winners (each exactly 2/4) and blocks two of the
-three losers, worth +$739. A 3-of-4 minimum would have blocked *both* winners.
+**Removed 2026-10-06: the 2-of-4 minimum.** It blocked 10 setups between
+09-24 and 10-06, and replayed through this bot's own stop, trailing, target,
+60-minute and 14:45 rules, **9 of the 10 would have won** at a mean of
+**+1.83R**, seven of them reaching the target — while the 22 trades it did
+take averaged about **−0.3R**. The score is inverted rather than merely
+uninformative: both non-runner 3/4 trades lost, and all three target hits came
+from 2/4 setups. It shipped on a 5-trade sample, which was too few. The score
+is still computed and recorded on every trade so it can keep being tested, but
+it gates nothing and sets no size.
 
 **Conviction** scores one point each, all knowable at entry: the pullback's
 own stop was close enough not to need capping; the Bollinger bands were in a
@@ -462,7 +467,6 @@ every 10 minutes; trades are saved the minute they happen.
 | Runner exit | 15:30 lagged (~15:50) | `RUNNER_FLATTEN` |
 | Deep red candle | body ≥2.5× typical 5-min move | `DEEP_DIP_MULT` |
 | Premium per trade | 4/35 of equity (~$800 on $7k) | `PREMIUM_PCT` |
-| Minimum conviction | 2 of 4 | `MIN_CONVICTION` |
 | Max cost of reaching the stop | 45% of premium | `STOP_COST_CAP` |
 | Premium backstop | −50% | `BACKSTOP` |
 | Max contracts | 50 | `MAX_QTY` |
