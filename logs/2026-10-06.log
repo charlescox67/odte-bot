@@ -1564,3 +1564,7 @@ equity $5,724.47 | cash $5,724.47 | open 0 | closed 23
 SPY: P setup H1505 stop 780.29 (SPY) — outside entry window 10:00-14:00
 QQQ: no setup as of 15:39 | trend down | vwap 761.10 | last low 760.36@1510 high 761.56@1405 | close 760.54
 equity $5,724.47 | cash $5,724.47 | open 0 | closed 23
+--- tick 2026-10-06 16:00:00 EDT (signals as of 15:40) ---
+SPY: no setup as of 15:40 | trend down | vwap 779.90 | last low 779.64@1430 high 780.29@1505 | close 779.60
+QQQ: P setup H1525 stop 760.96 (QQQ) — outside entry window 10:00-14:00
+equity $5,724.47 | cash $5,724.47 | open 0 | closed 23
