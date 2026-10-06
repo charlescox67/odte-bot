@@ -758,3 +758,28 @@ equity $6,003.32 | cash $6,003.32 | open 0 | closed 22
 SPY: no setup as of 12:19 | trend up | vwap 779.89 | last low 780.87@1145 high 781.50@1140 | close 781.02
 QQQ: no setup as of 12:19 | trend down | vwap 761.30 | last low 759.65@1030 high 762.36@1140 | close 761.21
 equity $6,003.32 | cash $6,003.32 | open 0 | closed 22
+--- tick 2026-10-06 12:40:00 EDT (signals as of 12:20) ---
+SPY: no setup as of 12:20 | trend up | vwap 779.90 | last low 780.87@1145 high 781.50@1140 | close 780.67
+QQQ: P setup H1140 stop 762.36 (QQQ) — stop pulled in to 761.80 (pivot 762.36 would cost ~76%)
+QQQ: P setup H1140 stop 762.36 (QQQ) — skipped: conviction 1/4 is below the 2/4 minimum
+equity $6,003.32 | cash $6,003.32 | open 0 | closed 22
+--- tick 2026-10-06 12:41:00 EDT (signals as of 12:21) ---
+SPY: no setup as of 12:21 | trend up | vwap 779.90 | last low 780.87@1145 high 781.50@1140 | close 780.67
+QQQ: P setup H1140 stop 762.36 (QQQ) — stop pulled in to 761.84 (pivot 762.36 would cost ~73%)
+QQQ: P setup H1140 stop 762.36 (QQQ) — skipped: conviction 1/4 is below the 2/4 minimum
+equity $6,003.32 | cash $6,003.32 | open 0 | closed 22
+--- tick 2026-10-06 12:42:00 EDT (signals as of 12:22) ---
+SPY: no setup as of 12:22 | trend up | vwap 779.90 | last low 780.87@1145 high 781.50@1140 | close 780.67
+QQQ: P setup H1140 stop 762.36 (QQQ) — stop pulled in to 761.87 (pivot 762.36 would cost ~72%)
+QQQ: P setup H1140 stop 762.36 (QQQ) — skipped: conviction 1/4 is below the 2/4 minimum
+equity $6,003.32 | cash $6,003.32 | open 0 | closed 22
+--- tick 2026-10-06 12:43:00 EDT (signals as of 12:23) ---
+SPY: no setup as of 12:23 | trend up | vwap 779.90 | last low 780.87@1145 high 781.50@1140 | close 780.67
+QQQ: P setup H1140 stop 762.36 (QQQ) — stop pulled in to 761.91 (pivot 762.36 would cost ~69%)
+QQQ: P setup H1140 stop 762.36 (QQQ) — skipped: conviction 1/4 is below the 2/4 minimum
+equity $6,003.32 | cash $6,003.32 | open 0 | closed 22
+--- tick 2026-10-06 12:44:00 EDT (signals as of 12:24) ---
+SPY: no setup as of 12:24 | trend up | vwap 779.91 | last low 780.87@1145 high 781.50@1140 | close 780.67
+QQQ: P setup H1140 stop 762.36 (QQQ) — stop pulled in to 761.90 (pivot 762.36 would cost ~69%)
+QQQ: P setup H1140 stop 762.36 (QQQ) — skipped: conviction 1/4 is below the 2/4 minimum
+equity $6,003.32 | cash $6,003.32 | open 0 | closed 22
