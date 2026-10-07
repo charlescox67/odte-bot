@@ -444,3 +444,16 @@ equity $5,463.09 | cash $5,463.09 | open 0 | closed 24
 SPY: no setup as of 12:22 | trend up | vwap 775.09 | last low 775.80@1200 high 776.60@1150 | close 776.58
 QQQ: no setup as of 12:22 | trend up | vwap 754.22 | last low 755.77@1200 high 756.83@1205 | close 756.56
 equity $5,463.09 | cash $5,463.09 | open 0 | closed 24
+--- tick 2026-10-07 12:43:00 EDT (signals as of 12:23) ---
+SPY: no setup as of 12:23 | trend up | vwap 775.10 | last low 775.80@1200 high 776.60@1150 | close 776.58
+QQQ: no setup as of 12:23 | trend up | vwap 754.22 | last low 755.77@1200 high 756.83@1205 | close 756.56
+equity $5,463.09 | cash $5,463.09 | open 0 | closed 24
+--- tick 2026-10-07 12:44:00 EDT (signals as of 12:24) ---
+SPY: no setup as of 12:24 | trend up | vwap 775.10 | last low 775.80@1200 high 776.60@1150 | close 776.58
+QQQ: no setup as of 12:24 | trend up | vwap 754.24 | last low 755.77@1200 high 756.83@1205 | close 756.56
+equity $5,463.09 | cash $5,463.09 | open 0 | closed 24
+--- tick 2026-10-07 12:45:00 EDT (signals as of 12:25) ---
+SPY: C setup L1200 stop 775.80 (SPY) — stop pulled in to 776.05 (pivot 775.80 would cost ~61%)
+  OPEN  DECENT 0/4 $576 premium (11% of equity) | SPY261007C00777000 x8 @ ask 0.72 (bid 0.71) SPY 776.77 | stop 776.05 (delta +0.45) | bands %B 0.84 | vs Dow -0.11%
+QQQ: no setup as of 12:25 | trend up | vwap 754.24 | last low 755.77@1200 high 756.83@1205 | close 756.50
+equity $5,457.65 | cash $4,881.65 | open 1 | closed 24
