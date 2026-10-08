@@ -178,3 +178,23 @@ equity $5,721.86 | cash $5,721.86 | open 0 | closed 26
 SPY: P setup H1125 stop 774.83 (SPY) — already failing on live prices (75% of the room to the stop used since the signal)
 QQQ: no setup as of 11:55 | trend down | vwap 754.17 | last low 752.11@0955 high 757.18@1025 | close 752.84
 equity $5,721.86 | cash $5,721.86 | open 0 | closed 26
+--- tick 2026-10-08 12:16:00 EDT (signals as of 11:56) ---
+SPY: P setup H1125 stop 774.83 (SPY) — already failing on live prices (90% of the room to the stop used since the signal)
+QQQ: no setup as of 11:56 | trend down | vwap 754.16 | last low 752.11@0955 high 757.18@1025 | close 752.84
+equity $5,721.86 | cash $5,721.86 | open 0 | closed 26
+--- tick 2026-10-08 12:17:00 EDT (signals as of 11:57) ---
+SPY: P setup H1125 stop 774.83 (SPY) — already failing on live prices (91% of the room to the stop used since the signal)
+QQQ: no setup as of 11:57 | trend down | vwap 754.16 | last low 752.11@0955 high 757.18@1025 | close 752.84
+equity $5,721.86 | cash $5,721.86 | open 0 | closed 26
+--- tick 2026-10-08 12:18:00 EDT (signals as of 11:58) ---
+SPY: P setup H1125 stop 774.83 (SPY) — already failing on live prices (416% of the room to the stop used since the signal)
+QQQ: no setup as of 11:58 | trend down | vwap 754.15 | last low 752.11@0955 high 757.18@1025 | close 752.84
+equity $5,721.86 | cash $5,721.86 | open 0 | closed 26
+--- tick 2026-10-08 12:19:00 EDT (signals as of 11:59) ---
+SPY: P setup H1125 stop 774.83 (SPY) — already failing on live prices (296% of the room to the stop used since the signal)
+QQQ: no setup as of 11:59 | trend down | vwap 754.15 | last low 752.11@0955 high 757.18@1025 | close 752.84
+equity $5,721.86 | cash $5,721.86 | open 0 | closed 26
+--- tick 2026-10-08 12:20:00 EDT (signals as of 12:00) ---
+SPY: no setup as of 12:00 | trend down | vwap 775.12 | last low 774.18@1135 high 774.83@1125 | close 774.41
+QQQ: no setup as of 12:00 | trend down | vwap 754.14 | last low 752.11@0955 high 757.18@1025 | close 752.91
+equity $5,721.86 | cash $5,721.86 | open 0 | closed 26
