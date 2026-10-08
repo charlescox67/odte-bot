@@ -942,3 +942,23 @@ equity $5,320.26 | cash $5,320.26 | open 0 | closed 28
 SPY: P setup H1450 stop 773.28 (SPY) — outside entry window 10:00-14:00
 QQQ: P setup H1450 stop 747.19 (QQQ) — outside entry window 10:00-14:00
 equity $5,320.26 | cash $5,320.26 | open 0 | closed 28
+--- tick 2026-10-08 15:26:00 EDT (signals as of 15:06) ---
+SPY: P setup H1450 stop 773.28 (SPY) — outside entry window 10:00-14:00
+QQQ: P setup H1450 stop 747.19 (QQQ) — outside entry window 10:00-14:00
+equity $5,320.26 | cash $5,320.26 | open 0 | closed 28
+--- tick 2026-10-08 15:27:00 EDT (signals as of 15:07) ---
+SPY: P setup H1450 stop 773.28 (SPY) — outside entry window 10:00-14:00
+QQQ: P setup H1450 stop 747.19 (QQQ) — outside entry window 10:00-14:00
+equity $5,320.26 | cash $5,320.26 | open 0 | closed 28
+--- tick 2026-10-08 15:28:00 EDT (signals as of 15:08) ---
+SPY: P setup H1450 stop 773.28 (SPY) — outside entry window 10:00-14:00
+QQQ: P setup H1450 stop 747.19 (QQQ) — outside entry window 10:00-14:00
+equity $5,320.26 | cash $5,320.26 | open 0 | closed 28
+--- tick 2026-10-08 15:29:00 EDT (signals as of 15:09) ---
+SPY: P setup H1450 stop 773.28 (SPY) — outside entry window 10:00-14:00
+QQQ: P setup H1450 stop 747.19 (QQQ) — outside entry window 10:00-14:00
+equity $5,320.26 | cash $5,320.26 | open 0 | closed 28
+--- tick 2026-10-08 15:30:00 EDT (signals as of 15:10) ---
+SPY: no setup as of 15:10 | trend down | vwap 773.86 | last low 772.52@1440 high 773.28@1450 | close 772.67
+QQQ: P setup H1450 stop 747.19 (QQQ) — outside entry window 10:00-14:00
+equity $5,320.26 | cash $5,320.26 | open 0 | closed 28
