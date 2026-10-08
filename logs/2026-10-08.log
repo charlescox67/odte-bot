@@ -555,3 +555,8 @@ equity $5,504.44 | cash $5,092.82 | open 1 | closed 26
 SPY: no setup as of 13:29 | trend down | vwap 774.62 | last low 771.80@1305 high 777.09@1215 | close 771.83
 QQQ: no setup as of 13:29 | trend down | vwap 751.21 | last low 746.03@1305 high 748.60@1310 | close 745.46
 equity $5,425.82 | cash $5,092.82 | open 1 | closed 26
+--- tick 2026-10-08 13:50:00 EDT (signals as of 13:30) ---
+SPY: P setup H1315 stop 773.49 (SPY) — stop pulled in to 771.98 (pivot 773.49 would cost ~120%)
+  OPEN  DECENT 1/4 $560 premium (10% of equity) | SPY261008P00771000 x8 @ ask 0.70 (bid 0.69) SPY 771.08 | stop 771.98 (delta -0.35) | bands %B 0.00 | vs Dow -0.20%
+QQQ: no setup as of 13:30 | trend down | vwap 751.14 | last low 746.03@1305 high 748.60@1310 | close 744.39
+equity $5,414.38 | cash $4,527.38 | open 2 | closed 26
