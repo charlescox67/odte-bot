@@ -145,32 +145,28 @@ covered 12 trades and was called suggestive rather than proof when it shipped.
 %B is still recorded on every trade; it is no longer a rule.
 
 **Size.** One flat **premium budget** for every trade, as a share of the
-account so it scales: **4/35 of equity**, which is **$800** on $7,000.
+account so it scales: **7.5% of equity**, about **$400** on the current book.
 
-| Conviction | Premium budget | On a $7,000 account |
+| Conviction | Premium budget | On the current ~$5,300 book |
 |---|---|---|
-| any score | 4/35 of equity | **$800** |
+| 2 or more of 4 | 7.5% of equity | **~$400** |
+| below 2 | not traded | — |
 
 ```
-contracts = floor( (4/35 of equity) / (ask x 100) )     capped at 50
+contracts = floor( (7.5% of equity) / (ask x 100) )     capped at 50
 ```
 
-**Conviction no longer sets the size.** It did until 2026-09-25 ($1,000 on a
-great setup, $500 on a decent one) and has not earned it: both 3/4 trades so
-far **lost**, 2/4 trades went 4-for-5, and on 09-25 the score put $1,050 on
-the loser and $430 on the winner — which is exactly why a +$298 winner and a
-−$299 loser netted to nothing. The score still gates entry and is recorded on
-every trade, so it can be judged on evidence later.
+Halved from 4/35 (~$800) on 2026-10-08 with the book down 24%, to slow the
+bleed while the sample builds.
 
-**Removed 2026-10-06: the 2-of-4 minimum.** It blocked 10 setups between
-09-24 and 10-06, and replayed through this bot's own stop, trailing, target,
-60-minute and 14:45 rules, **9 of the 10 would have won** at a mean of
-**+1.83R**, seven of them reaching the target — while the 22 trades it did
-take averaged about **−0.3R**. The score is inverted rather than merely
-uninformative: both non-runner 3/4 trades lost, and all three target hits came
-from 2/4 setups. It shipped on a 5-trade sample, which was too few. The score
-is still computed and recorded on every trade so it can keep being tested, but
-it gates nothing and sets no size.
+**A setup scoring below 2 of 4 is not traded.** This floor ran from 09-24,
+was removed on 10-06 because a replay of the 10 setups it had blocked said
+they would have returned +1.83R, and was **restored on 10-08** when the live
+record said the opposite: every 0/4 and 1/4 trade this book has taken has
+lost — **5 for 5, −$956** — three of them in the two days after the removal.
+The two samples are small and they disagree; the live one is the one being
+paid for. The replay's caveats (underlying-only R, the uncapped pivot stop)
+plausibly explain the gap.
 
 **Conviction** scores one point each, all knowable at entry: the pullback's
 own stop was close enough not to need capping; the Bollinger bands were in a

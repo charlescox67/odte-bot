@@ -54,18 +54,21 @@ RUNNER_FLATTEN = dtime(15, 30)
 # trades so far LOST while 2/4 went 4-for-5, and on 2026-09-25 the score put
 # $1,050 on the loser and $430 on the winner, turning +$298/-$299 into a flat
 # day. $800 is the midpoint of the $1,000/$500 it replaces.
-PREMIUM_PCT = 4 / 35           # exactly $800 on a $7,000 account
+# Halved on 2026-10-08 with the book at $5,320 (-24% from $7,000): 7.5% of
+# equity is ~$400 a trade now, and still a percentage so it tracks the balance
+# up and down. At $7,000 it would be $525, at $10,000 $750.
+PREMIUM_PCT = 0.075
 # Conviction: one point each for a stop that did not need capping, a Bollinger
 # squeeze, momentum already running our way, and a setup still fresh. 3+ = great.
 GREAT_SCORE = 3
-# The 2-of-4 minimum ran from 09-24 to 10-06 and is GONE: it blocked 10 setups
-# and, replayed through this bot's own stop/target/time rules, 9 of 10 would
-# have won at a mean of +1.83R, with 7 reaching the target - while the 22
-# trades it did take averaged about -0.3R. The score is inverted, not merely
-# uninformative: both non-runner 3/4 trades lost and all three target hits came
-# from 2/4 setups. It shipped on a 5-trade sample, which was too few. The score
-# is still computed and recorded so it can keep being tested; it gates nothing.
-MIN_CONVICTION = 0
+# RESTORED 2026-10-08. The floor ran 09-24 to 10-06, was removed because a
+# replay said the 10 setups it blocked would have returned +1.83R, and the live
+# record since says otherwise: every 0/4 and 1/4 trade this book has ever taken
+# has LOST - 5 for 5, -$956 - three of them in the two days after the removal.
+# Both samples are small and they disagree; the live one is real money-shaped
+# and is the one being paid for, so the floor comes back. The replay's caveats
+# (underlying-only R, the uncapped pivot stop) plausibly explain the gap.
+MIN_CONVICTION = 2
 BACKSTOP = 0.50                 # exit if the option loses half its premium
 MAX_QTY = 50                    # SPY/QQQ 0DTE trade thousands per minute
 MAX_SPREAD = 0.10               # skip if bid-ask exceeds 10% of the ask
@@ -517,6 +520,9 @@ def consider_entry(book: pe.Book, sym: str, sig_sym: str, sig_bars,
         squeeze=None if bb is None else bb[1],
         momentum=sw.breaking_out(sig_bars, asof, setup.side, risk_dist),
         used=used)
+    if not enough_conviction(score):
+        print(f"{tag} — skipped: conviction {score}/4 is below the {MIN_CONVICTION}/4 minimum")
+        return
     qty = size_qty(book.equity(), ask, profile.risk_mult)
     if qty < 1:
         print(f"{tag} — ask {ask:.2f} too expensive for the risk budget"); return
