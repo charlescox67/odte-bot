@@ -8,14 +8,20 @@ PORT = 7497          # 7497 = TWS paper. 7496 = TWS LIVE. Do not "fix" this.
 CLIENT_ID = 11
 
 
-def connect(host: str = HOST, port: int = PORT, client_id: int = CLIENT_ID) -> IB:
+def connect(host: str | None = None, port: int | None = None,
+            client_id: int | None = None) -> IB:
     """Return a connected IB handle, or raise if it is not a paper account.
 
     The port is the only thing separating paper from live, so the account
     prefix is checked independently before any order can be placed.
+
+    Arguments default to the module constants, read at CALL time rather than
+    baked in as default values, so a test or a drill can repoint HOST/PORT.
+    The paper-account check below is what actually keeps this safe, not the
+    port number.
     """
     ib = IB()
-    ib.connect(host, port, clientId=client_id)
+    ib.connect(host or HOST, port or PORT, clientId=client_id or CLIENT_ID)
 
     accounts = ib.managedAccounts()
     if not accounts:

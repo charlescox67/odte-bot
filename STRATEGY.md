@@ -4,9 +4,11 @@ A paper-trading bot that buys same-day (0DTE) options on the S&P 500 and the
 Nasdaq-100. It trades in the direction of the day's trend, entering after a
 pullback holds and price turns back. It trades an **internal paper book**
 starting at **$7,000** (restarted from $100,000 on 2026-09-23 — the earlier
-log is in `archive/trades-100k-paper.csv`), runs entirely on **free Yahoo
-Finance data**, and does
-not connect to any broker. It runs on GitHub Actions every trading day.
+log is in `archive/trades-100k-paper.csv`). Since **2026-10-09** it reads
+**live IBKR market data** through a running Trader Workstation; before that it
+ran on free Yahoo data with the 20-minute lagged clock described below, and it
+still falls back to Yahoo to manage open positions if TWS goes away. It places
+no orders with any broker: IBKR supplies quotes, the book is internal.
 
 > **Status: unproven.** A 60-day historical check of these rules was negative
 > (see [Evidence so far](#evidence-so-far)). The paper book is the real test.
@@ -42,7 +44,25 @@ not connect to any broker. It runs on GitHub Actions every trading day.
   *and* SPX would also be the same bet twice.
 - **VOO.** No same-day options Monday to Thursday and an ~11% spread.
 
-## 2. The 20-minute clock
+## 2. The clock
+
+**Live data since 2026-10-09.** With an OPRA subscription shared to the paper
+account, TWS quotes options in real time, so `LAG_MIN = 0`: the signal clock
+and the fill clock are the same clock and everything in this section about
+living 20 minutes in the past no longer applies to a normal trading day. Delta
+and implied volatility come from IBKR directly instead of being inferred from
+neighbouring strikes, and a position's mark is simply its bid — no put-call
+parity reconstruction, no marking-down estimate.
+
+The cost is that the bot can only trade while TWS is running on one specific
+Mac, so that Mac is now the only machine allowed to write to the book. The
+GitHub Actions schedule is switched off for exactly that reason; two writers
+on one book would corrupt it.
+
+**If TWS is unreachable**, the tick falls back to the Yahoo path below *for
+exits only* — a position that is already open must still be able to reach its
+stop — and refuses to open anything new. The rest of this section describes
+that fallback, and was how the bot ran from 2026-09-21 to 2026-10-09.
 
 **Why Yahoo?** It is free and needs no account. Checked 2026-09-21, nothing
 free is faster for option quotes:
@@ -54,7 +74,7 @@ free is faster for option quotes:
 | Alpaca free tier | 15 min delayed ("indicative") | free |
 | Alpaca Algo Trader Plus | real time | $99/mo |
 | Schwab API | real time | free with a brokerage account |
-| IBKR + OPRA subscription | real time | small monthly fee |
+| IBKR + OPRA subscription | real time | small monthly fee — **subscribed 2026-10-09** |
 
 Real-time option quotes essentially require a brokerage account. Underlying
 (SPY/QQQ) prices from Yahoo are already live, which is why stops use them.

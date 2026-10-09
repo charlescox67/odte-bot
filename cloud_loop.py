@@ -86,7 +86,10 @@ def main() -> int:
             break
         if t >= open_at:
             before = book_fingerprint()
-            r = subprocess.run([sys.executable, str(HERE / "run_bot.py"), "--once"],
+            # Explicitly Yahoo: there is no TWS on a runner, and the default
+            # "auto" source would fall back to exits-only and never trade.
+            r = subprocess.run([sys.executable, str(HERE / "run_bot.py"),
+                                "--once", "--source", "yahoo"],
                                capture_output=True, text=True, timeout=55)
             out = r.stdout + (f"[exit {r.returncode}] {r.stderr[-800:]}\n"
                               if r.returncode else "")

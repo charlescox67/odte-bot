@@ -11,3 +11,7 @@ trades.csv
 logs/
 .tick.lock
 .caffeinate.pid
+
+# live-data era: the state branch is checked out here as a worktree
+state/
+logs/.synced-*

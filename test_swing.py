@@ -338,5 +338,85 @@ check("CPI day half risk", ev.day_profile(date(2026, 10, 14)).risk_mult, 0.5)
 check("ordinary day", ev.day_profile(date(2026, 9, 22)).label, "")
 check("2027 flagged uncovered", ev.day_profile(date(2027, 1, 5)).covered, False)
 
+print("\nthe contract id survives a change of data source")
+import market_data as md
+check("Yahoo's own format, rebuilt",
+      md.occ_symbol("SPY", "2026-10-09", "C", 777.0), "SPY261009C00777000")
+check("sub-dollar strikes keep their thousandths",
+      md.occ_symbol("QQQ", "2026-10-09", "P", 751.5), "QQQ261009P00751500")
+check("three-digit strikes pad to eight",
+      md.occ_symbol("SPY", "2026-01-02", "C", 95.0), "SPY260102C00095000")
+
+print("\nlive quotes need no mark adjustment, stale ones do")
+FLAT = bars([(100.0, 100.2, 99.8, 100.0)] * 8)          # price pinned at 100
+NOON = DAY + timedelta(hours=1, minutes=30)
+PROFILE = ev.day_profile(DAY.date())
+
+class FakeSource:
+    """Hands manage() one fixed quote, so the only variable is the lag."""
+    name = "fake"
+    def __init__(self, lag, **q):
+        self.lag_min = lag
+        self.q = md.Quote(**{"contract": "SPY260922C00100000", "strike": 100.0,
+                             "bid": 5.00, "ask": 5.10, "delta": 0.50, **q})
+    def quote_position(self, pos):
+        return self.q
+    def close(self):
+        pass
+
+def held(source):
+    """A book holding one call, marked once by `source`. Returns the position."""
+    b = pe.Book(cash=10_000.0)
+    pos = b.open(symbol="SPY", contract="SPY260922C00100000", right="C",
+                 strike=100.0, expiry="2026-09-22", qty=1, ask=5.00,
+                 underlying=100.0, reason="test", ts=NOON - timedelta(minutes=5),
+                 stop_at_entry=99.0, stop_underlying=None)
+    rb.manage(b, "SPY", NOON, NOON - timedelta(minutes=source.lag_min),
+              FLAT, PROFILE, source)
+    return pos
+
+live = held(FakeSource(0))
+check("live: the bid IS the mark", live.mark, 5.00)
+check("live: booked as a real quote", live.exit_basis, "quote")
+check("live: nothing sold on a flat trade", live.status, "open")
+
+# Same bid, but the chain was quoting when SPY was 101 and it is 100 now: a
+# call is worth less than that stale bid says.
+stale = held(FakeSource(20, chain_ref=101.0))
+check("stale: marked down to the live price", stale.mark, 4.50)
+check("stale: flagged as an estimate", stale.exit_basis, "estimated")
+check("stale: same quote, worse mark", stale.mark < live.mark, True)
+
+# A move the trade's way is NOT booked: the delayed feed never printed it.
+kind = held(FakeSource(20, chain_ref=99.0))
+check("stale: a favourable move keeps the stale quote", kind.mark, 5.00)
+
+print("\na dead TWS stops entries but never abandons a position")
+import sys, types
+real = sys.modules.pop("ibkr_data", None)
+boom = types.ModuleType("ibkr_data")
+class NoTWS:
+    def __init__(self):
+        raise ConnectionRefusedError("[Errno 61] Connection refused")
+boom.IBKRSource = NoTWS
+sys.modules["ibkr_data"] = boom
+try:
+    src, entries = rb.open_source(pe.Book(cash=10_000.0))
+    check("nothing open -> no tick at all", src, None)
+    check("and certainly no entries", entries, False)
+
+    holding = pe.Book(cash=10_000.0)
+    holding.open(symbol="SPY", contract="SPY260922C00100000", right="C",
+                 strike=100.0, expiry="2026-09-22", qty=1, ask=5.00,
+                 underlying=100.0, reason="test")
+    src, entries = rb.open_source(holding)
+    check("a position open -> fall back to Yahoo", type(src), rb.YahooSource)
+    check("...on the lagged clock", src.lag_min, 20)
+    check("...for exits only", entries, False)
+finally:
+    sys.modules.pop("ibkr_data", None)
+    if real is not None:
+        sys.modules["ibkr_data"] = real
+
 print(f"\n{ok} passed, {fail} failed")
 raise SystemExit(1 if fail else 0)

@@ -20,6 +20,7 @@ import yfinance as yf
 import event_calendar as ev
 import paper_engine as pe
 import swing_signal as sw
+from market_data import Quote
 
 ET = ZoneInfo("America/New_York")
 LAG_MIN = 20            # measured: Yahoo OPRA delay
@@ -380,88 +381,140 @@ def chain_quote(symbol: str, expiry: str, right: str, spot: float):
     return row, float(row.strike), tbl
 
 
+class YahooSource:
+    """Free data, and the reason every lag defence in this file exists.
+
+    Underlying bars are real time; option quotes run ~16 minutes behind. The
+    Quote it returns therefore carries `tbl` (the raw chain, for the
+    strike-shift valuation) and `chain_ref` (what the chain itself implies the
+    underlying was, by put-call parity) so manage() can mark a position down
+    to something closer to now.
+    """
+
+    lag_min = LAG_MIN
+    name = "Yahoo"
+
+    def close(self) -> None:
+        pass
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        self.close()
+
+    def bars_1m(self, symbol: str, period: str = "1d"):
+        return bars_1m(symbol, period)
+
+    def spot(self, symbol: str) -> float | None:
+        return spot_now(symbol)
+
+    def close_on(self, symbol: str, day: str) -> float | None:
+        return close_on(symbol, day)
+
+    def chain_quote(self, symbol: str, expiry_iso: str, right: str,
+                    spot: float) -> Quote | None:
+        row, strike, tbl = chain_quote(symbol, expiry_iso, right, spot)
+        if row is None:
+            return None
+        return Quote(contract=row.contractSymbol, strike=strike,
+                     bid=float(row.bid), ask=float(row.ask),
+                     delta=est_delta(tbl, strike, right), tbl=tbl)
+
+    def quote_position(self, pos) -> Quote | None:
+        chain = yf.Ticker(pos.symbol).option_chain(pos.expiry)
+        tbl = chain.calls if pos.right == "C" else chain.puts
+        hit = tbl[tbl.contractSymbol == pos.contract]
+        if hit.empty:
+            return None
+        row = hit.iloc[0]
+        return Quote(contract=pos.contract, strike=pos.strike,
+                     bid=float(row.bid), ask=float(row.ask),
+                     delta=est_delta(tbl, pos.strike, pos.right), tbl=tbl,
+                     chain_ref=chain_ref_price(chain.calls, chain.puts))
+
+
 def manage(book: pe.Book, sym: str, t_now: datetime, asof: datetime,
-           sig_bars, profile: ev.DayProfile) -> None:
+           sig_bars, profile: ev.DayProfile, source) -> None:
     """Mark and exit open positions. The premium backstop needs only the
-    option chain, so it runs even when the chart feed is down; the swing
+    option quote, so it runs even when the chart feed is down; the swing
     stop and its trailing need the chart and run whenever it is available."""
-    holding = [p for p in book.open_positions if p.symbol == sym]
-    if not holding:
-        return
-    for expiry in {p.expiry for p in holding}:
-        chain = retry(lambda: yf.Ticker(sym).option_chain(expiry),
-                      label=f"{sym} chain {expiry}")
-        if chain is None:
-            print(f"  ! {sym} {expiry}: no chain, positions left open")
+    for pos in [p for p in book.open_positions if p.symbol == sym]:
+        q = retry(lambda p=pos: source.quote_position(p),
+                  label=f"{sym} {pos.contract} quote")
+        if q is None:
+            print(f"  ! {sym} {pos.contract}: no quote, position left open")
             continue
-        for pos in [p for p in holding if p.expiry == expiry]:
-            tbl = chain.calls if pos.right == "C" else chain.puts
-            hit = tbl[tbl.contractSymbol == pos.contract]
-            if hit.empty:
-                continue
-            quoted = float(hit.iloc[0].bid)
-            live_px = live_price(sig_bars, t_now) if sig_bars is not None else None
+        quoted = q.bid
+        live_px = live_price(sig_bars, t_now) if sig_bars is not None else None
+        if source.lag_min == 0:
+            # Live quotes: the bid IS the mark. The signal clock and the fill
+            # clock are the same clock, so there is no gap to estimate across.
+            lagged_px = live_px
+            pos.mark = quoted
+            pos.exit_basis = "quote"
+        else:
             # What the CHAIN thinks the underlying is, not what it was LAG_MIN ago.
-            lagged_px = chain_ref_price(chain.calls, chain.puts)
+            lagged_px = q.chain_ref
             if lagged_px is None and sig_bars is not None:
                 lagged_px = live_price(sig_bars, asof)
-            delta = est_delta(tbl, pos.strike, pos.right)
-            pos.mark = adjust_mark(quoted, delta, live_px, lagged_px,
-                                   tbl=tbl, strike=pos.strike)
+            pos.mark = adjust_mark(quoted, q.delta, live_px, lagged_px,
+                                   tbl=q.tbl, strike=pos.strike)
             pos.exit_basis = "estimated" if pos.mark < quoted else "quote"
-            held = t_now - datetime.fromisoformat(pos.entry_time).astimezone(ET)
-            pct = pos.move_pct(pos.mark)
-            pos.peak_pct = max(pos.peak_pct, pct)
-            stop_broken = False
-            if sig_bars is not None and pos.stop_underlying is not None:
-                new = sw.trail_stop(sig_bars, asof, pos.right, pos.stop_underlying)
-                if new != pos.stop_underlying:
-                    print(f"  TRAIL {pos.contract} stop {pos.stop_underlying:.2f} -> {new:.2f}")
-                    pos.stop_underlying = new
-                # Checked on the LIVE price, not the lagged one: the chart is
-                # real time, so a break is acted on now rather than 20 min late.
-                stop_broken = live_px is not None and (
-                    live_px < pos.stop_underlying if pos.right == "C"
-                    else live_px > pos.stop_underlying)
-            risk = (abs(pos.underlying_at_entry - pos.stop_at_entry)
-                    if pos.stop_at_entry is not None else 0.0)
-            live = sig_bars is not None
-            reason = decide_exit(
-                pct=pct, stop_broken=stop_broken,
-                aged=held >= timedelta(minutes=TIME_STOP_MIN),
-                r_now=progress_r(pos, live_px), asof_t=asof.time(),
-                event_flatten=profile.flatten_at, runner=pos.runner,
-                peak_pct=pos.peak_pct,
-                # both read the LIVE candles: the move is happening now
-                # Either clock may qualify a breakout: the target is spotted on
-                # the ~16-min-old quote, so the move that earned it shows up on
-                # the lagged bars, while the live bars say what is happening
-                # now. On 2026-09-22 the lagged clock said "breaking out" and
-                # the live clock said "stalling" for the same trade.
-                # Three windows, because the lag splits the move in two: the
-                # live bars, the lagged bars, and the BRIDGE between them. On
-                # 2026-09-25 a burst ran 11:54-12:10, i.e. after the lagged
-                # clock and before the live 10-minute window - the target fired
-                # at 12:14 with both tests reading "stalled" (one missed by a
-                # cent) and a +173% move was banked at +69%.
-                strong=live and (sw.breaking_out(sig_bars, t_now, pos.right, risk)
-                                 or sw.breaking_out(sig_bars, asof, pos.right, risk)
-                                 or bridge_move(pos.right, live_px, lagged_px) >= risk),
-                dip=live and pos.runner and sw.deep_dip(sig_bars, t_now, pos.right))
-            if reason == "runner":
-                pos.runner = True
-                print(f"  RUNNER {pos.contract} at {pct:+.0%}: breaking out hard, "
-                      f"holding for a deep red candle "
-                      f"(keeps {RUNNER_KEEP:.0%} of its best, min +{RUNNER_MIN_PCT:.0%})")
-                reason = None
-            if reason:
-                book.close(pos, bid=pos.mark, reason=reason)
-                print(f"  CLOSE {pos.contract} x{pos.qty} @ {pos.mark:.2f} ({reason}) "
-                      f"pnl ${pos.pnl():+.2f} after ${pos.fees:.2f} fees ({pct:+.0%} on the option)")
+        held = t_now - datetime.fromisoformat(pos.entry_time).astimezone(ET)
+        pct = pos.move_pct(pos.mark)
+        pos.peak_pct = max(pos.peak_pct, pct)
+        stop_broken = False
+        if sig_bars is not None and pos.stop_underlying is not None:
+            new = sw.trail_stop(sig_bars, asof, pos.right, pos.stop_underlying)
+            if new != pos.stop_underlying:
+                print(f"  TRAIL {pos.contract} stop {pos.stop_underlying:.2f} -> {new:.2f}")
+                pos.stop_underlying = new
+            # Checked on the LIVE price, not the lagged one: the chart is
+            # real time, so a break is acted on now rather than 20 min late.
+            stop_broken = live_px is not None and (
+                live_px < pos.stop_underlying if pos.right == "C"
+                else live_px > pos.stop_underlying)
+        risk = (abs(pos.underlying_at_entry - pos.stop_at_entry)
+                if pos.stop_at_entry is not None else 0.0)
+        live = sig_bars is not None
+        reason = decide_exit(
+            pct=pct, stop_broken=stop_broken,
+            aged=held >= timedelta(minutes=TIME_STOP_MIN),
+            r_now=progress_r(pos, live_px), asof_t=asof.time(),
+            event_flatten=profile.flatten_at, runner=pos.runner,
+            peak_pct=pos.peak_pct,
+            # both read the LIVE candles: the move is happening now
+            # Either clock may qualify a breakout: the target is spotted on
+            # the ~16-min-old quote, so the move that earned it shows up on
+            # the lagged bars, while the live bars say what is happening
+            # now. On 2026-09-22 the lagged clock said "breaking out" and
+            # the live clock said "stalling" for the same trade.
+            # Three windows, because the lag splits the move in two: the
+            # live bars, the lagged bars, and the BRIDGE between them. On
+            # 2026-09-25 a burst ran 11:54-12:10, i.e. after the lagged
+            # clock and before the live 10-minute window - the target fired
+            # at 12:14 with both tests reading "stalled" (one missed by a
+            # cent) and a +173% move was banked at +69%.
+            strong=live and (sw.breaking_out(sig_bars, t_now, pos.right, risk)
+                             or sw.breaking_out(sig_bars, asof, pos.right, risk)
+                             or bridge_move(pos.right, live_px, lagged_px) >= risk),
+            dip=live and pos.runner and sw.deep_dip(sig_bars, t_now, pos.right))
+        if reason == "runner":
+            pos.runner = True
+            print(f"  RUNNER {pos.contract} at {pct:+.0%}: breaking out hard, "
+                  f"holding for a deep red candle "
+                  f"(keeps {RUNNER_KEEP:.0%} of its best, min +{RUNNER_MIN_PCT:.0%})")
+            reason = None
+        if reason:
+            book.close(pos, bid=pos.mark, reason=reason)
+            print(f"  CLOSE {pos.contract} x{pos.qty} @ {pos.mark:.2f} ({reason}) "
+                  f"pnl ${pos.pnl():+.2f} after ${pos.fees:.2f} fees ({pct:+.0%} on the option)")
 
 
 def consider_entry(book: pe.Book, sym: str, sig_sym: str, sig_bars,
-                   t_now: datetime, asof: datetime, profile: ev.DayProfile) -> None:
+                   t_now: datetime, asof: datetime, profile: ev.DayProfile,
+                   source) -> None:
     if sig_bars is None:
         print(f"{sym}: no {sig_sym} bars — entry skipped (positions still managed)")
         return
@@ -475,7 +528,8 @@ def consider_entry(book: pe.Book, sym: str, sig_sym: str, sig_bars,
     tag = f"{sym}: {setup.side} setup {setup.pivot_id} stop {setup.stop:.2f} ({sig_sym})"
     # Two days of bars so the Bollinger window can reach into yesterday: with
     # one day the reading is blank for the first 100 minutes of trading.
-    wide = retry(lambda: bars_1m(sig_sym, "2d"), tries=1, label=f"{sig_sym} 2d bars")
+    wide = retry(lambda: source.bars_1m(sig_sym, "2d"), tries=1,
+                 label=f"{sig_sym} 2d bars")
     bb = sw.bollinger(wide if wide is not None else sig_bars, asof)
     cutoff = min(NO_ENTRY_AFTER, profile.entry_cutoff or NO_ENTRY_AFTER)
     if not ENTRY_START <= asof.time() < cutoff:
@@ -491,21 +545,23 @@ def consider_entry(book: pe.Book, sym: str, sig_sym: str, sig_bars,
     if sym == sig_sym:
         ref = setup.price
     else:
-        ub = retry(lambda: bars_1m(sym), label=f"{sym} bars")
+        ub = retry(lambda: source.bars_1m(sym), label=f"{sym} bars")
         d = sw.complete_1m(ub, asof) if ub is not None else None
         if d is None or d.empty:
             print(f"{tag} — no {sym} price at {asof:%H:%M}"); return
         ref = float(d["close"].iloc[-1])
-    row, strike, tbl = chain_quote(sym, t_now.date().isoformat(), setup.side, ref)
-    if row is None:
+    q = retry(lambda: source.chain_quote(sym, t_now.date().isoformat(),
+                                        setup.side, ref),
+              tries=1, label=f"{sym} 0DTE chain")
+    if q is None:
         print(f"{tag} — no 0DTE chain"); return
-    ask, bid = float(row.ask), float(row.bid)
+    strike, ask, bid = q.strike, q.ask, q.bid
     if ask - bid > MAX_SPREAD * ask:
         print(f"{tag} — spread {bid:.2f}/{ask:.2f} over {MAX_SPREAD:.0%}"); return
     # Pull the stop in if the pivot sits further away than 30% of premium
     # buys: otherwise the backstop always fires first and the chart stop is
     # decoration (that is how one trade lost 50% with price above its stop).
-    delta = est_delta(tbl, strike, setup.side)
+    delta = q.delta
     stop = cap_stop(setup.side, ref, setup.stop, ask, delta)
     if abs(stop - setup.stop) > 1e-9:
         print(f"{tag} — stop pulled in to {stop:.2f} "
@@ -527,9 +583,9 @@ def consider_entry(book: pe.Book, sym: str, sig_sym: str, sig_bars,
     if qty < 1:
         print(f"{tag} — ask {ask:.2f} too expensive for the risk budget"); return
     # Context recorded for later review; a missing Dow feed never blocks a trade.
-    dow = retry(lambda: bars_1m("DIA"), tries=1, label="DIA bars")
+    dow = retry(lambda: source.bars_1m("DIA"), tries=1, label="DIA bars")
     rel = sw.vs_dow(sig_bars, dow, asof) if dow is not None else None
-    pos = book.open(symbol=sym, contract=row.contractSymbol, right=setup.side,
+    pos = book.open(symbol=sym, contract=q.contract, right=setup.side,
                     strike=strike, expiry=t_now.date().isoformat(), qty=qty, ask=ask,
                     underlying=ref, reason=f"swing {setup.pivot_id}",
                     signal_symbol=sig_sym, setup=setup.pivot_id,
@@ -549,27 +605,53 @@ def consider_entry(book: pe.Book, sym: str, sig_sym: str, sig_bars,
           f"{' | ' + profile.label if profile.label else ''}")
 
 
-def settle_price(pos: pe.Position) -> float | None:
+def settle_price(source, pos: pe.Position) -> float | None:
     """Price on the position's OWN expiry date, not today's."""
     if pos.expiry == now_et().date().isoformat():
-        return spot_now(pos.symbol)
-    return close_on(pos.symbol, pos.expiry)
+        return source.spot(pos.symbol)
+    return source.close_on(pos.symbol, pos.expiry)
 
 
-def tick(book: pe.Book, *, verbose: bool = True) -> None:
+def open_source(book: pe.Book):
+    """Pick the data source for this tick. Returns (source, entries_allowed).
+
+    "TWS or nothing" governs TRADING; it does not govern RISK. A position that
+    is already open must still be able to reach its stop, and the Yahoo path
+    managed every trade this book has ever taken. So an unreachable TWS means
+    no new entries — never an unmanaged position.
+    """
+    try:
+        import ibkr_data
+        src = ibkr_data.IBKRSource()
+        print(f"data: {src.name}, live quotes (lag {src.lag_min}m)")
+        return src, True
+    except Exception as e:
+        why = f"{type(e).__name__}: {e}"
+        if not book.open_positions:
+            print(f"!!! TWS unreachable ({why}) — nothing open, no tick taken")
+            return None, False
+        print(f"!!! TWS unreachable ({why})")
+        print(f"!!! {len(book.open_positions)} position(s) open: falling back to "
+              f"Yahoo for EXITS ONLY. No entries while the live feed is down.")
+        return YahooSource(), False
+
+
+def tick(book: pe.Book, source, *, entries: bool = True,
+         verbose: bool = True) -> None:
     t_now = now_et()
-    asof = t_now - timedelta(minutes=LAG_MIN)
+    asof = t_now - timedelta(minutes=source.lag_min)
     profile = ev.day_profile(asof.date())
     if not profile.covered:
         print(f"!!! event_calendar.py ends {ev.COVERED_THROUGH} — add new dates")
     if profile.label:
         print(f"event day: {profile.label} (risk x{profile.risk_mult})")
-    bars = {s: retry(lambda s=s: bars_1m(s), label=f"{s} bars")
+    bars = {s: retry(lambda s=s: source.bars_1m(s), label=f"{s} bars")
             for s in dict.fromkeys(MARKETS.values())}
     for sym, sig in MARKETS.items():
-        manage(book, sym, t_now, asof, bars[sig], profile)   # risk first, always
-        consider_entry(book, sym, sig, bars[sig], t_now, asof, profile)
-    book.settle_expired(settle_price)
+        manage(book, sym, t_now, asof, bars[sig], profile, source)  # risk first
+        if entries:
+            consider_entry(book, sym, sig, bars[sig], t_now, asof, profile, source)
+    book.settle_expired(lambda pos: settle_price(source, pos))
     book.save()
     print(f"equity ${book.equity():,.2f} | cash ${book.cash:,.2f} | "
           f"open {len(book.open_positions)} | closed "
@@ -579,8 +661,20 @@ def tick(book: pe.Book, *, verbose: bool = True) -> None:
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--once", action="store_true", help="single tick then exit")
+    ap.add_argument("--source", choices=("auto", "ibkr", "yahoo"), default="auto",
+                    help="auto: IBKR, falling back to Yahoo for exits only")
     a = ap.parse_args()
     book = pe.Book.load()
-    print(f"--- tick {now_et():%Y-%m-%d %H:%M:%S %Z} (signals as of "
-          f"{(now_et()-timedelta(minutes=LAG_MIN)):%H:%M}) ---")
-    tick(book)
+    if a.source == "yahoo":
+        source, entries = YahooSource(), True
+        print(f"data: {source.name}, option quotes ~{source.lag_min}m stale")
+    else:
+        source, entries = open_source(book)
+    if source is None:
+        raise SystemExit(0)
+    try:
+        print(f"--- tick {now_et():%Y-%m-%d %H:%M:%S %Z} (signals as of "
+              f"{(now_et()-timedelta(minutes=source.lag_min)):%H:%M}) ---")
+        tick(book, source, entries=entries)
+    finally:
+        source.close()
