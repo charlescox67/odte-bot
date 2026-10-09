@@ -894,3 +894,8 @@ SPY: no setup as of 12:51 | trend up | vwap 776.86 | last low 776.83@1200 high 7
 QQQ: C setup L1220 stop 750.32 (QQQ) — stop pulled in to 750.46 (pivot 750.32 would cost ~55%)
 QQQ: C setup L1220 stop 750.32 (QQQ) — already failing on live prices (132% of the room to the stop used since the signal)
 equity $5,248.89 | cash $4,873.52 | open 1 | closed 29
+--- tick 2026-10-09 13:12:00 EDT (signals as of 12:52) ---
+SPY: no setup as of 12:52 | trend up | vwap 776.86 | last low 776.83@1200 high 778.24@1230 | close 778.25
+QQQ: C setup L1220 stop 750.32 (QQQ) — stop pulled in to 750.63 (pivot 750.32 would cost ~66%)
+QQQ: C setup L1220 stop 750.32 (QQQ) — already failing on live prices (156% of the room to the stop used since the signal)
+equity $5,265.63 | cash $4,873.52 | open 1 | closed 29
