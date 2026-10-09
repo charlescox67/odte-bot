@@ -1250,3 +1250,7 @@ equity $5,366.36 | cash $4,873.52 | open 1 | closed 29
 SPY: no setup as of 14:19 | trend up | vwap 777.28 | last low 777.71@1315 high 778.23@1330 | close 778.47
 QQQ: C setup L1400 stop 750.53 (QQQ) — outside entry window 10:00-14:00
 equity $5,354.81 | cash $4,873.52 | open 1 | closed 29
+--- tick 2026-10-09 14:40:00 EDT (signals as of 14:20) ---
+SPY: no setup as of 14:20 | trend up | vwap 777.28 | last low 777.71@1315 high 778.23@1330 | close 778.53
+QQQ: no setup as of 14:20 | trend up | vwap 750.12 | last low 750.53@1400 high 750.97@1350 | close 751.07
+equity $5,359.88 | cash $4,873.52 | open 1 | closed 29
