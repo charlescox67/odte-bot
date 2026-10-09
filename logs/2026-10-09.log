@@ -888,3 +888,9 @@ equity $5,350.76 | cash $4,624.82 | open 2 | closed 28
 SPY: no setup as of 12:50 | trend up | vwap 776.86 | last low 776.83@1200 high 778.24@1230 | close 778.25
 QQQ: C setup L1220 stop 750.32 (QQQ) — already holding
 equity $5,288.51 | cash $4,624.82 | open 2 | closed 28
+--- tick 2026-10-09 13:11:00 EDT (signals as of 12:51) ---
+SPY: no setup as of 12:51 | trend up | vwap 776.86 | last low 776.83@1200 high 778.24@1230 | close 778.25
+  CLOSE QQQ261009C00751000 x5 @ 0.50 (swing_stop) pnl $-129.70 after $6.80 fees (-33% on the option)
+QQQ: C setup L1220 stop 750.32 (QQQ) — stop pulled in to 750.46 (pivot 750.32 would cost ~55%)
+QQQ: C setup L1220 stop 750.32 (QQQ) — already failing on live prices (132% of the room to the stop used since the signal)
+equity $5,248.89 | cash $4,873.52 | open 1 | closed 29
