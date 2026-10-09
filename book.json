@@ -942,7 +942,7 @@
       "entry_reason": "swing L1130",
       "underlying_at_entry": 750.7899780273438,
       "status": "open",
-      "mark": 0.53,
+      "mark": 0.5,
       "exit_price": null,
       "exit_time": null,
       "exit_reason": null,
