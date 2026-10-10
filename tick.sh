@@ -9,11 +9,15 @@
 # whenever it changes.
 cd "$(dirname "$0")" || exit 1
 
-DOW=$(TZ=America/New_York date +%u)      # 1=Mon .. 7=Sun
-HHMM=$(TZ=America/New_York date +%H%M)
-[ "$DOW" -gt 5 ] && exit 0
-[ "$HHMM" \< "0930" ] && exit 0
-[ "$HHMM" \> "1600" ] && exit 0
+# FORCE_WINDOW and DRY_RUN exist only so this can be exercised out of hours;
+# same hooks as kick.sh. DRY_RUN does everything but the push.
+if [ "${FORCE_WINDOW:-0}" != "1" ]; then
+  DOW=$(TZ=America/New_York date +%u)      # 1=Mon .. 7=Sun
+  HHMM=$(TZ=America/New_York date +%H%M)
+  [ "$DOW" -gt 5 ] && exit 0
+  [ "$HHMM" \< "0930" ] && exit 0
+  [ "$HHMM" \> "1600" ] && exit 0
+fi
 
 # mkdir is atomic: if a slow quote request makes a tick outrun its 60s slot,
 # the next one skips rather than double-trading the same signal.
@@ -64,6 +68,7 @@ if git -C "$STATE" diff --cached --quiet; then
 fi
 if ! git -C "$STATE" diff --cached --quiet -- book.json trades.csv \
    || [ "$(( 10#$(TZ=America/New_York date +%M) % 5 ))" -eq 0 ]; then
+  [ "${DRY_RUN:-0}" = "1" ] && { echo "DRY RUN: would commit + push"; git -C "$STATE" reset -q; exit 0; }
   git -C "$STATE" commit -q -m "book $(TZ=America/New_York date '+%F %H:%M') ET"
   for i in 1 2 3; do
     git -C "$STATE" push -q origin HEAD:state && break
