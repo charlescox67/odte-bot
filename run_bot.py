@@ -620,6 +620,11 @@ def open_source(book: pe.Book):
     managed every trade this book has ever taken. So an unreachable TWS means
     no new entries — never an unmanaged position.
     """
+    # Every line here carries the clock. On 2026-10-12 TWS was down all session
+    # and the log held 102 identical undated complaints: it could not say when
+    # the bot started, when it gave up, or whether it had run at the open at
+    # all. That had to be reconstructed from git commit times. Never again.
+    stamp = f"{now_et():%H:%M:%S} ET"
     try:
         import ibkr_data
         src = ibkr_data.IBKRSource()
@@ -627,12 +632,15 @@ def open_source(book: pe.Book):
         return src, True
     except Exception as e:
         why = f"{type(e).__name__}: {e}"
+        hint = ("TWS is not running (nothing is listening on the API port)"
+                if isinstance(e, (ConnectionRefusedError, OSError))
+                else "TWS answered but would not serve data")
         if not book.open_positions:
-            print(f"!!! TWS unreachable ({why}) — nothing open, no tick taken")
+            print(f"!!! {stamp} NO TICK TAKEN — {hint}. Nothing open. ({why})")
             return None, False
-        print(f"!!! TWS unreachable ({why})")
-        print(f"!!! {len(book.open_positions)} position(s) open: falling back to "
-              f"Yahoo for EXITS ONLY. No entries while the live feed is down.")
+        print(f"!!! {stamp} {hint}. ({why})")
+        print(f"!!! {stamp} {len(book.open_positions)} position(s) open: falling "
+              f"back to Yahoo for EXITS ONLY. No entries while the feed is down.")
         return YahooSource(), False
 
 

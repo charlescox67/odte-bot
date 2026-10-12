@@ -1,6 +1,11 @@
 #!/bin/bash
 # Hold the system awake through the trading session.
 #
+# This is what makes the scheduled wake stick. launchd fires it every 60s; the
+# first firing after a wake exec's caffeinate, which holds the machine up to
+# 16:05 ET. If this script exits (outside its window) nothing asserts and the
+# Mac returns to sleep within a minute or two.
+#
 # This script deliberately EXECs caffeinate rather than backgrounding it.
 # launchd reaps a job's process group when the job's main process exits, so
 # `caffeinate ... &` dies seconds after launch. By exec'ing, caffeinate BECOMES
@@ -12,7 +17,13 @@ cd "$(dirname "$0")" || exit 1
 DOW=$(TZ=America/New_York date +%u)
 HHMM=$(TZ=America/New_York date +%H%M)
 [ "$DOW" -gt 5 ] && exit 0
-[ "$HHMM" \< "0925" ] && exit 0
+# 09:10, not 09:25. The scheduled wake (pmset repeat wakepoweron) has to land
+# INSIDE this window or it achieves nothing: on 2026-10-12 the Mac woke on
+# schedule at 07:20 ET, found this script two hours outside its window, got no
+# caffeinate assertion, and went back to sleep 68 seconds later. It stayed
+# asleep through the open and the entire entry window. Keep the wake time at
+# or after this one, with a few minutes of margin for launchd to fire.
+[ "$HHMM" \< "0910" ] && exit 0
 [ "$HHMM" \> "1605" ] && exit 0
 
 TODAY=$(TZ=America/New_York date +%Y-%m-%d)
