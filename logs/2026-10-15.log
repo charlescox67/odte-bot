@@ -634,3 +634,18 @@ Make sure API port on TWS/IBG is open
 API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 7497)")
 Make sure API port on TWS/IBG is open
 !!! 13:05:20 ET NO TICK TAKEN — TWS is not running (nothing is listening on the API port). Nothing open. (ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7497))
+API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 7497)")
+Make sure API port on TWS/IBG is open
+!!! 13:06:23 ET NO TICK TAKEN — TWS is not running (nothing is listening on the API port). Nothing open. (ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7497))
+API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 7497)")
+Make sure API port on TWS/IBG is open
+!!! 13:07:24 ET NO TICK TAKEN — TWS is not running (nothing is listening on the API port). Nothing open. (ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7497))
+API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 7497)")
+Make sure API port on TWS/IBG is open
+!!! 13:08:24 ET NO TICK TAKEN — TWS is not running (nothing is listening on the API port). Nothing open. (ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7497))
+API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 7497)")
+Make sure API port on TWS/IBG is open
+!!! 13:09:25 ET NO TICK TAKEN — TWS is not running (nothing is listening on the API port). Nothing open. (ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7497))
+API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 7497)")
+Make sure API port on TWS/IBG is open
+!!! 13:10:26 ET NO TICK TAKEN — TWS is not running (nothing is listening on the API port). Nothing open. (ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7497))
