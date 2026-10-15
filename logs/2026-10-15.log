@@ -1,0 +1,3 @@
+API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 7497)")
+Make sure API port on TWS/IBG is open
+!!! 09:30:15 ET NO TICK TAKEN — TWS is not running (nothing is listening on the API port). Nothing open. (ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7497))
