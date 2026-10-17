@@ -42,39 +42,26 @@ if [ ! -e "$STATE/.git" ]; then
     || { echo "$(date): could not create the state worktree" >> logs/bot.log; exit 1; }
 fi
 
-# First tick of the day: take whatever was left on the branch before trusting
-# the local copy. The marker lives outside the worktree so `git add -A` in
-# here never sees it.
-if [ ! -f "logs/.synced-$TODAY" ]; then
-  if git -C "$STATE" fetch -q origin state \
-     && git -C "$STATE" merge -q --ff-only FETCH_HEAD 2>/dev/null; then
-    rm -f logs/.synced-* ; touch "logs/.synced-$TODAY"
-  else
-    echo "$(date): state branch would not fast-forward — LOCAL BOOK MAY BE STALE" \
-      >> logs/bot.log
-  fi
+# Take whatever the cloud session left behind BEFORE reading the book - it may
+# have traded while this Mac was asleep or TWS was down. If the two have
+# genuinely diverged, do not trade: a stale book would overwrite the cloud's
+# trades on the next push.
+if ! ./venv/bin/python -c 'import state_repo as sr; raise SystemExit(0 if sr.sync() else 1)'; then
+  echo "$(TZ=America/New_York date '+%F %T') ET  state branch will not sync — no tick" \
+    | tee -a logs/bot.log >> "$STATE/logs/$TODAY.log"
+  exit 1
 fi
 
 mkdir -p "$STATE/logs"
 ./venv/bin/python run_bot.py --once 2>&1 \
   | tee -a logs/bot.log >> "$STATE/logs/$TODAY.log"
 
-# Push when the book moved, and otherwise every 5th minute so the log on the
-# branch (and anyone reading it) stays close to live. Same cadence as the old
-# cloud loop's PUSH_EVERY.
-git -C "$STATE" add -A
-if git -C "$STATE" diff --cached --quiet; then
-  exit 0
-fi
-if ! git -C "$STATE" diff --cached --quiet -- book.json trades.csv \
+# Push when the book moved, and otherwise every 5th minute. The heartbeat
+# rides along: state_repo.STALE_MIN is set well above this cadence precisely
+# because a healthy Mac's stamp can be five minutes old on the branch.
+if ! git -C "$STATE" diff --quiet -- book.json trades.csv \
    || [ "$(( 10#$(TZ=America/New_York date +%M) % 5 ))" -eq 0 ]; then
-  [ "${DRY_RUN:-0}" = "1" ] && { echo "DRY RUN: would commit + push"; git -C "$STATE" reset -q; exit 0; }
-  git -C "$STATE" commit -q -m "book $(TZ=America/New_York date '+%F %H:%M') ET"
-  for i in 1 2 3; do
-    git -C "$STATE" push -q origin HEAD:state && break
-    echo "$(date): state push failed ($i/3)" >> logs/bot.log
-    sleep $((5 * i))
-  done
-else
-  git -C "$STATE" reset -q           # leave it staged-free until the next push
+  [ "${DRY_RUN:-0}" = "1" ] && { echo "DRY RUN: would commit + push"; exit 0; }
+  ./venv/bin/python -c "import state_repo as sr; sr.persist('book $(TZ=America/New_York date '+%F %H:%M') ET (mac)')" \
+    >> logs/bot.log 2>&1
 fi

@@ -1,26 +1,25 @@
 name: session
 
-# The Yahoo-powered fallback session, kept on manual dispatch only.
+# The Yahoo-powered fallback session.
 #
-# This ran the book every day from 2026-09-22 to 2026-10-09, because GitHub
-# cron is best-effort and a Mac sleeps; the dense cron slots, the self-handoff
-# at the 6h job cap, and kick.sh on the Mac were all there to make sure one
-# session started each morning. It all still works. It is simply not allowed
-# to start by itself any more - see the note on the schedule below.
+# This ran the book outright from 2026-09-22 to 2026-10-09 and is now the
+# safety net under the Mac, which trades the same book on live IBKR quotes.
+# Both read the `state` branch; state_repo's heartbeat decides which one is
+# allowed to write, and the Mac always wins while it is actually trading.
 on:
-  # SCHEDULE DELIBERATELY OFF since 2026-10-09. The bot now reads live IBKR
-  # quotes from a TWS that only runs on the Mac, so the Mac is the only
-  # machine that can trade. A cloud session firing on its own would be a
-  # SECOND writer on the same `state` branch and the same book - the two would
-  # overwrite each other's trades. Starting one by hand is still fine (it runs
-  # on Yahoo, 20 minutes stale), but only while the Mac is NOT running.
-  #
-  # To restore the old always-on cloud schedule, uncomment these and stop the
-  # com.charles.odte-bot launch agent on the Mac. Never both.
-  #   schedule:
-  #     - cron: "*/15 10-11 * * 1-5"
-  #     - cron: "*/10 12-14 * * 1-5"
-  #     - cron: "*/10 15-20 * * 1-5"
+  # BACK ON since 2026-10-17, now as the FALLBACK rather than the main bot.
+  # It was off for a week because a cloud session would have been a second
+  # writer on the same book. It no longer is: cloud_loop asks state_repo
+  # whether the Mac has traded recently and stands down if so, so this session
+  # runs all day and only picks up the book when the Mac does not. That is
+  # what the week of 2026-10-12..16 needed - the Mac ticked 913 times into a
+  # TWS that was never started, and nothing traded for five sessions.
+  schedule:
+    # GitHub cron is best-effort and has dropped whole mornings, so the slots
+    # are dense and the job itself hands off at its 6h budget.
+    - cron: "*/15 10-11 * * 1-5"
+    - cron: "*/10 12-14 * * 1-5"
+    - cron: "*/10 15-20 * * 1-5"
   workflow_dispatch:
     inputs:
       budget_min:
@@ -83,6 +82,7 @@ jobs:
       - name: Run session
         env:
           ODTE_STATE_DIR: state
+          ODTE_WRITER: cloud      # state_repo: stand down while the Mac trades
           BUDGET_MIN: ${{ inputs.budget_min || '340' }}
           GH_TOKEN: ${{ github.token }}
         run: python cloud_loop.py

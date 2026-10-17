@@ -19,6 +19,7 @@ import yfinance as yf
 
 import event_calendar as ev
 import paper_engine as pe
+import state_repo as sr
 import swing_signal as sw
 from market_data import Quote
 
@@ -613,17 +614,16 @@ def settle_price(source, pos: pe.Position) -> float | None:
 
 
 def open_source(book: pe.Book):
-    """Pick the data source for this tick. Returns (source, entries_allowed).
+    """Pick the data source for this tick, or None to take no tick at all.
 
-    "TWS or nothing" governs TRADING; it does not govern RISK. A position that
-    is already open must still be able to reach its stop, and the Yahoo path
-    managed every trade this book has ever taken. So an unreachable TWS means
-    no new entries — never an unmanaged position.
+    The Mac trades ONLY on live IBKR data. It used to fall back to Yahoo to
+    manage open positions when TWS was down, which was right while it was the
+    only writer. Since 2026-10-17 the cloud is behind it on the same Yahoo
+    data and can both manage AND enter, so a Mac that cannot reach TWS should
+    get out of the way completely rather than become a second writer on the
+    same book. It stops, says so, and stops stamping the heartbeat; the cloud
+    notices within state_repo.STALE_MIN minutes and takes the whole session.
     """
-    # Every line here carries the clock. On 2026-10-12 TWS was down all session
-    # and the log held 102 identical undated complaints: it could not say when
-    # the bot started, when it gave up, or whether it had run at the open at
-    # all. That had to be reconstructed from git commit times. Never again.
     stamp = f"{now_et():%H:%M:%S} ET"
     try:
         import ibkr_data
@@ -635,13 +635,12 @@ def open_source(book: pe.Book):
         hint = ("TWS is not running (nothing is listening on the API port)"
                 if isinstance(e, (ConnectionRefusedError, OSError))
                 else "TWS answered but would not serve data")
-        if not book.open_positions:
-            print(f"!!! {stamp} NO TICK TAKEN — {hint}. Nothing open. ({why})")
-            return None, False
-        print(f"!!! {stamp} {hint}. ({why})")
-        print(f"!!! {stamp} {len(book.open_positions)} position(s) open: falling "
-              f"back to Yahoo for EXITS ONLY. No entries while the feed is down.")
-        return YahooSource(), False
+        held = len(book.open_positions)
+        print(f"!!! {stamp} NO TICK TAKEN — {hint}. ({why})")
+        print(f"!!! {stamp} not claiming the book: the cloud session takes over "
+              f"within {sr.STALE_MIN} min"
+              f"{f', {held} position(s) open' if held else ''}")
+        return None, False
 
 
 def tick(book: pe.Book, source, *, entries: bool = True,
@@ -661,6 +660,9 @@ def tick(book: pe.Book, source, *, entries: bool = True,
             consider_entry(book, sym, sig, bars[sig], t_now, asof, profile, source)
     book.settle_expired(lambda pos: settle_price(source, pos))
     book.save()
+    # "I traded", not "I am alive" — see state_repo. Stamped only here, at the
+    # end of a tick that had a working source.
+    sr.write_beat(source.name)
     print(f"equity ${book.equity():,.2f} | cash ${book.cash:,.2f} | "
           f"open {len(book.open_positions)} | closed "
           f"{len(book.positions)-len(book.open_positions)}")

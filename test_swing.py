@@ -391,7 +391,7 @@ check("stale: same quote, worse mark", stale.mark < live.mark, True)
 kind = held(FakeSource(20, chain_ref=99.0))
 check("stale: a favourable move keeps the stale quote", kind.mark, 5.00)
 
-print("\na dead TWS stops entries but never abandons a position")
+print("\na dead TWS makes the Mac step aside entirely")
 import sys, types
 real = sys.modules.pop("ibkr_data", None)
 boom = types.ModuleType("ibkr_data")
@@ -405,18 +405,63 @@ try:
     check("nothing open -> no tick at all", src, None)
     check("and certainly no entries", entries, False)
 
+    # Even with a position open the Mac stops. It used to fall back to Yahoo
+    # to manage it, which was right while it was the only writer; now the
+    # cloud is behind it on the same data and can manage AND enter, so a
+    # second writer here would be the bug, not the safety net.
     holding = pe.Book(cash=10_000.0)
     holding.open(symbol="SPY", contract="SPY260922C00100000", right="C",
                  strike=100.0, expiry="2026-09-22", qty=1, ask=5.00,
                  underlying=100.0, reason="test")
     src, entries = rb.open_source(holding)
-    check("a position open -> fall back to Yahoo", type(src), rb.YahooSource)
-    check("...on the lagged clock", src.lag_min, 20)
-    check("...for exits only", entries, False)
+    check("a position open -> still no tick, the cloud gets it", src, None)
+    check("...and no entries either", entries, False)
 finally:
     sys.modules.pop("ibkr_data", None)
     if real is not None:
         sys.modules["ibkr_data"] = real
+
+print("\nonly one writer may hold the book")
+import importlib, json, os, tempfile
+from datetime import timezone
+
+def with_writer(who, beat=None, age_min=None):
+    """Fresh state_repo bound to a temp state dir, optionally pre-stamped."""
+    d = tempfile.mkdtemp()
+    os.environ["ODTE_STATE_DIR"], os.environ["ODTE_WRITER"] = d, who
+    import state_repo
+    sr = importlib.reload(state_repo)
+    if beat:
+        ts = datetime.now(timezone.utc) - timedelta(minutes=age_min)
+        sr.BEAT.write_text(json.dumps(
+            {"writer": beat, "source": "IBKR", "ts": ts.isoformat()}))
+    return sr
+
+check("cloud yields to a Mac that just traded",
+      bool(with_writer("cloud", "mac", 1).stand_down()), True)
+check("cloud yields at 11 min (one push cycle of slack left)",
+      bool(with_writer("cloud", "mac", 11).stand_down()), True)
+check("cloud takes over at 13 min",
+      with_writer("cloud", "mac", 13).stand_down(), None)
+check("cloud trades when nobody has stamped",
+      with_writer("cloud").stand_down(), None)
+check("cloud does not yield to its own stamp",
+      with_writer("cloud", "cloud", 1).stand_down(), None)
+check("the Mac never yields - it is the preferred writer",
+      with_writer("mac", "cloud", 1).stand_down(), None)
+check("a corrupt stamp is not a reason to stand down",
+      with_writer("cloud", "mac", 1).beat_age({"ts": "not a date"}), None)
+
+sr = with_writer("mac")
+sr.write_beat("IBKR")
+b = sr.read_beat()
+check("a stamp says who and on what", (b["writer"], b["source"]), ("mac", "IBKR"))
+check("...and is fresh", sr.beat_age(b) < timedelta(seconds=5), True)
+
+# The stale stamp must be longer than the push cadence or the two race.
+check("STALE_MIN clears the 5-minute push cadence", sr.STALE_MIN > 10, True)
+for k in ("ODTE_STATE_DIR", "ODTE_WRITER"):
+    os.environ.pop(k, None)
 
 print(f"\n{ok} passed, {fail} failed")
 raise SystemExit(1 if fail else 0)
