@@ -1,0 +1,27 @@
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-19 11:33:13 EDT (signals as of 11:13) ---
+SPY: no setup as of 11:13 | trend up | vwap 768.18 | last low 767.00@1030 high 769.04@1015 | close 768.60
+QQQ: C setup L1030 stop 719.21 (QQQ) — stop pulled in to 720.60 (pivot 719.21 would cost ~89%)
+QQQ: C setup L1030 stop 719.21 (QQQ) — skipped: conviction 1/4 is below the 2/4 minimum
+equity $5,379.38 | cash $5,379.38 | open 0 | closed 30
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-19 11:34:00 EDT (signals as of 11:14) ---
+SPY: no setup as of 11:14 | trend up | vwap 768.19 | last low 767.00@1030 high 769.04@1015 | close 768.60
+QQQ: C setup L1030 stop 719.21 (QQQ) — stop pulled in to 720.74 (pivot 719.21 would cost ~90%)
+QQQ: C setup L1030 stop 719.21 (QQQ) — skipped: conviction 1/4 is below the 2/4 minimum
+equity $5,379.38 | cash $5,379.38 | open 0 | closed 30
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-19 11:35:00 EDT (signals as of 11:15) ---
+SPY: no setup as of 11:15 | trend up | vwap 768.19 | last low 767.00@1030 high 769.04@1015 | close 768.65
+QQQ: no setup as of 11:15 | trend up | vwap 720.71 | last low 719.21@1030 high 721.63@1045 | close 721.86
+equity $5,379.38 | cash $5,379.38 | open 0 | closed 30
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-19 11:36:00 EDT (signals as of 11:16) ---
+SPY: no setup as of 11:16 | trend up | vwap 768.20 | last low 767.00@1030 high 769.04@1015 | close 768.65
+QQQ: no setup as of 11:16 | trend up | vwap 720.71 | last low 719.21@1030 high 721.63@1045 | close 721.86
+equity $5,379.38 | cash $5,379.38 | open 0 | closed 30
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-19 11:37:00 EDT (signals as of 11:17) ---
+SPY: no setup as of 11:17 | trend up | vwap 768.20 | last low 767.00@1030 high 769.04@1015 | close 768.65
+QQQ: no setup as of 11:17 | trend up | vwap 720.84 | last low 719.21@1030 high 721.63@1045 | close 721.86
+equity $5,379.38 | cash $5,379.38 | open 0 | closed 30
