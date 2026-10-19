@@ -1,0 +1,22 @@
+2026-10-19 11:08:35 ET  state branch will not sync — no tick
+2026-10-19 11:23:18 ET  state branch will not sync — no tick
+API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 7497)")
+Make sure API port on TWS/IBG is open
+!!! 11:31:10 ET NO TICK TAKEN — TWS is not running (nothing is listening on the API port). (ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7497))
+!!! 11:31:10 ET not claiming the book: the cloud session takes over within 12 min
+API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 7497)")
+Make sure API port on TWS/IBG is open
+!!! 11:32:12 ET NO TICK TAKEN — TWS is not running (nothing is listening on the API port). (ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7497))
+!!! 11:32:12 ET not claiming the book: the cloud session takes over within 12 min
+API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 7497)")
+Make sure API port on TWS/IBG is open
+!!! 11:33:13 ET NO TICK TAKEN — TWS is not running (nothing is listening on the API port). (ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7497))
+!!! 11:33:13 ET not claiming the book: the cloud session takes over within 12 min
+API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 7497)")
+Make sure API port on TWS/IBG is open
+!!! 11:34:15 ET NO TICK TAKEN — TWS is not running (nothing is listening on the API port). (ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7497))
+!!! 11:34:15 ET not claiming the book: the cloud session takes over within 12 min
+API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 7497)")
+Make sure API port on TWS/IBG is open
+!!! 11:35:18 ET NO TICK TAKEN — TWS is not running (nothing is listening on the API port). (ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7497))
+!!! 11:35:18 ET not claiming the book: the cloud session takes over within 12 min
