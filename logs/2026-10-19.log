@@ -40,3 +40,7 @@ API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0
 Make sure API port on TWS/IBG is open
 !!! 12:05:17 ET NO TICK TAKEN — TWS is not running (nothing is listening on the API port). (ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7497))
 !!! 12:05:17 ET not claiming the book: the cloud session takes over within 12 min
+API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 7497)")
+Make sure API port on TWS/IBG is open
+!!! 12:10:26 ET NO TICK TAKEN — TWS is not running (nothing is listening on the API port). (ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7497))
+!!! 12:10:26 ET not claiming the book: the cloud session takes over within 12 min
