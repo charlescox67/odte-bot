@@ -415,3 +415,11 @@ SPY: P setup H1315 stop 767.77 (SPY) — already holding
 QQQ: P setup H1315 stop 720.34 (QQQ) — stop pulled in to 719.58 (pivot 720.34 would cost ~83%)
 QQQ: P setup H1315 stop 720.34 (QQQ) — already failing on live prices (77% of the room to the stop used since the signal)
 equity $5,283.08 | cash $5,014.34 | open 1 | closed 30
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-19 14:14:00 EDT (signals as of 13:54) ---
+  CLOSE SPY261019P00768000 x3 @ 0.84 (swing_stop) pnl $-116.40 after $4.08 fees (-31% on the option)
+SPY: P setup H1315 stop 767.77 (SPY) — stop pulled in to 767.72 (pivot 767.77 would cost ~49%)
+SPY: P setup H1315 stop 767.77 (SPY) — already failing on live prices (114% of the room to the stop used since the signal)
+QQQ: P setup H1315 stop 720.34 (QQQ) — stop pulled in to 719.67 (pivot 720.34 would cost ~81%)
+QQQ: P setup H1315 stop 720.34 (QQQ) — already failing on live prices (75% of the room to the stop used since the signal)
+equity $5,262.98 | cash $5,262.98 | open 0 | closed 31
