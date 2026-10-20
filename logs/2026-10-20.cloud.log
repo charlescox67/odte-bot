@@ -146,3 +146,8 @@ SPY: P setup H1200 stop 770.08 (SPY) — stop pulled in to 769.61 (pivot 770.08 
 SPY: P setup H1200 stop 770.08 (SPY) — already failing on live prices (96% of the room to the stop used since the signal)
 QQQ: no setup as of 12:21 | trend none | vwap 719.54 | last low 717.88@1135 high 720.18@1200 | close 718.12
 equity $5,262.98 | cash $5,262.98 | open 0 | closed 31
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-20 12:46:00 EDT (signals as of 12:26) ---
+SPY: no setup as of 12:26 | trend down | vwap 770.15 | last low 767.95@1110 high 770.08@1200 | close 768.72
+QQQ: no setup as of 12:26 | trend down | vwap 719.54 | last low 717.88@1135 high 720.18@1200 | close 718.41
+equity $5,262.98 | cash $5,262.98 | open 0 | closed 31
