@@ -195,3 +195,9 @@ SPY: P setup H1235 stop 769.85 (SPY) — stop pulled in to 769.60 (pivot 769.85 
 SPY: P setup H1235 stop 769.85 (SPY) — skipped: conviction 1/4 is below the 2/4 minimum
 QQQ: no setup as of 12:57 | trend down | vwap 719.54 | last low 717.88@1220 high 720.02@1235 | close 718.02
 equity $5,223.74 | cash $4,882.94 | open 1 | closed 31
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-20 13:18:00 EDT (signals as of 12:58) ---
+SPY: P setup H1235 stop 769.85 (SPY) — stop pulled in to 769.65 (pivot 769.85 would cost ~55%)
+  OPEN  DECENT 2/4 $354 premium (7% of equity) | SPY261020P00769000 x3 @ ask 1.18 (bid 1.17) SPY 768.69 | stop 769.65 (delta -0.55) | bands %B 0.01 | vs Dow -0.05%
+QQQ: no setup as of 12:58 | trend down | vwap 719.54 | last low 717.88@1220 high 720.02@1235 | close 718.02
+equity $5,205.35 | cash $4,526.90 | open 2 | closed 31
