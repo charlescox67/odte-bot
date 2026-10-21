@@ -590,3 +590,8 @@ data: Yahoo, option quotes ~20m stale
 SPY: no setup as of 12:41 | trend up | vwap 770.97 | last low 772.03@1225 high 772.68@1220 | close 773.64
 QQQ: C setup L1225 stop 724.88 (QQQ) — already holding
 equity $5,304.31 | cash $4,918.31 | open 1 | closed 34
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-21 13:02:00 EDT (signals as of 12:42) ---
+SPY: no setup as of 12:42 | trend up | vwap 770.99 | last low 772.03@1225 high 772.68@1220 | close 773.64
+QQQ: C setup L1225 stop 724.88 (QQQ) — already holding
+equity $5,293.31 | cash $4,918.31 | open 1 | closed 34
