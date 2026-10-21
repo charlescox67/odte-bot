@@ -1128,3 +1128,9 @@ SPY: no setup as of 14:29 | trend up | vwap 772.97 | last low 773.56@1400 high 7
   CLOSE QQQ261021C00723000 x1 @ 3.75 (swing_stop) pnl $+178.92 after $2.06 fees (+93% on the option)
 QQQ: no setup as of 14:29 | trend up | vwap 724.85 | last low 726.22@1400 high 727.95@1320 | close 727.01
 equity $5,185.04 | cash $4,953.54 | open 1 | closed 35
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-21 14:50:00 EDT (signals as of 14:30) ---
+  CLOSE SPY261021C00774000 x4 @ 0.39 (backstop) pnl $-184.48 after $5.44 fees (-53% on the option)
+SPY: C setup L1400 stop 773.56 (SPY) — outside entry window 10:00-14:00
+QQQ: no setup as of 14:30 | trend up | vwap 724.85 | last low 726.22@1400 high 727.25@1415 | close 727.19
+equity $5,107.78 | cash $5,107.78 | open 0 | closed 36
