@@ -240,3 +240,8 @@ SPY: no setup as of 11:31 | trend up | vwap 770.36 | last low 768.40@1010 high 7
   RUNNER QQQ261021C00723000 at +65%: breaking out hard, holding for a deep red candle (keeps 40% of its best, min +30%)
 QQQ: no setup as of 11:31 | trend up | vwap 723.42 | last low 720.09@1010 high 723.57@1000 | close 724.74
 equity $5,032.12 | cash $4,711.12 | open 1 | closed 33
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-21 11:52:00 EDT (signals as of 11:32) ---
+SPY: no setup as of 11:32 | trend up | vwap 770.36 | last low 768.40@1010 high 771.17@1050 | close 771.99
+QQQ: no setup as of 11:32 | trend up | vwap 723.42 | last low 720.09@1010 high 723.57@1000 | close 724.74
+equity $5,066.12 | cash $4,711.12 | open 1 | closed 33
