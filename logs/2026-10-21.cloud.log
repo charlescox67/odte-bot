@@ -911,3 +911,8 @@ data: Yahoo, option quotes ~20m stale
 SPY: C setup L1330 stop 773.42 (SPY) — skipped: conviction 1/4 is below the 2/4 minimum
 QQQ: no setup as of 13:46 | trend up | vwap 724.84 | last low 726.39@1330 high 727.95@1320 | close 726.82
 equity $5,314.31 | cash $4,918.31 | open 1 | closed 34
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-21 14:07:00 EDT (signals as of 13:47) ---
+SPY: C setup L1330 stop 773.42 (SPY) — skipped: conviction 1/4 is below the 2/4 minimum
+QQQ: no setup as of 13:47 | trend up | vwap 724.84 | last low 726.39@1330 high 727.95@1320 | close 726.82
+equity $5,311.49 | cash $4,918.31 | open 1 | closed 34
