@@ -966,3 +966,8 @@ data: Yahoo, option quotes ~20m stale
 SPY: no setup as of 13:57 | trend up | vwap 772.93 | last low 773.42@1330 high 774.29@1320 | close 774.09
 QQQ: no setup as of 13:57 | trend up | vwap 724.84 | last low 726.39@1330 high 727.95@1320 | close 726.73
 equity $5,216.59 | cash $4,579.59 | open 2 | closed 34
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-21 14:18:00 EDT (signals as of 13:58) ---
+SPY: no setup as of 13:58 | trend up | vwap 772.93 | last low 773.42@1330 high 774.29@1320 | close 774.09
+QQQ: no setup as of 13:58 | trend up | vwap 724.84 | last low 726.39@1330 high 727.95@1320 | close 726.73
+equity $5,212.59 | cash $4,579.59 | open 2 | closed 34
