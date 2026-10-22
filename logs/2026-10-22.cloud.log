@@ -356,3 +356,9 @@ data: Yahoo, option quotes ~20m stale
 SPY: no setup as of 13:46 | trend down | vwap 764.10 | last low 762.16@1310 high 763.86@1255 | close 763.56
 QQQ: no setup as of 13:46 | trend down | vwap 708.28 | last low 705.13@1305 high 707.04@1255 | close 706.64
 equity $5,122.84 | cash $5,122.84 | open 0 | closed 37
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-22 14:10:00 EDT (signals as of 13:50) ---
+SPY: no setup as of 13:50 | trend down | vwap 763.87 | last low 762.16@1310 high 763.98@1335 | close 762.99
+QQQ: P setup H1335 stop 706.83 (QQQ) — stop pulled in to 706.78 (pivot 706.83 would cost ~47%)
+  OPEN  DECENT 2/4 $375 premium (7% of equity) | QQQ261022P00705000 x3 @ ask 1.25 (bid 1.23) QQQ 705.65 | stop 706.78 (delta -0.50) | bands %B 0.29 | vs Dow -0.14%
+equity $5,120.80 | cash $4,745.80 | open 1 | closed 37
