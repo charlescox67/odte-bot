@@ -321,3 +321,8 @@ SPY: P setup H1255 stop 763.86 (SPY) — stop pulled in to 763.68 (pivot 763.86 
 SPY: P setup H1255 stop 763.86 (SPY) — already failing on live prices (70% of the room to the stop used since the signal)
 QQQ: no setup as of 13:11 | trend down | vwap 708.55 | last low 704.47@1250 high 707.04@1255 | close 705.47
 equity $5,122.84 | cash $5,122.84 | open 0 | closed 37
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-22 13:36:00 EDT (signals as of 13:16) ---
+SPY: no setup as of 13:16 | trend down | vwap 764.13 | last low 762.19@1250 high 763.86@1255 | close 762.77
+QQQ: no setup as of 13:16 | trend down | vwap 708.55 | last low 704.47@1250 high 707.04@1255 | close 705.96
+equity $5,122.84 | cash $5,122.84 | open 0 | closed 37
