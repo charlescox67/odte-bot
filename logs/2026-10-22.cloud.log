@@ -134,3 +134,8 @@ data: Yahoo, option quotes ~20m stale
 SPY: no setup as of 11:18 | trend down | vwap 765.19 | last low 762.10@1035 high 763.64@1100 | close 762.71
   OPEN  DECENT 2/4 $264 premium (5% of equity) | QQQ261022P00710000 x1 @ ask 2.64 (bid 2.62) QQQ 708.27 | stop 708.97 (delta -0.50) | bands %B 0.16 | vs Dow -0.17%
 equity $5,106.75 | cash $4,842.75 | open 1 | closed 36
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-22 11:39:00 EDT (signals as of 11:19) ---
+SPY: no setup as of 11:19 | trend down | vwap 765.18 | last low 762.10@1035 high 763.64@1100 | close 762.71
+QQQ: no setup as of 11:19 | trend down | vwap 708.95 | last low 711.75@0950 high 708.97@1100 | close 706.99
+equity $5,092.75 | cash $4,842.75 | open 1 | closed 36
