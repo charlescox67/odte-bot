@@ -98,3 +98,8 @@ data: Yahoo, option quotes ~20m stale
   OPEN  DECENT 2/4 $298 premium (6% of equity) | SPY261023C00763000 x2 @ ask 1.49 (bid 1.49) SPY 762.87 | stop 761.74 (delta +0.52) | bands %B 0.83 | vs Dow -0.05%
 QQQ: no setup as of 11:32 | trend up | vwap 707.14 | last low 703.29@1025 high 709.30@1050 | close 707.73
 equity $5,379.17 | cash $5,081.17 | open 1 | closed 38
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-23 11:53:00 EDT (signals as of 11:33) ---
+SPY: no setup as of 11:33 | trend up | vwap 761.76 | last low 761.74@1110 high 763.14@1055 | close 762.99
+QQQ: no setup as of 11:33 | trend up | vwap 707.14 | last low 703.29@1025 high 709.30@1050 | close 707.73
+equity $5,353.17 | cash $5,081.17 | open 1 | closed 38
