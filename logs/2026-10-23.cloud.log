@@ -254,3 +254,9 @@ data: Yahoo, option quotes ~20m stale
 SPY: C setup L1145 stop 761.90 (SPY) — already holding
 QQQ: no setup as of 12:03 | trend up | vwap 707.39 | last low 706.66@1140 high 708.51@1130 | close 708.55
 equity $5,212.37 | cash $4,717.81 | open 2 | closed 38
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-23 12:24:01 EDT (signals as of 12:04) ---
+  CLOSE SPY261023C00763000 x2 @ 0.85 (swing_stop) pnl $-130.00 after $2.72 fees (-43% on the option)
+SPY: C setup L1145 stop 761.90 (SPY) — already failing on live prices (114% of the room to the stop used since the signal)
+QQQ: no setup as of 12:04 | trend up | vwap 707.46 | last low 706.66@1140 high 708.51@1130 | close 708.55
+equity $5,137.62 | cash $4,887.18 | open 1 | closed 39
