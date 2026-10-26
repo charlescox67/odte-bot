@@ -1,5 +1,5 @@
 {
-  "cash": 4778.585882390726,
+  "cash": 4587.555882390726,
   "positions": [
     {
       "id": "c4bc1a41",
@@ -1344,6 +1344,38 @@
       "bb_pct": -0.049,
       "bb_squeeze": false,
       "vs_dow_30m": 0.005
+    },
+    {
+      "id": "213b5fcd",
+      "symbol": "QQQ",
+      "contract": "QQQ261026C00714000",
+      "right": "C",
+      "strike": 714.0,
+      "expiry": "2026-10-26",
+      "qty": 1,
+      "entry_price": 1.9,
+      "entry_time": "2026-10-26T15:19:02.464907+00:00",
+      "entry_reason": "swing L1030",
+      "underlying_at_entry": 714.1199951171875,
+      "status": "open",
+      "mark": 1.9,
+      "exit_price": null,
+      "exit_time": null,
+      "exit_reason": null,
+      "signal_symbol": "QQQ",
+      "setup": "L1030",
+      "stop_at_entry": 712.6199951171875,
+      "stop_underlying": 712.6199951171875,
+      "spread_at_entry": 0.01,
+      "event_day": "",
+      "exit_basis": "",
+      "runner": false,
+      "fees": 1.03,
+      "peak_pct": 0.0,
+      "conviction": "decent 2/4",
+      "bb_pct": 0.974,
+      "bb_squeeze": false,
+      "vs_dow_30m": 0.653
     }
   ]
 }
