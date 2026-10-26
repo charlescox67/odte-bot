@@ -242,3 +242,9 @@ data: Yahoo, option quotes ~20m stale
 SPY: P setup H1225 stop 765.80 (SPY) — already failing on live prices (75% of the room to the stop used since the signal)
 QQQ: no setup as of 12:42 | trend none | vwap 713.11 | last low 713.73@1115 high 713.32@1225 | close 712.50
 equity $4,705.20 | cash $4,705.20 | open 0 | closed 43
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-26 13:07:00 EDT (signals as of 12:47) ---
+SPY: P setup H1225 stop 765.80 (SPY) — stop pulled in to 765.42 (pivot 765.80 would cost ~67%)
+SPY: P setup H1225 stop 765.80 (SPY) — already failing on live prices (133% of the room to the stop used since the signal)
+QQQ: no setup as of 12:47 | trend none | vwap 713.11 | last low 713.73@1115 high 713.32@1225 | close 711.80
+equity $4,705.20 | cash $4,705.20 | open 0 | closed 43
