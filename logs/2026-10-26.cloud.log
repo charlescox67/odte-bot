@@ -325,3 +325,8 @@ data: Yahoo, option quotes ~20m stale
 SPY: no setup as of 14:02 | trend down | vwap 766.02 | last low 764.46@1345 high 766.56@1320 | close 765.91
 QQQ: C setup L1345 stop 712.09 (QQQ) — outside entry window 10:00-14:00
 equity $4,705.20 | cash $4,705.20 | open 0 | closed 43
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-26 14:27:00 EDT (signals as of 14:07) ---
+SPY: no setup as of 14:07 | trend down | vwap 765.97 | last low 764.46@1345 high 766.56@1320 | close 765.69
+QQQ: no setup as of 14:07 | trend up | vwap 713.10 | last low 712.09@1345 high 714.91@1320 | close 713.80
+equity $4,705.20 | cash $4,705.20 | open 0 | closed 43
