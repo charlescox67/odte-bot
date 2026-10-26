@@ -10,3 +10,8 @@ SPY: no setup as of 10:59 | trend up | vwap 764.71 | last low 764.16@1030 high 7
 QQQ: C setup L1030 stop 708.67 (QQQ) — stop pulled in to 712.62 (pivot 708.67 would cost ~164%)
   OPEN  DECENT 2/4 $190 premium (4% of equity) | QQQ261026C00714000 x1 @ ask 1.90 (bid 1.89) QQQ 714.12 | stop 712.62 (delta +0.57) | bands %B 0.97 | vs Dow +0.65%
 equity $4,777.56 | cash $4,587.56 | open 1 | closed 42
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-26 11:20:00 EDT (signals as of 11:00) ---
+SPY: no setup as of 11:00 | trend up | vwap 764.72 | last low 764.16@1030 high 765.80@1020 | close 767.03
+QQQ: no setup as of 11:00 | trend up | vwap 710.91 | last low 708.67@1030 high 710.69@1020 | close 714.12
+equity $4,763.38 | cash $4,587.56 | open 1 | closed 42
