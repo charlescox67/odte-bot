@@ -334,3 +334,8 @@ data: Yahoo, option quotes ~20m stale
 SPY: no setup as of 12:29 | trend up | vwap 768.98 | last low 769.23@1130 high 771.07@1200 | close 770.33
 QQQ: C setup L1210 stop 721.53 (QQQ) — already failing on live prices (289% of the room to the stop used since the signal)
 equity $4,499.36 | cash $4,499.36 | open 0 | closed 45
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-27 12:54:00 EDT (signals as of 12:34) ---
+SPY: no setup as of 12:34 | trend up | vwap 768.99 | last low 769.23@1130 high 771.07@1200 | close 770.15
+QQQ: no setup as of 12:34 | trend up | vwap 719.13 | last low 721.53@1210 high 722.72@1200 | close 722.03
+equity $4,499.36 | cash $4,499.36 | open 0 | closed 45
