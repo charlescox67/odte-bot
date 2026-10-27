@@ -316,3 +316,10 @@ data: Yahoo, option quotes ~20m stale
 SPY: no setup as of 12:24 | trend up | vwap 768.98 | last low 769.23@1130 high 771.07@1200 | close 770.26
 QQQ: no setup as of 12:24 | trend up | vwap 718.97 | last low 719.48@1135 high 722.72@1200 | close 721.87
 equity $4,461.72 | cash $4,111.12 | open 2 | closed 43
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-27 12:45:00 EDT (signals as of 12:25) ---
+SPY: no setup as of 12:25 | trend up | vwap 768.98 | last low 769.23@1130 high 771.07@1200 | close 770.33
+  TRAIL QQQ261027C00721000 stop 720.21 -> 721.53
+  CLOSE QQQ261027C00721000 x2 @ 0.97 (swing_stop) pnl $-102.32 after $2.72 fees (-34% on the option)
+QQQ: C setup L1210 stop 721.53 (QQQ) — already failing on live prices (203% of the room to the stop used since the signal)
+equity $4,484.56 | cash $4,304.16 | open 1 | closed 44
