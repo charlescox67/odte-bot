@@ -1,5 +1,5 @@
 {
-  "cash": 4178.869444402442,
+  "cash": 4379.160538152445,
   "positions": [
     {
       "id": "c4bc1a41",
@@ -1485,11 +1485,11 @@
       "entry_time": "2026-10-28T16:50:02.665147+00:00",
       "entry_reason": "swing L1150",
       "underlying_at_entry": 771.2449951171875,
-      "status": "open",
-      "mark": 2.1200097656250136,
-      "exit_price": null,
-      "exit_time": null,
-      "exit_reason": null,
+      "status": "closed",
+      "mark": 2.0132109375000256,
+      "exit_price": 2.0132109375000256,
+      "exit_time": "2026-10-28T17:28:02.185130+00:00",
+      "exit_reason": "swing_stop",
       "signal_symbol": "SPY",
       "setup": "L1150",
       "stop_at_entry": 770.9400024414062,
@@ -1498,7 +1498,7 @@
       "event_day": "FOMC",
       "exit_basis": "estimated",
       "runner": false,
-      "fees": 1.03,
+      "fees": 2.06,
       "peak_pct": 0.0,
       "conviction": "decent 2/4",
       "bb_pct": 0.605,
