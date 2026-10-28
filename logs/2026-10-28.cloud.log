@@ -215,3 +215,9 @@ event day: FOMC (risk x1.0)
 SPY: no setup as of 12:57 | trend up | vwap 771.15 | last low 770.85@1220 high 771.48@1230 | close 772.69
 QQQ: C setup L1220 stop 721.77 (QQQ) — skipped: conviction 1/4 is below the 2/4 minimum
 equity $4,404.82 | cash $4,178.87 | open 1 | closed 46
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-28 13:18:02 EDT (signals as of 12:58) ---
+event day: FOMC (risk x1.0)
+SPY: no setup as of 12:58 | trend up | vwap 771.15 | last low 770.85@1220 high 771.48@1230 | close 772.69
+QQQ: C setup L1220 stop 721.77 (QQQ) — already failing on live prices (59% of the room to the stop used since the signal)
+equity $4,403.64 | cash $4,178.87 | open 1 | closed 46
