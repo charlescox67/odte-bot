@@ -390,3 +390,9 @@ event day: FOMC (risk x1.0)
 SPY: no setup as of 14:38 | trend none | vwap 771.15 | last low 769.80@1415 high 772.72@1400 | close 771.33
 QQQ: no setup as of 14:38 | trend up | vwap 722.00 | last low 720.76@1415 high 724.00@1400 | close 723.33
 equity $4,379.16 | cash $4,379.16 | open 0 | closed 47
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-28 15:03:01 EDT (signals as of 14:43) ---
+event day: FOMC (risk x1.0)
+SPY: no setup as of 14:43 | trend none | vwap 771.16 | last low 769.80@1415 high 772.72@1400 | close 771.74
+QQQ: no setup as of 14:43 | trend up | vwap 722.00 | last low 720.76@1415 high 724.00@1400 | close 723.84
+equity $4,379.16 | cash $4,379.16 | open 0 | closed 47
