@@ -545,3 +545,10 @@ data: Yahoo, option quotes ~20m stale
 SPY: no setup as of 14:29 | trend down | vwap 768.52 | last low 766.62@1350 high 768.69@1330 | close 767.58
 QQQ: no setup as of 14:29 | trend down | vwap 715.86 | last low 712.29@1350 high 714.92@1330 | close 713.50
 equity $4,520.07 | cash $3,966.71 | open 2 | closed 48
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-29 14:50:01 EDT (signals as of 14:30) ---
+  TRAIL SPY261029P00768000 stop 768.69 -> 767.88
+SPY: no setup as of 14:30 | trend down | vwap 768.52 | last low 766.62@1350 high 767.88@1415 | close 767.38
+  TRAIL QQQ261029P00713000 stop 714.92 -> 713.70
+QQQ: P setup H1415 stop 713.70 (QQQ) — outside entry window 10:00-14:00
+equity $4,516.63 | cash $3,966.71 | open 2 | closed 48
