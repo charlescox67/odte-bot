@@ -597,3 +597,8 @@ data: Yahoo, option quotes ~20m stale
 SPY: P setup H1415 stop 767.88 (SPY) — outside entry window 10:00-14:00
 QQQ: P setup H1415 stop 713.70 (QQQ) — outside entry window 10:00-14:00
 equity $4,443.82 | cash $3,966.71 | open 2 | closed 48
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-29 15:00:00 EDT (signals as of 14:40) ---
+SPY: no setup as of 14:40 | trend down | vwap 768.50 | last low 766.62@1350 high 767.88@1415 | close 766.97
+QQQ: no setup as of 14:40 | trend down | vwap 715.85 | last low 712.29@1350 high 713.70@1415 | close 712.20
+equity $4,460.86 | cash $3,966.71 | open 2 | closed 48
