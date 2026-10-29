@@ -320,3 +320,8 @@ SPY: no setup as of 13:43 | trend down | vwap 768.55 | last low 768.07@1310 high
   CLOSE QQQ261029P00715000 x1 @ 3.09 (target) pnl $+126.94 after $2.06 fees (+72% on the option)
 QQQ: no setup as of 13:43 | trend down | vwap 716.02 | last low 713.66@1315 high 716.32@1255 | close 714.26
 equity $4,506.10 | cash $4,506.10 | open 0 | closed 48
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-29 14:05:00 EDT (signals as of 13:45) ---
+  OPEN  DECENT 2/4 $306 premium (7% of equity) | SPY261029P00768000 x2 @ ask 1.53 (bid 1.52) SPY 767.86 | stop 768.69 (delta -0.57) | bands %B 0.02 | vs Dow +0.03%
+QQQ: no setup as of 13:45 | trend down | vwap 716.02 | last low 713.66@1315 high 714.92@1330 | close 714.08
+equity $4,504.74 | cash $4,198.74 | open 1 | closed 48
