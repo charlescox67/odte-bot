@@ -294,3 +294,9 @@ data: Yahoo, option quotes ~20m stale
 SPY: no setup as of 11:40 | trend down | vwap 759.54 | last low 757.28@1025 high 760.40@1045 | close 757.83
 QQQ: no setup as of 11:40 | trend down | vwap 695.25 | last low 692.68@1025 high 697.94@1040 | close 693.44
 equity $4,526.10 | cash $4,112.91 | open 1 | closed 50
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-30 12:01:00 EDT (signals as of 11:41) ---
+  RUNNER SPY261030P00759000 at +70%: breaking out hard, holding for a deep red candle (keeps 40% of its best, min +30%)
+SPY: no setup as of 11:41 | trend down | vwap 759.53 | last low 757.28@1025 high 760.40@1045 | close 757.83
+QQQ: no setup as of 11:41 | trend down | vwap 695.25 | last low 692.68@1025 high 697.94@1040 | close 693.44
+equity $4,610.74 | cash $4,112.91 | open 1 | closed 50
