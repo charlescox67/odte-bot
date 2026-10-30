@@ -1,5 +1,5 @@
 {
-  "cash": 5446.455240300885,
+  "cash": 5761.165499089943,
   "positions": [
     {
       "id": "c4bc1a41",
@@ -1677,11 +1677,11 @@
       "entry_time": "2026-10-30T18:10:01.899970+00:00",
       "entry_reason": "swing H1320",
       "underlying_at_entry": 688.3499755859375,
-      "status": "open",
-      "mark": 3.254695385742182,
-      "exit_price": null,
-      "exit_time": null,
-      "exit_reason": null,
+      "status": "closed",
+      "mark": 3.157402587890589,
+      "exit_price": 3.157402587890589,
+      "exit_time": "2026-10-30T19:00:01.680907+00:00",
+      "exit_reason": "runner_dip",
       "signal_symbol": "QQQ",
       "setup": "H1320",
       "stop_at_entry": 689.85498046875,
@@ -1690,7 +1690,7 @@
       "event_day": "",
       "exit_basis": "estimated",
       "runner": true,
-      "fees": 1.03,
+      "fees": 2.06,
       "peak_pct": 1.156960069188538,
       "conviction": "decent 2/4",
       "bb_pct": 0.154,

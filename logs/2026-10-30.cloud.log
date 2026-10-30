@@ -1200,3 +1200,9 @@ data: Yahoo, option quotes ~20m stale
 SPY: no setup as of 14:39 | trend down | vwap 756.37 | last low 755.04@1310 high 755.79@1320 | close 750.64
 QQQ: P setup H1410 stop 687.46 (QQQ) — outside entry window 10:00-14:00
 equity $5,771.92 | cash $5,446.46 | open 1 | closed 52
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-30 15:00:00 EDT (signals as of 14:40) ---
+SPY: no setup as of 14:40 | trend down | vwap 756.36 | last low 755.04@1310 high 755.79@1320 | close 751.80
+  CLOSE QQQ261030P00688000 x1 @ 3.16 (runner_dip) pnl $+101.68 after $2.06 fees (+49% on the option)
+QQQ: no setup as of 14:40 | trend down | vwap 692.93 | last low 688.04@1335 high 687.46@1410 | close 684.98
+equity $5,761.17 | cash $5,761.17 | open 0 | closed 53
