@@ -68,3 +68,8 @@ data: Yahoo, option quotes ~20m stale
 SPY: no setup as of 09:59 | warming up (5 bars)
 QQQ: no setup as of 09:59 | warming up (5 bars)
 equity $4,406.27 | cash $4,406.27 | open 0 | closed 50
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-30 10:24:00 EDT (signals as of 10:04) ---
+SPY: no setup as of 10:04 | trend up | vwap 760.55 | last low - high - | close 761.12
+QQQ: no setup as of 10:04 | trend up | vwap 696.34 | last low - high - | close 698.18
+equity $4,406.27 | cash $4,406.27 | open 0 | closed 50
