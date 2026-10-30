@@ -977,3 +977,8 @@ data: Yahoo, option quotes ~20m stale
 SPY: P setup H1320 stop 755.79 (SPY) — already holding
 QQQ: no setup as of 13:55 | trend down | vwap 693.03 | last low 688.04@1335 high 689.85@1320 | close 687.46
 equity $5,282.82 | cash $4,049.82 | open 2 | closed 51
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-30 14:16:00 EDT (signals as of 13:56) ---
+SPY: P setup H1320 stop 755.79 (SPY) — already holding
+QQQ: no setup as of 13:56 | trend down | vwap 693.03 | last low 688.04@1335 high 689.85@1320 | close 687.46
+equity $5,334.82 | cash $4,049.82 | open 2 | closed 51
