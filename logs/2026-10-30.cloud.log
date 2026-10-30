@@ -1,0 +1,25 @@
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-30 09:30:00 EDT (signals as of 09:10) ---
+SPY: no setup as of 09:10 | warming up (0 bars)
+QQQ: no QQQ bars — entry skipped (positions still managed)
+equity $4,406.27 | cash $4,406.27 | open 0 | closed 50
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-30 09:31:00 EDT (signals as of 09:11) ---
+SPY: no setup as of 09:11 | warming up (0 bars)
+QQQ: no setup as of 09:11 | warming up (0 bars)
+equity $4,406.27 | cash $4,406.27 | open 0 | closed 50
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-30 09:32:00 EDT (signals as of 09:12) ---
+SPY: no setup as of 09:12 | warming up (0 bars)
+QQQ: no setup as of 09:12 | warming up (0 bars)
+equity $4,406.27 | cash $4,406.27 | open 0 | closed 50
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-30 09:33:00 EDT (signals as of 09:13) ---
+SPY: no setup as of 09:13 | warming up (0 bars)
+QQQ: no setup as of 09:13 | warming up (0 bars)
+equity $4,406.27 | cash $4,406.27 | open 0 | closed 50
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-30 09:34:00 EDT (signals as of 09:14) ---
+SPY: no setup as of 09:14 | warming up (0 bars)
+QQQ: no setup as of 09:14 | warming up (0 bars)
+equity $4,406.27 | cash $4,406.27 | open 0 | closed 50
