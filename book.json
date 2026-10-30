@@ -1,5 +1,5 @@
 {
-  "cash": 4112.905240300885,
+  "cash": 3862.8752403008853,
   "positions": [
     {
       "id": "c4bc1a41",
@@ -1614,7 +1614,7 @@
       "entry_reason": "swing H1045",
       "underlying_at_entry": 758.8499755859375,
       "status": "open",
-      "mark": 3.51,
+      "mark": 3.94,
       "exit_price": null,
       "exit_time": null,
       "exit_reason": null,
@@ -1627,11 +1627,43 @@
       "exit_basis": "quote",
       "runner": true,
       "fees": 1.36,
-      "peak_pct": 1.5479452054794522,
+      "peak_pct": 1.6986301369863013,
       "conviction": "decent 2/4",
       "bb_pct": 0.386,
       "bb_squeeze": false,
       "vs_dow_30m": -0.013
+    },
+    {
+      "id": "62e6b3bc",
+      "symbol": "QQQ",
+      "contract": "QQQ261030P00691000",
+      "right": "P",
+      "strike": 691.0,
+      "expiry": "2026-10-30",
+      "qty": 1,
+      "entry_price": 2.49,
+      "entry_time": "2026-10-30T17:10:01.964810+00:00",
+      "entry_reason": "swing H1225",
+      "underlying_at_entry": 690.5800170898438,
+      "status": "open",
+      "mark": 2.49,
+      "exit_price": null,
+      "exit_time": null,
+      "exit_reason": null,
+      "signal_symbol": "QQQ",
+      "setup": "H1225",
+      "stop_at_entry": 692.5287127420177,
+      "stop_underlying": 692.5287127420177,
+      "spread_at_entry": 0.02,
+      "event_day": "",
+      "exit_basis": "",
+      "runner": false,
+      "fees": 1.03,
+      "peak_pct": 0.0,
+      "conviction": "decent 2/4",
+      "bb_pct": -0.037,
+      "bb_squeeze": false,
+      "vs_dow_30m": -0.177
     }
   ]
 }
