@@ -1130,3 +1130,8 @@ SPY: no setup as of 14:25 | trend down | vwap 756.51 | last low 755.04@1310 high
   TRAIL QQQ261030P00688000 stop 689.85 -> 687.46
 QQQ: no setup as of 14:25 | trend down | vwap 692.98 | last low 688.04@1335 high 687.46@1410 | close 685.78
 equity $5,791.09 | cash $5,446.46 | open 1 | closed 52
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-30 14:46:00 EDT (signals as of 14:26) ---
+SPY: no setup as of 14:26 | trend down | vwap 756.51 | last low 755.04@1310 high 755.79@1320 | close 752.17
+QQQ: no setup as of 14:26 | trend down | vwap 692.98 | last low 688.04@1335 high 687.46@1410 | close 685.78
+equity $5,849.46 | cash $5,446.46 | open 1 | closed 52
