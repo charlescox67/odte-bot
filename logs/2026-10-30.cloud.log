@@ -479,3 +479,9 @@ SPY: no setup as of 12:17 | trend down | vwap 759.18 | last low 757.12@1145 high
 QQQ: P setup H1155 stop 694.04 (QQQ) — stop pulled in to 693.50 (pivot 694.04 would cost ~59%)
 QQQ: P setup H1155 stop 694.04 (QQQ) — skipped: conviction 0/4 is below the 2/4 minimum
 equity $4,590.48 | cash $4,112.91 | open 1 | closed 50
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-10-30 12:38:00 EDT (signals as of 12:18) ---
+SPY: no setup as of 12:18 | trend down | vwap 759.18 | last low 757.12@1145 high 758.06@1155 | close 757.00
+QQQ: P setup H1155 stop 694.04 (QQQ) — stop pulled in to 693.84 (pivot 694.04 would cost ~50%)
+QQQ: P setup H1155 stop 694.04 (QQQ) — skipped: conviction 1/4 is below the 2/4 minimum
+equity $4,602.34 | cash $4,112.91 | open 1 | closed 50
