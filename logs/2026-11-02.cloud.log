@@ -79,3 +79,8 @@ SPY: P setup H1045 stop 763.21 (SPY) — stop pulled in to 761.19 (pivot 763.21 
   OPEN  DECENT 2/4 $366 premium (6% of equity) | SPY261102P00760000 x3 @ ask 1.22 (bid 1.21) SPY 759.90 | stop 761.19 (delta -0.42) | bands %B 0.18 | vs Dow -0.17%
 QQQ: no setup as of 11:28 | trend down | vwap 696.03 | last low 693.94@1000 high 699.43@1025 | close 693.87
 equity $5,759.13 | cash $5,393.13 | open 1 | closed 53
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-11-02 11:49:00 EST (signals as of 11:29) ---
+SPY: no setup as of 11:29 | trend down | vwap 760.73 | last low 760.70@1055 high 763.21@1045 | close 760.00
+QQQ: no setup as of 11:29 | trend down | vwap 695.85 | last low 693.94@1000 high 699.43@1025 | close 693.87
+equity $5,765.13 | cash $5,393.13 | open 1 | closed 53
