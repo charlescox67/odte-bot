@@ -347,3 +347,8 @@ data: Yahoo, option quotes ~20m stale
 SPY: C setup L1205 stop 754.66 (SPY) — already holding
   OPEN  GREAT 3/4 $450 premium (7% of equity) | QQQ261103C00687000 x3 @ ask 1.50 (bid 1.49) QQQ 687.39 | stop 686.07 (delta +0.47) | bands %B 0.67 SQUEEZE | vs Dow +0.08%
 equity $6,190.19 | cash $5,359.19 | open 2 | closed 56
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-11-03 12:51:03 EST (signals as of 12:31) ---
+SPY: C setup L1205 stop 754.66 (SPY) — already holding
+QQQ: no setup as of 12:31 | trend up | vwap 685.93 | last low 686.07@1205 high 687.58@1210 | close 687.39
+equity $6,193.19 | cash $5,359.19 | open 2 | closed 56
