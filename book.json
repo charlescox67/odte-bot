@@ -1,5 +1,5 @@
 {
-  "cash": 6359.961758855556,
+  "cash": 6024.601758855556,
   "positions": [
     {
       "id": "c4bc1a41",
@@ -1760,6 +1760,38 @@
       "bb_pct": 0.168,
       "bb_squeeze": true,
       "vs_dow_30m": -0.045
+    },
+    {
+      "id": "27cde586",
+      "symbol": "SPY",
+      "contract": "SPY261103C00756000",
+      "right": "C",
+      "strike": 756.0,
+      "expiry": "2026-11-03",
+      "qty": 2,
+      "entry_price": 1.67,
+      "entry_time": "2026-11-03T16:21:02.505376+00:00",
+      "entry_reason": "swing L1030",
+      "underlying_at_entry": 755.9287719726562,
+      "status": "open",
+      "mark": 1.67,
+      "exit_price": null,
+      "exit_time": null,
+      "exit_reason": null,
+      "signal_symbol": "SPY",
+      "setup": "L1030",
+      "stop_at_entry": 754.5624083362926,
+      "stop_underlying": 754.5624083362926,
+      "spread_at_entry": 0.01,
+      "event_day": "",
+      "exit_basis": "",
+      "runner": false,
+      "fees": 1.36,
+      "peak_pct": 0.0,
+      "conviction": "decent 2/4",
+      "bb_pct": 1.065,
+      "bb_squeeze": false,
+      "vs_dow_30m": -0.115
     }
   ]
 }
