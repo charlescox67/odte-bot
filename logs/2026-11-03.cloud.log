@@ -754,3 +754,8 @@ SPY: no setup as of 13:50 | trend up | vwap 755.04 | last low 755.94@1320 high 7
   CLOSE QQQ261103C00688000 x4 @ 0.64 (swing_stop) pnl $-187.90 after $5.44 fees (-41% on the option)
 QQQ: no setup as of 13:50 | trend up | vwap 686.07 | last low 686.55@1320 high 688.41@1330 | close 687.55
 equity $6,122.06 | cash $6,122.06 | open 0 | closed 59
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-11-03 14:13:12 EST (signals as of 13:53) ---
+SPY: no setup as of 13:53 | trend up | vwap 755.04 | last low 755.94@1320 high 757.07@1330 | close 756.32
+QQQ: no setup as of 13:53 | trend up | vwap 686.07 | last low 686.55@1320 high 688.41@1330 | close 687.55
+equity $6,122.06 | cash $6,122.06 | open 0 | closed 59
