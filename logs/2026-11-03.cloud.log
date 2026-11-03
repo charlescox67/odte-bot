@@ -201,3 +201,8 @@ data: Yahoo, option quotes ~20m stale
   OPEN  GREAT 4/4 $393 premium (6% of equity) | SPY261103C00755000 x3 @ ask 1.31 (bid 1.30) SPY 755.36 | stop 754.42 (delta +0.50) | bands %B 0.55 SQUEEZE | vs Dow +0.17%
 QQQ: no setup as of 12:00 | trend none | vwap 685.85 | last low 684.81@1130 high 688.69@1100 | close 686.76
 equity $6,204.23 | cash $5,811.23 | open 1 | closed 56
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-11-03 12:21:02 EST (signals as of 12:01) ---
+SPY: no setup as of 12:01 | trend up | vwap 754.97 | last low 754.42@1145 high 756.50@1115 | close 755.36
+QQQ: no setup as of 12:01 | trend none | vwap 685.85 | last low 684.81@1130 high 688.69@1100 | close 686.76
+equity $6,216.23 | cash $5,811.23 | open 1 | closed 56
