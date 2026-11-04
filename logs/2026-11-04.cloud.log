@@ -20,3 +20,8 @@ SPY: C setup L1205 stop 767.09 (SPY) — stop pulled in to 767.10 (pivot 767.09 
 QQQ: C setup L1210 stop 693.67 (QQQ) — stop pulled in to 694.28 (pivot 693.67 would cost ~63%)
   OPEN  DECENT 2/4 $400 premium (7% of equity) | QQQ261104C00696000 x2 @ ask 2.00 (bid 1.99) QQQ 695.77 | stop 694.28 (delta +0.60) | bands %B 0.82 | vs Dow -0.05%
 equity $6,118.66 | cash $5,274.66 | open 2 | closed 59
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-11-04 12:46:00 EST (signals as of 12:26) ---
+SPY: no setup as of 12:26 | trend up | vwap 765.96 | last low 767.09@1205 high 769.01@1155 | close 768.22
+QQQ: no setup as of 12:26 | trend up | vwap 694.50 | last low 693.67@1210 high 697.09@1155 | close 695.77
+equity $6,017.74 | cash $5,274.66 | open 2 | closed 59
