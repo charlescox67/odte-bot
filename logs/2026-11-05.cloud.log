@@ -86,3 +86,8 @@ SPY: no setup as of 13:25 | trend down | vwap 745.32 | last low 734.24@1300 high
   TRAIL QQQ261105P00655000 stop 655.75 -> 654.19
 QQQ: P setup H1310 stop 654.19 (QQQ) — already holding
 equity $5,743.90 | cash $4,911.90 | open 2 | closed 61
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-11-05 13:47:00 EST (signals as of 13:27) ---
+SPY: no setup as of 13:27 | trend down | vwap 745.30 | last low 734.24@1300 high 744.50@1310 | close 735.74
+QQQ: P setup H1310 stop 654.19 (QQQ) — already holding
+equity $5,743.90 | cash $4,911.90 | open 2 | closed 61
