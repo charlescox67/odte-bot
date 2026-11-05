@@ -1973,7 +1973,7 @@
       "signal_symbol": "SPY",
       "setup": "H1215",
       "stop_at_entry": 740.3419780273438,
-      "stop_underlying": 740.3419780273438,
+      "stop_underlying": 736.989990234375,
       "spread_at_entry": 0.01,
       "event_day": "",
       "exit_basis": "quote",
