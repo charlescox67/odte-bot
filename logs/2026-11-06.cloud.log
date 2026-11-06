@@ -93,3 +93,9 @@ SPY: P setup H1220 stop 739.97 (SPY) — stop pulled in to 739.22 (pivot 739.97 
 QQQ: P setup H1220 stop 660.40 (QQQ) — stop pulled in to 658.38 (pivot 660.40 would cost ~94%)
   OPEN  GREAT 3/4 $205 premium (4% of equity) | QQQ261106P00655000 x1 @ ask 2.05 (bid 2.03) QQQ 656.53 | stop 658.38 (delta -0.50) | bands %B 0.27 SQUEEZE | vs Dow -0.27% | NFP
 equity $5,736.04 | cash $5,327.04 | open 2 | closed 63
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-11-06 12:58:00 EST (signals as of 12:38) ---
+event day: NFP (risk x0.5)
+SPY: no setup as of 12:38 | trend down | vwap 739.64 | last low 738.29@1220 high 739.97@1220 | close 738.95
+QQQ: no setup as of 12:38 | trend down | vwap 659.70 | last low 658.31@1205 high 660.40@1220 | close 658.70
+equity $5,785.60 | cash $5,327.04 | open 2 | closed 63
