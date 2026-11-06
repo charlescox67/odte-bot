@@ -1,0 +1,30 @@
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-11-06 12:07:06 EST (signals as of 11:47) ---
+event day: NFP (risk x0.5)
+SPY: no setup as of 11:47 | trend up | vwap 739.42 | last low 737.64@1120 high 741.60@1050 | close 739.72
+QQQ: no setup as of 11:47 | trend up | vwap 659.67 | last low 656.77@1120 high 661.95@1050 | close 659.96
+equity $5,738.10 | cash $5,738.10 | open 0 | closed 63
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-11-06 12:08:00 EST (signals as of 11:48) ---
+event day: NFP (risk x0.5)
+SPY: no setup as of 11:48 | trend up | vwap 739.42 | last low 737.64@1120 high 741.60@1050 | close 739.72
+QQQ: no setup as of 11:48 | trend up | vwap 659.67 | last low 656.77@1120 high 661.95@1050 | close 659.96
+equity $5,738.10 | cash $5,738.10 | open 0 | closed 63
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-11-06 12:09:00 EST (signals as of 11:49) ---
+event day: NFP (risk x0.5)
+SPY: no setup as of 11:49 | trend up | vwap 739.42 | last low 737.64@1120 high 741.60@1050 | close 739.72
+QQQ: no setup as of 11:49 | trend up | vwap 659.67 | last low 656.77@1120 high 661.95@1050 | close 659.96
+equity $5,738.10 | cash $5,738.10 | open 0 | closed 63
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-11-06 12:10:00 EST (signals as of 11:50) ---
+event day: NFP (risk x0.5)
+SPY: no setup as of 11:50 | trend up | vwap 739.42 | last low 737.64@1120 high 741.06@1135 | close 739.68
+QQQ: no setup as of 11:50 | trend up | vwap 659.67 | last low 656.77@1120 high 662.07@1135 | close 659.84
+equity $5,738.10 | cash $5,738.10 | open 0 | closed 63
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-11-06 12:11:00 EST (signals as of 11:51) ---
+event day: NFP (risk x0.5)
+SPY: no setup as of 11:51 | trend up | vwap 739.42 | last low 737.64@1120 high 741.06@1135 | close 739.68
+QQQ: no setup as of 11:51 | trend up | vwap 659.67 | last low 656.77@1120 high 662.07@1135 | close 659.84
+equity $5,738.10 | cash $5,738.10 | open 0 | closed 63
