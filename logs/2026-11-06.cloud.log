@@ -36,3 +36,9 @@ SPY: C setup L1120 stop 737.64 (SPY) — already failing on live prices (92% of 
 QQQ: C setup L1120 stop 656.77 (QQQ) — stop pulled in to 658.47 (pivot 656.77 would cost ~78%)
 QQQ: C setup L1120 stop 656.77 (QQQ) — already failing on live prices (65% of the room to the stop used since the signal)
 equity $5,738.10 | cash $5,738.10 | open 0 | closed 63
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-11-06 12:21:00 EST (signals as of 12:01) ---
+event day: NFP (risk x0.5)
+SPY: no setup as of 12:01 | trend up | vwap 739.68 | last low 739.30@1145 high 741.06@1135 | close 740.46
+QQQ: no setup as of 12:01 | trend up | vwap 659.71 | last low 659.30@1145 high 662.07@1135 | close 660.68
+equity $5,738.10 | cash $5,738.10 | open 0 | closed 63
