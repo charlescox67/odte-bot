@@ -1,0 +1,30 @@
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-11-10 12:26:08 EST (signals as of 12:06) ---
+event day: CPI (risk x0.5)
+SPY: no setup as of 12:06 | trend down | vwap 748.83 | last low 746.75@1125 high 748.50@1130 | close 746.66
+QQQ: no setup as of 12:06 | trend down | vwap 674.28 | last low 671.52@1055 high 675.21@1105 | close 670.45
+equity $5,612.81 | cash $5,612.81 | open 0 | closed 65
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-11-10 12:27:00 EST (signals as of 12:07) ---
+event day: CPI (risk x0.5)
+SPY: no setup as of 12:07 | trend down | vwap 748.83 | last low 746.75@1125 high 748.50@1130 | close 746.66
+QQQ: no setup as of 12:07 | trend down | vwap 674.28 | last low 671.52@1055 high 675.21@1105 | close 670.45
+equity $5,612.81 | cash $5,612.81 | open 0 | closed 65
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-11-10 12:28:00 EST (signals as of 12:08) ---
+event day: CPI (risk x0.5)
+SPY: no setup as of 12:08 | trend down | vwap 748.82 | last low 746.75@1125 high 748.50@1130 | close 746.66
+QQQ: no setup as of 12:08 | trend down | vwap 674.28 | last low 671.52@1055 high 675.21@1105 | close 670.45
+equity $5,612.81 | cash $5,612.81 | open 0 | closed 65
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-11-10 12:29:00 EST (signals as of 12:09) ---
+event day: CPI (risk x0.5)
+SPY: no setup as of 12:09 | trend down | vwap 748.82 | last low 746.75@1125 high 748.50@1130 | close 746.66
+QQQ: no setup as of 12:09 | trend down | vwap 674.28 | last low 671.52@1055 high 675.21@1105 | close 670.45
+equity $5,612.81 | cash $5,612.81 | open 0 | closed 65
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-11-10 12:30:00 EST (signals as of 12:10) ---
+event day: CPI (risk x0.5)
+SPY: no setup as of 12:10 | trend down | vwap 748.82 | last low 746.75@1125 high 748.50@1130 | close 747.07
+QQQ: no setup as of 12:10 | trend down | vwap 674.27 | last low 671.52@1055 high 675.21@1105 | close 670.47
+equity $5,612.81 | cash $5,612.81 | open 0 | closed 65
