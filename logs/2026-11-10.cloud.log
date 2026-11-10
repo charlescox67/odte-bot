@@ -66,3 +66,11 @@ SPY: P setup H1215 stop 747.75 (SPY) — already failing on live prices (99% of 
 QQQ: P setup H1215 stop 671.41 (QQQ) — stop pulled in to 669.52 (pivot 671.41 would cost ~95%)
 QQQ: P setup H1215 stop 671.41 (QQQ) — already failing on live prices (128% of the room to the stop used since the signal)
 equity $5,612.81 | cash $5,612.81 | open 0 | closed 65
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-11-10 13:03:00 EST (signals as of 12:43) ---
+event day: CPI (risk x0.5)
+SPY: P setup H1215 stop 747.75 (SPY) — stop pulled in to 747.18 (pivot 747.75 would cost ~63%)
+  OPEN  DECENT 2/4 $156 premium (3% of equity) | SPY261110P00746000 x1 @ ask 1.56 (bid 1.55) SPY 745.78 | stop 747.18 (delta -0.50) | bands %B -0.13 | vs Dow -0.16% | CPI
+QQQ: P setup H1215 stop 671.41 (QQQ) — stop pulled in to 669.92 (pivot 671.41 would cost ~83%)
+QQQ: P setup H1215 stop 671.41 (QQQ) — already failing on live prices (57% of the room to the stop used since the signal)
+equity $5,611.78 | cash $5,455.78 | open 1 | closed 65
