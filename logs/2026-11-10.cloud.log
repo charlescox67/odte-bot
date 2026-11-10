@@ -281,3 +281,9 @@ event day: CPI (risk x0.5)
 SPY: no setup as of 13:35 | trend down | vwap 748.23 | last low 745.61@1320 high 746.89@1255 | close 747.10
 QQQ: no setup as of 13:35 | trend down | vwap 674.20 | last low 668.62@1320 high 679.35@1300 | close 670.41
 equity $5,532.79 | cash $5,532.79 | open 0 | closed 66
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-11-10 14:00:00 EST (signals as of 13:40) ---
+event day: CPI (risk x0.5)
+SPY: no setup as of 13:40 | trend down | vwap 748.23 | last low 745.61@1320 high 746.89@1255 | close 746.86
+QQQ: no setup as of 13:40 | trend down | vwap 674.20 | last low 668.62@1320 high 679.35@1300 | close 670.09
+equity $5,532.79 | cash $5,532.79 | open 0 | closed 66
