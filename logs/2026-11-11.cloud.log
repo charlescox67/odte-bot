@@ -13,3 +13,8 @@ data: Yahoo, option quotes ~20m stale
 SPY: no setup as of 12:20 | trend up | vwap 758.78 | last low 757.66@1110 high 760.62@1200 | close 760.51
   OPEN  GREAT 3/4 $304 premium (5% of equity) | QQQ261111C00694000 x2 @ ask 1.52 (bid 1.51) QQQ 693.67 | stop 692.62 (delta +0.56) | bands %B 0.85 | vs Dow +0.01%
 equity $5,531.43 | cash $5,227.43 | open 1 | closed 66
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-11-11 12:41:00 EST (signals as of 12:21) ---
+SPY: no setup as of 12:21 | trend up | vwap 758.78 | last low 757.66@1110 high 760.62@1200 | close 760.51
+QQQ: no setup as of 12:21 | trend up | vwap 690.80 | last low 692.62@1205 high 693.82@1200 | close 693.67
+equity $5,493.43 | cash $5,227.43 | open 1 | closed 66
