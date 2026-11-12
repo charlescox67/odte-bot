@@ -23,3 +23,9 @@ data: Yahoo, option quotes ~20m stale
 SPY: no setup as of 12:35 | trend up | vwap 760.05 | last low 760.04@1220 high 761.46@1200 | close 761.25
 QQQ: no setup as of 12:35 | trend up | vwap 690.75 | last low 689.25@1220 high 692.08@1150 | close 690.88
 equity $4,961.39 | cash $4,961.39 | open 0 | closed 69
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-11-12 13:00:00 EST (signals as of 12:40) ---
+SPY: C setup L1220 stop 760.04 (SPY) — stop pulled in to 760.30 (pivot 760.04 would cost ~57%)
+SPY: C setup L1220 stop 760.04 (SPY) — skipped: conviction 1/4 is below the 2/4 minimum
+QQQ: no setup as of 12:40 | trend up | vwap 690.75 | last low 689.25@1220 high 692.08@1150 | close 691.53
+equity $4,961.39 | cash $4,961.39 | open 0 | closed 69
