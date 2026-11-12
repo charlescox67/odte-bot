@@ -40,3 +40,8 @@ SPY: C setup L1220 stop 760.04 (SPY) — stop pulled in to 760.84 (pivot 760.04 
 SPY: C setup L1220 stop 760.04 (SPY) — already failing on live prices (161% of the room to the stop used since the signal)
 QQQ: no setup as of 12:50 | trend up | vwap 690.75 | last low 689.25@1220 high 692.08@1150 | close 692.14
 equity $4,961.39 | cash $4,961.39 | open 0 | closed 69
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-11-12 13:15:00 EST (signals as of 12:55) ---
+SPY: no setup as of 12:55 | trend up | vwap 760.35 | last low 760.04@1220 high 761.46@1200 | close 761.31
+QQQ: no setup as of 12:55 | trend up | vwap 690.75 | last low 689.25@1220 high 692.08@1150 | close 691.94
+equity $4,961.39 | cash $4,961.39 | open 0 | closed 69
