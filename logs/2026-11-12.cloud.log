@@ -368,3 +368,9 @@ data: Yahoo, option quotes ~20m stale
 SPY: P setup H1420 stop 759.81 (SPY) — outside entry window 10:00-14:00
 QQQ: P setup H1420 stop 690.06 (QQQ) — outside entry window 10:00-14:00
 equity $5,061.35 | cash $4,626.35 | open 1 | closed 69
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-11-12 15:05:00 EST (signals as of 14:45) ---
+  CLOSE SPY261112P00759000 x3 @ 1.65 (eod) pnl $+157.92 after $4.08 fees (+49% on the option)
+SPY: no setup as of 14:45 | trend down | vwap 760.30 | last low 757.90@1400 high 759.81@1420 | close 757.74
+QQQ: no setup as of 14:45 | trend down | vwap 690.75 | last low 687.78@1400 high 690.06@1420 | close 687.78
+equity $5,119.31 | cash $5,119.31 | open 0 | closed 70
