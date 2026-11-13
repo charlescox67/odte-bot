@@ -136,3 +136,9 @@ event day: PPI (risk x0.5)
 SPY: no setup as of 13:41 | trend up | vwap 750.81 | last low 750.73@1300 high 752.39@1250 | close 752.48
 QQQ: no setup as of 13:41 | trend up | vwap 674.49 | last low 675.65@1300 high 677.89@1245 | close 678.02
 equity $5,119.31 | cash $5,119.31 | open 0 | closed 70
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-11-13 14:06:00 EST (signals as of 13:46) ---
+event day: PPI (risk x0.5)
+SPY: no setup as of 13:46 | trend up | vwap 750.82 | last low 750.73@1300 high 752.39@1250 | close 752.91
+QQQ: no setup as of 13:46 | trend up | vwap 674.49 | last low 675.65@1300 high 677.89@1245 | close 678.59
+equity $5,119.31 | cash $5,119.31 | open 0 | closed 70
