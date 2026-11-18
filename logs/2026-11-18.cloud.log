@@ -322,3 +322,8 @@ data: Yahoo, option quotes ~20m stale
 SPY: P setup H1425 stop 731.35 (SPY) — outside entry window 10:00-14:00
 QQQ: no setup as of 14:44 | trend none | vwap 657.86 | last low 657.86@1405 high 660.32@1425 | close 658.17
 equity $4,782.49 | cash $4,782.49 | open 0 | closed 72
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-11-18 15:09:00 EST (signals as of 14:49) ---
+SPY: no setup as of 14:49 | trend none | vwap 729.91 | last low 729.94@1405 high 731.35@1425 | close 730.32
+QQQ: no setup as of 14:49 | trend none | vwap 657.86 | last low 657.86@1405 high 660.32@1425 | close 658.90
+equity $4,782.49 | cash $4,782.49 | open 0 | closed 72
