@@ -178,3 +178,8 @@ data: Yahoo, option quotes ~20m stale
 SPY: P setup H1455 stop 696.50 (SPY) — outside entry window 10:00-14:00
 QQQ: P setup H1455 stop 616.88 (QQQ) — outside entry window 10:00-14:00
 equity $4,667.50 | cash $4,667.50 | open 0 | closed 74
+data: Yahoo, option quotes ~20m stale
+--- tick 2026-11-20 15:58:00 EST (signals as of 15:38) ---
+SPY: P setup H1520 stop 695.65 (SPY) — outside entry window 10:00-14:00
+QQQ: P setup H1520 stop 615.19 (QQQ) — outside entry window 10:00-14:00
+equity $4,667.50 | cash $4,667.50 | open 0 | closed 74
